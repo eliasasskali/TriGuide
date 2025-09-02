@@ -1,8 +1,5 @@
 //
-//  PaceCalculatorViewModel.swift
-//  TriGuide
-//
-//  Created by Elias Asskali Assakali on 1/7/25.
+//  TriGuide 2025
 //
 
 import Foundation
@@ -62,8 +59,12 @@ class PaceCalculatorViewModel: ObservableObject {
         self.paceUnit = paceUnit
         self.distanceUnit = paceUnit?.distanceUnit ?? .kilometers
     }
+}
 
-    private func recalculateAll() {
+// MARK: - Private methods
+
+private extension PaceCalculatorViewModel {
+    func recalculateAll() {
         guard let duration, let distance, let paceUnit else { return }
         isUpdating = true
         let paceOrSpeed = paceCalculator.calculatePace(duration: duration, distance: distance, paceUnit: paceUnit)
@@ -77,7 +78,7 @@ class PaceCalculatorViewModel: ObservableObject {
         isUpdating = false
     }
 
-    private func updateFromPace() {
+    func updateFromPace() {
         guard let pace, let distance, let paceUnit else { return }
         isUpdating = true
         duration = paceCalculator.calculateTime(pace: pace, distance: distance, paceUnit: paceUnit)
@@ -94,7 +95,7 @@ class PaceCalculatorViewModel: ObservableObject {
         isUpdating = false
     }
 
-    private func updateFromDuration() {
+    func updateFromDuration() {
         guard let duration, let distance, let paceUnit else { return }
         isUpdating = true
         let paceOrSpeed = paceCalculator.calculatePace(duration: duration, distance: distance, paceUnit: paceUnit)
@@ -107,5 +108,6 @@ class PaceCalculatorViewModel: ObservableObject {
         }
         isUpdating = false
     }
-}
 
+    // TODO: update from distance?
+}

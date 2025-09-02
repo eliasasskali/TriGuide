@@ -1,8 +1,5 @@
 //
-//  PaceCalculatorTests.swift
-//  TriGuideTests
-//
-//  Created by Elias Asskali Assakali on 11/7/25.
+//  TriGuide 2025
 //
 
 import XCTest

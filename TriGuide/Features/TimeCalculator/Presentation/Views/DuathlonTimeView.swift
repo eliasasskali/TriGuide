@@ -4,27 +4,27 @@
 
 import SwiftUI
 
-struct TriathlonTimeView: View {
-    @StateObject var viewModel: TriathlonTimeViewModel
+struct DuathlonTimeView: View {
+    @StateObject var viewModel: DuathlonTimeViewModel
 
-    @State var selectedTriDistance: TriathlonDistance? = nil
+    @State var selectedDuathlonDistance: DuathlonDistance? = nil
 
     var body: some View {
         VStack(spacing: 16) {
-            triDistancePicker
+            duathlonDistancePicker
 
-            PaceTimeCalculatorView<SwimmingDistance>(
-                sport: .swim,
+            PaceTimeCalculatorView<RunningDistance>(
+                sport: .run,
                 viewModel: PaceCalculatorViewModel(
-                    paceCalculator: SwimmingPaceCalculator()
+                    paceCalculator: RunningPaceCalculator()
                 ),
                 selectedRaceDistance: Binding(
-                    get: { selectedTriDistance?.swimmingDistance },
+                    get: { selectedDuathlonDistance?.firstRunDistance },
                     set: { _ in
-                        selectedTriDistance = nil
+                        selectedDuathlonDistance = nil
                     }
                 ),
-                duration: $viewModel.swimTime
+                duration: $viewModel.firstRunTime
             )
 
             DurationPickerView(
@@ -39,9 +39,9 @@ struct TriathlonTimeView: View {
                     paceCalculator: CyclingPaceCalculator()
                 ),
                 selectedRaceDistance: Binding(
-                    get: { selectedTriDistance?.cyclingDistance },
+                    get: { selectedDuathlonDistance?.cyclingDistance },
                     set: { _ in
-                        selectedTriDistance = nil
+                        selectedDuathlonDistance = nil
                     }
                 ),
                 duration: $viewModel.cyclingTime
@@ -59,12 +59,12 @@ struct TriathlonTimeView: View {
                     paceCalculator: RunningPaceCalculator()
                 ),
                 selectedRaceDistance: Binding(
-                    get: { selectedTriDistance?.runningDistance },
+                    get: { selectedDuathlonDistance?.secondRunDistance },
                     set: { _ in
-                        selectedTriDistance = nil
+                        selectedDuathlonDistance = nil
                     }
                 ),
-                duration: $viewModel.runningTime
+                duration: $viewModel.secondRunTime
             )
 
             totalTime
@@ -72,12 +72,12 @@ struct TriathlonTimeView: View {
     }
 }
 
-private extension TriathlonTimeView {
-    var triDistancePicker: some View {
+private extension DuathlonTimeView {
+    var duathlonDistancePicker: some View {
         Menu {
-            Picker("Triathlon Distance", selection: $selectedTriDistance) {
-                Text("Select race").tag(nil as TriathlonDistance?)
-                ForEach(TriathlonDistance.allCases, id: \.self) { distance in
+            Picker("Duathlon Distance", selection: $selectedDuathlonDistance) {
+                Text("Select race").tag(nil as DuathlonDistance?)
+                ForEach(DuathlonDistance.allCases, id: \.self) { distance in
                     Text(distance.displayName).tag(Optional(distance))
                 }
             }
@@ -85,7 +85,7 @@ private extension TriathlonTimeView {
             HStack {
                 Text("Triathlon Distance: ")
                     .font(.Custom.Medium.font4)
-                Text(selectedTriDistance?.displayName ?? "Select race")
+                Text(selectedDuathlonDistance?.displayName ?? "Select race")
                     .font(.Custom.Regular.font4)
                 Spacer()
                 Image(systemName: "chevron.down")
@@ -105,7 +105,7 @@ private extension TriathlonTimeView {
 }
 
 #Preview {
-    TriathlonTimeView(
-        viewModel: TriathlonTimeViewModel()
+    DuathlonTimeView(
+        viewModel: DuathlonTimeViewModel()
     )
 }

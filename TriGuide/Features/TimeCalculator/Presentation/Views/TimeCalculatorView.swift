@@ -1,8 +1,5 @@
 //
-//  TimeCalculatorView.swift
-//  TriGuide
-//
-//  Created by Elias Asskali Assakali on 1/7/25.
+//  TriGuide 2025
 //
 
 import SwiftUI
@@ -79,7 +76,9 @@ private extension TimeCalculatorView {
     }
 
     var duathlonTimeView: some View {
-        Text("Duathlon")
+        DuathlonTimeView(
+            viewModel: DuathlonTimeViewModel()
+        )
     }
 }
 
