@@ -1,0 +1,140 @@
+//
+//  PaceTimeCalculatorView.swift
+//  TriGuide
+//
+//  Created by Elias Asskali Assakali on 12/7/25.
+//
+
+import SwiftUI
+
+struct PaceTimeCalculatorView<Distance: RaceDistance & CaseIterable>: View where Distance.AllCases: RandomAccessCollection {
+    let sport: SupportedSport
+    @StateObject var viewModel: PaceCalculatorViewModel
+
+    var selectedRaceDistance: Binding<Distance?>? = nil
+    var duration: Binding<TimeInterval?>? = nil
+
+    var body: some View {
+        VStack {
+            Text(sport.localized)
+                .font(.Custom.Medium.font4)
+
+            HStack {
+                distancePicker
+                raceDistancePicker
+            }
+
+            HStack {
+                DurationPickerView(
+                    title: "Time",
+                    duration: $viewModel.duration
+                )
+
+                paceSpeedPicker
+                unitsPicker
+            }
+        }
+        .onAppear {
+            if viewModel.paceUnit == nil {
+                viewModel.paceUnit = sport.supportedUnits.first
+            }
+            if let externalDuration = duration?.wrappedValue {
+                viewModel.duration = externalDuration
+            }
+        }
+        .onChange(of: viewModel.duration) { _, newValue in
+            duration?.wrappedValue = newValue
+        }
+        .onChange(of: selectedRaceDistance?.wrappedValue) { _, newValue in
+            viewModel.distance = newValue?.meters
+        }
+        .frame(maxWidth: .infinity)
+        .padding()
+        .background(Color.black.opacity(0.2))
+    }
+}
+
+private extension PaceTimeCalculatorView {
+
+    @ViewBuilder
+    var distancePicker: some View {
+        DistancePickerView(
+            title: "Distance",
+            distance: $viewModel.distance,
+            unit: sport.defaultDistanceUnit
+        ) {
+            selectedRaceDistance?.wrappedValue = nil
+        }
+    }
+
+    @ViewBuilder
+    var paceSpeedPicker: some View {
+        if sport == .bike {
+            DecimalPickerView(
+                title: "Speed",
+                value: Binding(
+                    get: { viewModel.speed },
+                    set: { viewModel.speed = $0 }
+                ),
+                range: 0...60,
+                unit: viewModel.paceUnit?.localized,
+                showUnitOnLabel: false,
+                mode: .regular
+            )
+        } else {
+            DurationPickerView(
+                title: "Pace",
+                duration: $viewModel.pace
+            )
+        }
+    }
+
+    @ViewBuilder
+    var unitsPicker: some View {
+        Menu {
+            ForEach(sport.supportedUnits, id: \.self) { unit in
+                Button {
+                    viewModel.paceUnit = unit
+                } label: {
+                    Text(unit.localized)
+                        .font(.Custom.Regular.font3) // menu item font
+                }
+            }
+        } label: {
+            HStack {
+                Text(viewModel.paceUnit?.localized ?? "Unit")
+                Image(systemName: "chevron.up.chevron.down")
+            }
+            .font(.Custom.Regular.font3) // label font
+        }
+    }
+
+    @ViewBuilder
+    var raceDistancePicker: some View {
+        Menu {
+            ForEach(Distance.allCases, id: \.self) { distance in
+                Button {
+                    selectedRaceDistance?.wrappedValue = distance
+                    viewModel.distance = distance.meters
+                } label: {
+                    Text(distance.displayName)
+                        .font(.Custom.Regular.font3)
+                }
+            }
+        } label: {
+            HStack {
+                Text(selectedRaceDistance?.wrappedValue?.displayName ?? "Select race")
+                Image(systemName: "chevron.up.chevron.down")
+            }
+            .font(.Custom.Regular.font3)
+        }
+    }
+}
+
+#Preview {
+    PaceTimeCalculatorView<RunningDistance>(
+        sport: .run,
+        viewModel: PaceCalculatorViewModel(paceCalculator: RunningPaceCalculator()),
+        duration: .constant(60)
+    )
+}
