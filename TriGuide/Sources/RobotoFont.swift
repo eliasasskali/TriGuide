@@ -1,8 +1,5 @@
 //
-//  RobotoFont.swift
-//  TriGuide
-//
-//  Created by Elias Asskali Assakali on 24/8/25.
+//  TriGuide 2025
 //
 
 import SwiftUI

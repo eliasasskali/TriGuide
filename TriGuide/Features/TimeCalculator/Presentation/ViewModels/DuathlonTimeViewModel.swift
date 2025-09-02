@@ -4,21 +4,21 @@
 
 import Foundation
 
-class TriathlonTimeViewModel: ObservableObject {
-    @Published var swimTime: TimeInterval?
+class DuathlonTimeViewModel: ObservableObject {
+    @Published var firstRunTime: TimeInterval?
     @Published var t1Time: TimeInterval?
     @Published var cyclingTime: TimeInterval?
     @Published var t2Time: TimeInterval?
-    @Published var runningTime: TimeInterval?
+    @Published var secondRunTime: TimeInterval?
 
     private var totalTime: TimeInterval? {
-        let swim = swimTime ?? 0
+        let firstRun = firstRunTime ?? 0
         let t1 = t1Time ?? 0
         let cycling = cyclingTime ?? 0
         let t2 = t2Time ?? 0
-        let running = runningTime ?? 0
+        let secondRun = secondRunTime ?? 0
 
-        return swim + t1 + cycling + t2 + running
+        return firstRun + t1 + cycling + t2 + secondRun
     }
 
     var formattedTotalTime: String {

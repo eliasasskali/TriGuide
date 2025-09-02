@@ -1,3 +1,7 @@
+//
+//  TriGuide 2025
+//
+
 import SwiftUI
 
 struct DecimalPickerView: View {

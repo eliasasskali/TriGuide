@@ -1,8 +1,5 @@
 //
-//  PaceTimeCalculatorView.swift
-//  TriGuide
-//
-//  Created by Elias Asskali Assakali on 12/7/25.
+//  TriGuide 2025
 //
 
 import SwiftUI
