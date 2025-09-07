@@ -20,8 +20,9 @@ public extension Font {
             }
         }
 
-        static let Regular = Style(familyName: Roboto.regular.rawValue)
-        static let Medium = Style(familyName: Roboto.medium.rawValue)
         static let Bold = Style(familyName: Roboto.bold.rawValue)
+        static let Medium = Style(familyName: Roboto.medium.rawValue)
+        static let Regular = Style(familyName: Roboto.regular.rawValue)
+        static let Light = Style(familyName: Roboto.light.rawValue)
     }
 }

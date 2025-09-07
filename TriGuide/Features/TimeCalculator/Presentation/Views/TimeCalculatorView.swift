@@ -21,27 +21,26 @@ struct TimeCalculatorView: View {
 
             Divider()
 
-            ScrollView {
-                VStack(spacing: 16) {
-                    switch selectedSport {
-                    case .swim:
-                        swimTimeView
-                    case .bike:
-                        bikeTimeView
-                    case .run:
-                        runTimeView
-                    case .triathlon:
-                        triathlonTimeView
-                    case .duathlon:
-                        duathlonTimeView
-                    }
-                }
-            }
+            selectedSportView
+                .padding()
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 
 private extension TimeCalculatorView {
+    @ViewBuilder
+    var selectedSportView: some View {
+       switch selectedSport {
+       case .swim: swimTimeView
+       case .bike: bikeTimeView
+       case .run: runTimeView
+       case .triathlon: triathlonTimeView
+       case .duathlon: duathlonTimeView
+       }
+    }
+
     var swimTimeView: some View {
         PaceTimeCalculatorView<SwimmingDistance>(
             sport: .swim,

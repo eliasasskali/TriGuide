@@ -8,20 +8,29 @@ struct DurationPickerView: View {
     enum Mode {
         case regular
         case compact
+
+        var labelOrientation: PickerLabelOrientation {
+            switch self {
+            case .regular: return .vertical
+            case .compact: return .horizontal
+            }
+        }
     }
 
     let title: String
     let mode: Mode
-
+    let labelsBackgroundColor: Color
     @Binding var duration: TimeInterval?
 
     init(
         title: String,
         mode: Mode = .regular,
+        labelsBackgroundColor: Color = Color(UIColor.lightGray).opacity(0.2),
         duration: Binding<TimeInterval?>
     ) {
         self.title = title
         self.mode = mode
+        self.labelsBackgroundColor = labelsBackgroundColor
         self._duration = duration
     }
 
@@ -43,55 +52,19 @@ struct DurationPickerView: View {
         .onChange(of: duration) { updateStateFromDuration() }
     }
 }
+// MARK: - Views
 
 private extension DurationPickerView {
-    func durationWheel(_ selection: Binding<Int>, range: Range<Int>, label: String) -> some View {
-        VStack(spacing: 4) {
-            Picker(selection: selection, label: Text(label)) {
-                ForEach(range, id: \.self) { Text("\($0)") }
-            }
-            .pickerStyle(WheelPickerStyle())
-            .onChange(of: selection.wrappedValue) {
-                updateDurationFromState()
-            }
-            .frame(width: 60, height: 90)
-            .clipped()
-
-            Text(label).font(.caption2)
-        }
-    }
-
-    var formattedDuration: String {
-        var components: [String] = []
-
-        if hours > 0 {
-            components.append("\(hours)h")
-        }
-        if minutes > 0 {
-            components.append("\(minutes)m")
-        }
-        if seconds > 0 || components.isEmpty {
-            components.append("\(seconds)s")
-        }
-
-        return components.joined()
-    }
-
-    var compactFormattedDuration: String {
-        if hours > 0 {
-            return String(format: "%d:%02d:%02d", hours, minutes, seconds)
-        } else {
-            return String(format: "%d:%02d", minutes, seconds)
-        }
-    }
-
     @ViewBuilder
     var pickerLabel: some View {
-        switch mode {
-        case .regular:
-            regularPickerLabel
-        case .compact:
-            compactPickerLabel
+        PickerLabel(
+            orientation: mode.labelOrientation,
+            title: "\(title): ",
+            value: compactFormattedDuration
+        ) {
+            Image(systemName: "chevron.down")
+                .rotationEffect(.degrees(showPicker ? 180 : 0))
+                .font(.Custom.Medium.font3)
         }
     }
 
@@ -122,39 +95,51 @@ private extension DurationPickerView {
         .background(Color(UIColor.systemBackground))
     }
 
-    var regularPickerLabel: some View {
-        HStack {
-            VStack(alignment: .leading) {
-                Text("\(title):")
-                    .foregroundStyle(.black)
-                Text(compactFormattedDuration)
-                    .font(.subheadline)
+    func durationWheel(_ selection: Binding<Int>, range: Range<Int>, label: String) -> some View {
+        VStack(spacing: 4) {
+            Picker(selection: selection, label: Text(label)) {
+                ForEach(range, id: \.self) { Text("\($0)") }
             }
-            Spacer()
-            Image(systemName: "chevron.down")
-                .rotationEffect(.degrees(showPicker ? 180 : 0))
+            .pickerStyle(WheelPickerStyle())
+            .onChange(of: selection.wrappedValue) {
+                updateDurationFromState()
+            }
+            .frame(width: 60, height: 90)
+            .clipped()
+
+            Text(label).font(.caption2)
         }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 8)
-        .background(Color.gray.opacity(0.2))
-        .cornerRadius(8)
+    }
+}
+
+// MARK: - Helpers
+
+private extension DurationPickerView {
+    var formattedDuration: String {
+        var components: [String] = []
+
+        if hours > 0 {
+            components.append("\(hours)h")
+        }
+        if minutes > 0 {
+            components.append("\(minutes)m")
+        }
+        if seconds > 0 || components.isEmpty {
+            components.append("\(seconds)s")
+        }
+
+        return components.joined()
     }
 
-    var compactPickerLabel: some View {
-        HStack {
-            Text("\(title): ")
-                .foregroundStyle(.black)
-            Text(compactFormattedDuration)
-                .font(.subheadline)
-            Spacer()
-            Image(systemName: "chevron.down")
-                .rotationEffect(.degrees(showPicker ? 180 : 0))
+    var compactFormattedDuration: String {
+        if hours > 0 {
+            return String(format: "%d:%02d:%02d", hours, minutes, seconds)
+        } else {
+            return String(format: "%d:%02d", minutes, seconds)
         }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 8)
-        .background(Color.gray.opacity(0.2))
-        .cornerRadius(8)
     }
+
+    // MARK: - State management
 
     func updateStateFromDuration() {
         guard let duration else { return }

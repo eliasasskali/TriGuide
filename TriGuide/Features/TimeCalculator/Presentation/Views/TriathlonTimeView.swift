@@ -10,69 +10,46 @@ struct TriathlonTimeView: View {
     @State var selectedTriDistance: TriathlonDistance? = nil
 
     var body: some View {
-        VStack(spacing: 16) {
-            triDistancePicker
+        VStack {
+            ScrollView {
+                calculatorViews
+                    .padding(.bottom)
+            }
 
-            PaceTimeCalculatorView<SwimmingDistance>(
-                sport: .swim,
-                viewModel: PaceCalculatorViewModel(
-                    paceCalculator: SwimmingPaceCalculator()
-                ),
-                selectedRaceDistance: Binding(
-                    get: { selectedTriDistance?.swimmingDistance },
-                    set: { _ in
-                        selectedTriDistance = nil
-                    }
-                ),
-                duration: $viewModel.swimTime
-            )
-
-            DurationPickerView(
-                title: "T1 Time",
-                mode: .compact,
-                duration: $viewModel.t1Time
-            )
-
-            PaceTimeCalculatorView<CyclingDistance>(
-                sport: .bike,
-                viewModel: PaceCalculatorViewModel(
-                    paceCalculator: CyclingPaceCalculator()
-                ),
-                selectedRaceDistance: Binding(
-                    get: { selectedTriDistance?.cyclingDistance },
-                    set: { _ in
-                        selectedTriDistance = nil
-                    }
-                ),
-                duration: $viewModel.cyclingTime
-            )
-
-            DurationPickerView(
-                title: "T2 Time",
-                mode: .compact,
-                duration: $viewModel.t2Time
-            )
-
-            PaceTimeCalculatorView<RunningDistance>(
-                sport: .run,
-                viewModel: PaceCalculatorViewModel(
-                    paceCalculator: RunningPaceCalculator()
-                ),
-                selectedRaceDistance: Binding(
-                    get: { selectedTriDistance?.runningDistance },
-                    set: { _ in
-                        selectedTriDistance = nil
-                    }
-                ),
-                duration: $viewModel.runningTime
-            )
-
-            totalTime
+            TotalTimeView(time: viewModel.formattedTotalTime)
         }
     }
 }
 
 private extension TriathlonTimeView {
+    var calculatorViews: some View {
+        VStack(spacing: 16) {
+            triDistancePicker
+
+            swimCalculatorView
+
+            DurationPickerView(
+                title: "T1 Time",
+                mode: .compact,
+                labelsBackgroundColor: Color.primaryWhite,
+                duration: $viewModel.t1Time
+            )
+            .padding(.horizontal, 4)
+
+            bikeCalculatorView
+
+            DurationPickerView(
+                title: "T2 Time",
+                mode: .compact,
+                labelsBackgroundColor: Color.primaryWhite,
+                duration: $viewModel.t2Time
+            )
+            .padding(.horizontal, 4)
+
+            runCalculatorView
+        }
+    }
+
     var triDistancePicker: some View {
         Menu {
             Picker("Triathlon Distance", selection: $selectedTriDistance) {
@@ -85,6 +62,7 @@ private extension TriathlonTimeView {
             HStack {
                 Text("Triathlon Distance: ")
                     .font(.Custom.Medium.font4)
+                    .foregroundStyle(.black)
                 Text(selectedTriDistance?.displayName ?? "Select race")
                     .font(.Custom.Regular.font4)
                 Spacer()
@@ -97,10 +75,52 @@ private extension TriathlonTimeView {
         }
     }
 
-    var totalTime: some View {
-        Text("Total time: \(viewModel.formattedTotalTime)")
-            .font(.Custom.Medium.font5)
+    var swimCalculatorView: some View {
+        PaceTimeCalculatorView<SwimmingDistance>(
+            sport: .swim,
+            viewModel: PaceCalculatorViewModel(
+                paceCalculator: SwimmingPaceCalculator()
+            ),
+            selectedRaceDistance: Binding(
+                get: { selectedTriDistance?.swimmingDistance },
+                set: { _ in
+                    selectedTriDistance = nil
+                }
+            ),
+            duration: $viewModel.swimTime
+        )
+    }
 
+    var bikeCalculatorView: some View {
+        PaceTimeCalculatorView<CyclingDistance>(
+            sport: .bike,
+            viewModel: PaceCalculatorViewModel(
+                paceCalculator: CyclingPaceCalculator()
+            ),
+            selectedRaceDistance: Binding(
+                get: { selectedTriDistance?.cyclingDistance },
+                set: { _ in
+                    selectedTriDistance = nil
+                }
+            ),
+            duration: $viewModel.cyclingTime
+        )
+    }
+
+    var runCalculatorView: some View {
+        PaceTimeCalculatorView<RunningDistance>(
+            sport: .run,
+            viewModel: PaceCalculatorViewModel(
+                paceCalculator: RunningPaceCalculator()
+            ),
+            selectedRaceDistance: Binding(
+                get: { selectedTriDistance?.runningDistance },
+                set: { _ in
+                    selectedTriDistance = nil
+                }
+            ),
+            duration: $viewModel.runningTime
+        )
     }
 }
 
