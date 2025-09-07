@@ -9,7 +9,7 @@ class PaceCalculatorViewModel: ObservableObject {
     let paceCalculator: PaceCalculator
 
     @Published var distance: Double? {
-        didSet { recalculateAll() }
+        didSet { updateFromPace() }
     }
 
     @Published var duration: TimeInterval? {

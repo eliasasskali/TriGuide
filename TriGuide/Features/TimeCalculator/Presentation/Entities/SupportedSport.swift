@@ -53,4 +53,17 @@ enum SupportedSport: CaseIterable {
             return .kilometers
         }
     }
+
+    var representativeIcon: String {
+        switch self {
+        case .swim:
+            return "figure.pool.swim"
+        case .bike:
+            return "bicycle"
+        case .run:
+            return "figure.run"
+        default:
+            return "figure.run"
+        }
+    }
 }

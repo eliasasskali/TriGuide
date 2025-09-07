@@ -19,65 +19,71 @@ struct DistancePickerView: View {
         Button {
             showPicker.toggle()
         } label: {
-            HStack {
-                Text("\(title): ")
-                    .foregroundStyle(.black)
-                Text(compactFormattedDistance)
-                    .font(.subheadline)
-                Spacer()
-                Image(systemName: "chevron.down")
-                    .rotationEffect(.degrees(showPicker ? 180 : 0))
-            }
-            .padding(.horizontal, 8)
-            .padding(.vertical, 8)
-            .background(Color.gray.opacity(0.2))
-            .cornerRadius(8)
+            pickerLabel
         }
         .sheet(isPresented: $showPicker) {
-            VStack(spacing: 8) {
-                if usesDecimals {
-                    HStack(spacing: 0) {
-                        distanceWheel($whole, values: Array(0..<1000), label: "")
-                        Text(".")
-                            .font(.title)
-                            .frame(width: 10)
-                        distanceWheel($decimal, values: Array(0..<10), label: "")
-                        unitPicker
-                    }
-                    .frame(height: 100)
-                } else {
-                    HStack() {
-                        distanceWheel(
-                            $whole,
-                            values: Array(stride(from: 0, through: 100000, by: 50)),
-                            label: selectedUnitLabel
-                        )
-                        .frame(height: 100)
-
-                        unitPicker
-                    }
-                }
-
-                HStack {
-                    Spacer()
-                    Button("Done") {
-                        updateDistanceFromState()
-                        showPicker = false
-                    }
-                    .padding(.trailing)
-                }
-            }
-            .padding(12)
-            .cornerRadius(12)
-            .presentationDetents([.height(200)])
-            .presentationDragIndicator(.hidden)
-            .background(Color(UIColor.systemBackground))
+            pickerSheet
         }
         .onAppear { updateStateFromDistance() }
         .onChange(of: distance) { updateStateFromDistance() }
     }
+}
 
-    // MARK: - Wheels
+// MARK: - Views
+
+private extension DistancePickerView {
+    var pickerLabel: some View {
+        PickerLabel(
+            orientation: .horizontal,
+            title: "\(title): ",
+            value: compactFormattedDistance
+        ) {
+            Image(systemName: "chevron.down")
+                .rotationEffect(.degrees(showPicker ? 180 : 0))
+                .font(.Custom.Medium.font3)
+        }
+    }
+
+    var pickerSheet: some View {
+        VStack(spacing: 8) {
+            if usesDecimals {
+                HStack(spacing: 0) {
+                    distanceWheel($whole, values: Array(0..<1000), label: "")
+                    Text(".")
+                        .font(.title)
+                        .frame(width: 10)
+                    distanceWheel($decimal, values: Array(0..<10), label: "")
+                    unitPicker
+                }
+                .frame(height: 100)
+            } else {
+                HStack() {
+                    distanceWheel(
+                        $whole,
+                        values: Array(stride(from: 0, through: 100000, by: 50)),
+                        label: selectedUnitLabel
+                    )
+                    .frame(height: 100)
+
+                    unitPicker
+                }
+            }
+
+            HStack {
+                Spacer()
+                Button("Done") {
+                    updateDistanceFromState()
+                    showPicker = false
+                }
+                .padding(.trailing)
+            }
+        }
+        .padding(12)
+        .cornerRadius(12)
+        .presentationDetents([.height(200)])
+        .presentationDragIndicator(.hidden)
+        .background(Color(UIColor.systemBackground))
+    }
 
     func distanceWheel(_ selection: Binding<Int>, values: [Int], label: String) -> some View {
         VStack(spacing: 4) {
@@ -100,7 +106,10 @@ struct DistancePickerView: View {
     var unitPicker: some View {
         Picker("", selection: Binding(
             get: { selectedUnit ?? unit ?? .kilometers },
-            set: { selectedUnit = $0; updateDistanceFromState() }
+            set: {
+                selectedUnit = $0
+                updateDistanceFromState()
+            }
         )) {
             if usesDecimals {
                 Text("km").tag(DistanceUnit.kilometers)
@@ -115,12 +124,11 @@ struct DistancePickerView: View {
     }
 }
 
+// MARK: - Helpers
+
 private extension DistancePickerView {
-
-    // MARK: - Display helpers
-
     var compactFormattedDistance: String {
-        guard let distance, let baseUnit = unit else { return "Distance (\(unitLabel))" }
+        guard let distance, let baseUnit = unit else { return "0 \(unitLabel)" }
         let effectiveUnit = selectedUnit ?? baseUnit
         let value = distance / effectiveUnit.factorToMeters
 

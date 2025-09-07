@@ -8,6 +8,13 @@ struct DecimalPickerView: View {
     enum Mode {
         case regular
         case compact
+
+        var labelOrientation: PickerLabelOrientation {
+            switch self {
+            case .regular: return .vertical
+            case .compact: return .horizontal
+            }
+        }
     }
 
     let title: String
@@ -28,72 +35,91 @@ struct DecimalPickerView: View {
         Button {
             showPicker.toggle()
         } label: {
-            if mode == .regular {
-                HStack {
-                    VStack(alignment: .leading) {
-                        Text("\(title):")
-                            .foregroundStyle(.black)
-                        Text(compactValue)
-                            .font(.subheadline)
-                    }
-                    Spacer()
-                    Image(systemName: "chevron.down")
-                        .rotationEffect(.degrees(showPicker ? 180 : 0))
-                }
-                .padding(.horizontal, 8)
-                .padding(.vertical, 8)
-                .background(Color.gray.opacity(0.2))
-                .cornerRadius(8)
-            } else if mode == .compact {
-                HStack {
-                    Text("\(title): ")
-                        .foregroundStyle(.black)
-                    Text(compactValue)
-                        .font(.subheadline)
-                    Spacer()
-                    Image(systemName: "chevron.down")
-                        .rotationEffect(.degrees(showPicker ? 180 : 0))
-                }
-                .padding(8)
-                .background(Color.gray.opacity(0.2))
-                .cornerRadius(8)
-            }
+            pickerLabel
         }
         .sheet(isPresented: $showPicker) {
-            VStack(spacing: 8) {
-                HStack(spacing: 0) {
-                    pickerWheel($whole, values: Array(range))
-                    Text(".").font(.title).frame(width: 10)
-                    pickerWheel($decimal, values: Array(0...maxDecimal))
-                    if let unit { Text(unit).padding(.leading, 8) }
-                }
-                .frame(height: 100)
-
-                HStack {
-                    Spacer()
-                    Button("Done") {
-                        showPicker = false
-                    }
-                    .padding(.trailing)
-                }
-            }
-            .padding(12)
-            .presentationDetents([.height(200)])
-            .presentationDragIndicator(.hidden)
-            .background(Color(UIColor.systemBackground))
+            pickerSheet
         }
         .onAppear { updateStateFromValue() }
         .onChange(of: value) { updateStateFromValue() }
     }
+}
 
-    // MARK: - Helpers
+// MARK: - Views
 
-    private var compactValue: String {
-        guard let value else { return "--" }
-        return showUnitOnLabel ? String(format: "%.1f %@", value, unit ?? "") : String(format: "%.1f", value)
+private extension DecimalPickerView {
+    @ViewBuilder
+    var pickerLabel: some View {
+        PickerLabel(
+            orientation: mode.labelOrientation,
+            title: "\(title):",
+            value: compactValue
+        ) {
+            Image(systemName: "chevron.down")
+                .rotationEffect(.degrees(showPicker ? 180 : 0))
+        }
     }
 
-    private func pickerWheel(_ selection: Binding<Int>, values: [Int]) -> some View {
+    var regularPickerLabel: some View {
+        HStack {
+            VStack(alignment: .leading) {
+                Text("\(title):")
+                    .foregroundStyle(.black)
+                Text(compactValue)
+                    .font(.subheadline)
+            }
+            Spacer()
+            Image(systemName: "chevron.down")
+                .rotationEffect(.degrees(showPicker ? 180 : 0))
+        }
+        .padding(.horizontal, 8)
+        .padding(.vertical, 8)
+        .cardBackground(
+            backgroundColor: Color(UIColor.lightGray).opacity(0.2)
+        )
+    }
+
+    var compactPickerLabel: some View {
+        HStack {
+            Text("\(title): ")
+                .foregroundStyle(.black)
+            Text(compactValue)
+                .font(.subheadline)
+            Spacer()
+            Image(systemName: "chevron.down")
+                .rotationEffect(.degrees(showPicker ? 180 : 0))
+        }
+        .padding(8)
+        .cardBackground(
+            backgroundColor: Color(UIColor.lightGray).opacity(0.2)
+        )
+    }
+
+    var pickerSheet: some View {
+        VStack(spacing: 8) {
+            HStack(spacing: 0) {
+                pickerWheel($whole, values: Array(range))
+                Text(".").font(.title).frame(width: 10)
+                pickerWheel($decimal, values: Array(0...maxDecimal))
+                if let unit { Text(unit).padding(.leading, 8) }
+            }
+            .frame(height: 100)
+
+            HStack {
+                Spacer()
+                Button("Done") {
+                    showPicker = false
+                }
+                .padding(.trailing)
+            }
+        }
+        .padding(12)
+        .presentationDetents([.height(200)])
+        .presentationDragIndicator(.hidden)
+        .background(Color(UIColor.systemBackground))
+    }
+
+    func pickerWheel(_ selection: Binding<Int>, values: [Int]) -> some View {
         Picker(selection: selection, label: Text("")) {
             ForEach(values, id: \.self) { Text("\($0)") }
         }
@@ -105,14 +131,23 @@ struct DecimalPickerView: View {
             onChange?()
         }
     }
+}
 
-    private func updateStateFromValue() {
+// MARK: - Helpers
+
+private extension DecimalPickerView {
+    var compactValue: String {
+        guard let value else { return "0.0" }
+        return showUnitOnLabel ? String(format: "%.1f %@", value, unit ?? "") : String(format: "%.1f", value)
+    }
+
+    func updateStateFromValue() {
         guard let value else { return }
         whole = Int(floor(value))
         decimal = Int(((value - Double(whole)) * 10).rounded())
     }
 
-    private func updateValueFromState() {
+    func updateValueFromState() {
         value = Double(whole) + Double(decimal)/10.0
     }
 }
