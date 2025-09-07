@@ -12,11 +12,12 @@ struct PaceTimeCalculatorView<Distance: RaceDistance & CaseIterable>: View where
     var duration: Binding<TimeInterval?>? = nil
 
     var body: some View {
-        VStack {
-            Text(sport.localized)
-                .font(.Custom.Medium.font4)
-
+        VStack(spacing: 8) {
             HStack {
+                Image(systemName: sport.representativeIcon)
+                    .font(.Custom.Regular.font5)
+                    .foregroundColor(.black)
+
                 distancePicker
                 raceDistancePicker
             }
@@ -45,14 +46,14 @@ struct PaceTimeCalculatorView<Distance: RaceDistance & CaseIterable>: View where
         .onChange(of: selectedRaceDistance?.wrappedValue) { _, newValue in
             viewModel.distance = newValue?.meters
         }
-        .frame(maxWidth: .infinity)
         .padding()
-        .background(Color.black.opacity(0.2))
+        .cardBackground()
+        .frame(maxWidth: .infinity)
+        .padding(.horizontal, 4)
     }
 }
 
 private extension PaceTimeCalculatorView {
-
     @ViewBuilder
     var distancePicker: some View {
         DistancePickerView(

@@ -11,68 +11,47 @@ struct DuathlonTimeView: View {
 
     var body: some View {
         VStack(spacing: 16) {
-            duathlonDistancePicker
+            VStack {
+                ScrollView {
+                    calculatorViews
+                        .padding(.bottom)
+                }
 
-            PaceTimeCalculatorView<RunningDistance>(
-                sport: .run,
-                viewModel: PaceCalculatorViewModel(
-                    paceCalculator: RunningPaceCalculator()
-                ),
-                selectedRaceDistance: Binding(
-                    get: { selectedDuathlonDistance?.firstRunDistance },
-                    set: { _ in
-                        selectedDuathlonDistance = nil
-                    }
-                ),
-                duration: $viewModel.firstRunTime
-            )
-
-            DurationPickerView(
-                title: "T1 Time",
-                mode: .compact,
-                duration: $viewModel.t1Time
-            )
-
-            PaceTimeCalculatorView<CyclingDistance>(
-                sport: .bike,
-                viewModel: PaceCalculatorViewModel(
-                    paceCalculator: CyclingPaceCalculator()
-                ),
-                selectedRaceDistance: Binding(
-                    get: { selectedDuathlonDistance?.cyclingDistance },
-                    set: { _ in
-                        selectedDuathlonDistance = nil
-                    }
-                ),
-                duration: $viewModel.cyclingTime
-            )
-
-            DurationPickerView(
-                title: "T2 Time",
-                mode: .compact,
-                duration: $viewModel.t2Time
-            )
-
-            PaceTimeCalculatorView<RunningDistance>(
-                sport: .run,
-                viewModel: PaceCalculatorViewModel(
-                    paceCalculator: RunningPaceCalculator()
-                ),
-                selectedRaceDistance: Binding(
-                    get: { selectedDuathlonDistance?.secondRunDistance },
-                    set: { _ in
-                        selectedDuathlonDistance = nil
-                    }
-                ),
-                duration: $viewModel.secondRunTime
-            )
-
-            totalTime
+                TotalTimeView(time: viewModel.formattedTotalTime)
+            }
         }
     }
 }
 
 private extension DuathlonTimeView {
+    var calculatorViews: some View {
+        VStack(spacing: 16) {
+            duathlonDistancePicker
+
+            firstRunCalculatorView
+
+            DurationPickerView(
+                title: "T1 Time",
+                mode: .compact,
+                labelsBackgroundColor: Color.primaryWhite,
+                duration: $viewModel.t1Time
+            )
+            .padding(.horizontal, 4)
+
+            bikeCalulatorView
+
+            DurationPickerView(
+                title: "T2 Time",
+                mode: .compact,
+                labelsBackgroundColor: Color.primaryWhite,
+                duration: $viewModel.t2Time
+            )
+            .padding(.horizontal, 4)
+
+            secondRunCalculatorView
+        }
+    }
+
     var duathlonDistancePicker: some View {
         Menu {
             Picker("Duathlon Distance", selection: $selectedDuathlonDistance) {
@@ -83,8 +62,9 @@ private extension DuathlonTimeView {
             }
         } label: {
             HStack {
-                Text("Triathlon Distance: ")
+                Text("Duathlon Distance: ")
                     .font(.Custom.Medium.font4)
+                    .foregroundStyle(.black)
                 Text(selectedDuathlonDistance?.displayName ?? "Select race")
                     .font(.Custom.Regular.font4)
                 Spacer()
@@ -97,10 +77,52 @@ private extension DuathlonTimeView {
         }
     }
 
-    var totalTime: some View {
-        Text("Total time: \(viewModel.formattedTotalTime)")
-            .font(.Custom.Medium.font5)
+    var firstRunCalculatorView: some View {
+        PaceTimeCalculatorView<RunningDistance>(
+            sport: .run,
+            viewModel: PaceCalculatorViewModel(
+                paceCalculator: RunningPaceCalculator()
+            ),
+            selectedRaceDistance: Binding(
+                get: { selectedDuathlonDistance?.firstRunDistance },
+                set: { _ in
+                    selectedDuathlonDistance = nil
+                }
+            ),
+            duration: $viewModel.firstRunTime
+        )
+    }
 
+    var bikeCalulatorView: some View {
+        PaceTimeCalculatorView<CyclingDistance>(
+            sport: .bike,
+            viewModel: PaceCalculatorViewModel(
+                paceCalculator: CyclingPaceCalculator()
+            ),
+            selectedRaceDistance: Binding(
+                get: { selectedDuathlonDistance?.cyclingDistance },
+                set: { _ in
+                    selectedDuathlonDistance = nil
+                }
+            ),
+            duration: $viewModel.cyclingTime
+        )
+    }
+
+    var secondRunCalculatorView: some View {
+        PaceTimeCalculatorView<RunningDistance>(
+            sport: .run,
+            viewModel: PaceCalculatorViewModel(
+                paceCalculator: RunningPaceCalculator()
+            ),
+            selectedRaceDistance: Binding(
+                get: { selectedDuathlonDistance?.secondRunDistance },
+                set: { _ in
+                    selectedDuathlonDistance = nil
+                }
+            ),
+            duration: $viewModel.secondRunTime
+        )
     }
 }
 
