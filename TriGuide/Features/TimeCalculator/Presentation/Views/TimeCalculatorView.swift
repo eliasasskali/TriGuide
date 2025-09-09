@@ -9,7 +9,7 @@ struct TimeCalculatorView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            Picker("Sport", selection: $selectedSport) {
+            Picker(Localizables.Common.sport, selection: $selectedSport) {
                 ForEach(SupportedSport.allCases, id: \.self) { sport in
                     Text(sport.localized)
                 }

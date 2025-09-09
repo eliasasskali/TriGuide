@@ -31,10 +31,10 @@ enum DistanceUnit {
 
     var localized: String {
         switch self {
-        case .kilometers: return "kms"
-        case .miles: return "miles"
-        case .meters: return "meters"
-        case .yards: return "yds"
+        case .kilometers: return Localizables.Units.kmSymbol
+        case .miles: return Localizables.Units.miSymbol
+        case .meters: return Localizables.Units.mSymbol
+        case .yards: return Localizables.Units.ydSymbol
         }
     }
 }

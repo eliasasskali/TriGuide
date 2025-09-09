@@ -8,8 +8,8 @@ struct TotalTimeView: View {
     let time: String
 
     var body: some View {
-        HStack {
-            Text("Total time:")
+        HStack(spacing: 0) {
+            Text(String("\(Localizables.PaceCalculator.totalTime): "))
                 .font(.Custom.Medium.font5)
             Text(time)
                 .font(.Custom.Regular.font5)

@@ -81,8 +81,8 @@ enum RunningDistance: RaceDistance, Hashable, CaseIterable {
         case .a3k: return "3K"
         case .a5k: return "5K"
         case .a10k: return "10K"
-        case .halfMarathon: return "Half Marathon"
-        case .marathon: return "Marathon"
+        case .halfMarathon: return Localizables.RaceDistance.halfMarathon
+        case .marathon: return Localizables.RaceDistance.marathon
         case .custom(let meters): return "\(meters)m"
         }
     }
@@ -168,11 +168,11 @@ enum TriathlonDistance: CaseIterable {
 
     var displayName: String {
         switch self {
-        case .supersprint: return "Supersprint"
-        case .sprint: return "Sprint"
-        case .olympic: return "Olympic"
-        case .half: return "Half (70.3)"
-        case .full: return "Full (140.6)"
+        case .supersprint: return Localizables.RaceDistance.supersprint
+        case .sprint: return Localizables.RaceDistance.sprint
+        case .olympic: return Localizables.RaceDistance.triathlonOlympic
+        case .half: return Localizables.RaceDistance.triathlonMiddle
+        case .full: return Localizables.RaceDistance.triathlonFull
         }
     }
 
@@ -222,11 +222,11 @@ enum DuathlonDistance: CaseIterable {
 
     var displayName: String {
         switch self {
-        case .supersprint: return "Supersprint"
-        case .sprint: return "Sprint"
-        case .standard: return "Standard"
-        case .middle: return "Middle distance"
-        case .long: return "Long distance"
+        case .supersprint: return Localizables.RaceDistance.supersprint
+        case .sprint: return Localizables.RaceDistance.sprint
+        case .standard: return Localizables.RaceDistance.duathlonStandard
+        case .middle: return Localizables.RaceDistance.duathlonMiddle
+        case .long: return Localizables.RaceDistance.duathlonLong
         }
     }
 

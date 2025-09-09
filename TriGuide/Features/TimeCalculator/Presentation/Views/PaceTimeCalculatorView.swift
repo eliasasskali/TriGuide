@@ -24,7 +24,7 @@ struct PaceTimeCalculatorView<Distance: RaceDistance & CaseIterable>: View where
 
             HStack {
                 DurationPickerView(
-                    title: "Time",
+                    title: Localizables.PaceCalculator.time,
                     duration: $viewModel.duration
                 )
 
@@ -57,7 +57,7 @@ private extension PaceTimeCalculatorView {
     @ViewBuilder
     var distancePicker: some View {
         DistancePickerView(
-            title: "Distance",
+            title: Localizables.PaceCalculator.distance,
             distance: $viewModel.distance,
             unit: sport.defaultDistanceUnit
         ) {
@@ -69,7 +69,7 @@ private extension PaceTimeCalculatorView {
     var paceSpeedPicker: some View {
         if sport == .bike {
             DecimalPickerView(
-                title: "Speed",
+                title: Localizables.PaceCalculator.speed,
                 value: Binding(
                     get: { viewModel.speed },
                     set: { viewModel.speed = $0 }
@@ -81,7 +81,7 @@ private extension PaceTimeCalculatorView {
             )
         } else {
             DurationPickerView(
-                title: "Pace",
+                title: Localizables.PaceCalculator.pace,
                 duration: $viewModel.pace
             )
         }
@@ -100,7 +100,7 @@ private extension PaceTimeCalculatorView {
             }
         } label: {
             HStack {
-                Text(viewModel.paceUnit?.localized ?? "Unit")
+                Text(viewModel.paceUnit?.localized ?? Localizables.PaceCalculator.unit)
                 Image(systemName: "chevron.up.chevron.down")
             }
             .font(.Custom.Regular.font3) // label font
@@ -121,7 +121,7 @@ private extension PaceTimeCalculatorView {
             }
         } label: {
             HStack {
-                Text(selectedRaceDistance?.wrappedValue?.displayName ?? "Select race")
+                Text(selectedRaceDistance?.wrappedValue?.displayName ?? Localizables.PaceCalculator.race)
                 Image(systemName: "chevron.up.chevron.down")
             }
             .font(.Custom.Regular.font3)

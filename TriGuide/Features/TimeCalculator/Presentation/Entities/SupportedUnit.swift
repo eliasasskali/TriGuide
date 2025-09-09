@@ -30,17 +30,17 @@ enum SupportedUnit {
     var localized: String {
         switch self {
         case .minPerKm:
-            return "min/km"
+            return Localizables.Units.minPerKmSymbol
         case .minPerMile:
-            return "min/mi"
+            return Localizables.Units.minPerMileSymbol
         case .kmPerHour:
-            return "km/h"
+            return Localizables.Units.kmhSymbol
         case .milesPerHour:
-            return "mph"
+            return Localizables.Units.mphSymbol
         case .minPer100m:
-            return "min/100m"
+            return Localizables.Units.minPer100mSymbol
         case .minPer100yds:
-            return "min/100yds"
+            return Localizables.Units.minPer100ydSymbol
         }
     }
 }

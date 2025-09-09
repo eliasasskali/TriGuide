@@ -54,18 +54,18 @@ private extension DuathlonTimeView {
 
     var duathlonDistancePicker: some View {
         Menu {
-            Picker("Duathlon Distance", selection: $selectedDuathlonDistance) {
-                Text("Select race").tag(nil as DuathlonDistance?)
+            Picker(Localizables.PaceCalculator.duathlonDistance, selection: $selectedDuathlonDistance) {
+                Text(Localizables.PaceCalculator.race).tag(nil as DuathlonDistance?)
                 ForEach(DuathlonDistance.allCases, id: \.self) { distance in
                     Text(distance.displayName).tag(Optional(distance))
                 }
             }
         } label: {
             HStack {
-                Text("Duathlon Distance: ")
+                Text(Localizables.PaceCalculator.duathlonDistance)
                     .font(.Custom.Medium.font4)
                     .foregroundStyle(.black)
-                Text(selectedDuathlonDistance?.displayName ?? "Select race")
+                Text(selectedDuathlonDistance?.displayName ?? Localizables.PaceCalculator.race)
                     .font(.Custom.Regular.font4)
                 Spacer()
                 Image(systemName: "chevron.down")

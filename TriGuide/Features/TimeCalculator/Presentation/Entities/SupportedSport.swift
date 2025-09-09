@@ -16,15 +16,15 @@ enum SupportedSport: CaseIterable {
     var localized: String {
         switch self {
         case .swim:
-            return "Swimming"
+            return Localizables.Sports.swimming
         case .bike:
-            return "Cycling"
+            return Localizables.Sports.cycling
         case .run:
-            return "Running"
+            return Localizables.Sports.running
         case .triathlon:
-            return "Triathlon"
+            return Localizables.Sports.triathlon
         case .duathlon:
-            return "Duathlon"
+            return Localizables.Sports.duathlon
         }
     }
 

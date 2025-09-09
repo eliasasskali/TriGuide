@@ -72,16 +72,16 @@ private extension DurationPickerView {
         VStack(spacing: 8) {
             HStack(spacing: 8) {
                 if mode == .regular {
-                    durationWheel($hours, range: 0..<24, label: "h")
+                    durationWheel($hours, range: 0..<24, label: Localizables.Units.hourSymbol)
                 }
-                durationWheel($minutes, range: 0..<60, label: "m")
-                durationWheel($seconds, range: 0..<60, label: "s")
+                durationWheel($minutes, range: 0..<60, label: Localizables.Units.minuteSymbol)
+                durationWheel($seconds, range: 0..<60, label: Localizables.Units.secondSymbol)
             }
             .frame(height: 100)
 
             HStack {
                 Spacer()
-                Button("Done") {
+                Button(Localizables.Common.done) {
                     updateDurationFromState()
                     showPicker = false
                 }
@@ -98,7 +98,7 @@ private extension DurationPickerView {
     func durationWheel(_ selection: Binding<Int>, range: Range<Int>, label: String) -> some View {
         VStack(spacing: 4) {
             Picker(selection: selection, label: Text(label)) {
-                ForEach(range, id: \.self) { Text("\($0)") }
+                ForEach(range, id: \.self) { Text(String($0)) }
             }
             .pickerStyle(WheelPickerStyle())
             .onChange(of: selection.wrappedValue) {
@@ -119,13 +119,13 @@ private extension DurationPickerView {
         var components: [String] = []
 
         if hours > 0 {
-            components.append("\(hours)h")
+            components.append("\(hours)\(Localizables.Units.hourSymbol)")
         }
         if minutes > 0 {
-            components.append("\(minutes)m")
+            components.append("\(minutes)\(Localizables.Units.minuteSymbol)")
         }
         if seconds > 0 || components.isEmpty {
-            components.append("\(seconds)s")
+            components.append("\(seconds)\(Localizables.Units.secondSymbol)")
         }
 
         return components.joined()
@@ -156,7 +156,7 @@ private extension DurationPickerView {
 
 #Preview {
     DurationPickerView(
-        title: "Duration",
+        title: Localizables.PaceCalculator.time,
         duration: .constant(3600)
     )
 }

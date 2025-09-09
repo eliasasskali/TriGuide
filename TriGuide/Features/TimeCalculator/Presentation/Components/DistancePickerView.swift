@@ -49,7 +49,7 @@ private extension DistancePickerView {
             if usesDecimals {
                 HStack(spacing: 0) {
                     distanceWheel($whole, values: Array(0..<1000), label: "")
-                    Text(".")
+                    Text(String("."))
                         .font(.title)
                         .frame(width: 10)
                     distanceWheel($decimal, values: Array(0..<10), label: "")
@@ -71,7 +71,7 @@ private extension DistancePickerView {
 
             HStack {
                 Spacer()
-                Button("Done") {
+                Button(Localizables.Common.done) {
                     updateDistanceFromState()
                     showPicker = false
                 }
@@ -88,7 +88,7 @@ private extension DistancePickerView {
     func distanceWheel(_ selection: Binding<Int>, values: [Int], label: String) -> some View {
         VStack(spacing: 4) {
             Picker(selection: selection, label: Text(label)) {
-                ForEach(values, id: \.self) { Text("\($0)") }
+                ForEach(values, id: \.self) { Text(String($0)) }
             }
             .pickerStyle(WheelPickerStyle())
             .onChange(of: selection.wrappedValue) {
@@ -112,11 +112,11 @@ private extension DistancePickerView {
             }
         )) {
             if usesDecimals {
-                Text("km").tag(DistanceUnit.kilometers)
-                Text("mi").tag(DistanceUnit.miles)
+                Text(Localizables.Units.kmSymbol).tag(DistanceUnit.kilometers)
+                Text(Localizables.Units.miSymbol).tag(DistanceUnit.miles)
             } else {
-                Text("m").tag(DistanceUnit.meters)
-                Text("yd").tag(DistanceUnit.yards)
+                Text(Localizables.Units.mSymbol).tag(DistanceUnit.meters)
+                Text(Localizables.Units.ydSymbol).tag(DistanceUnit.yards)
             }
         }
         .pickerStyle(.wheel)
@@ -156,11 +156,11 @@ private extension DistancePickerView {
     }
 
     var unitLabel: String {
-        unit?.localized ?? "unit"
+        unit?.localized ?? Localizables.PaceCalculator.unit
     }
 
     var selectedUnitLabel: String {
-        selectedUnit?.localized ?? unit?.localized ?? "unit"
+        selectedUnit?.localized ?? unit?.localized ?? Localizables.PaceCalculator.unit
     }
 
     // MARK: - State management

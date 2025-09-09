@@ -9,17 +9,17 @@ struct ContentView: View {
         TabView {
             TimeCalculatorView()
                 .tabItem {
-                    Label("Calculator", systemImage: "plusminus")
+                    Label(Localizables.Tabs.calculator, systemImage: "plusminus")
                 }
 
-            Text("Home")
+            Text(Localizables.Tabs.home)
                 .tabItem {
-                    Label("Home", systemImage: "house")
+                    Label(Localizables.Tabs.home, systemImage: "house")
                 }
 
-            Text("Material list")
+            Text(Localizables.Tabs.materialList)
                 .tabItem {
-                    Label("Material list", systemImage: "checkmark.square")
+                    Label(Localizables.Tabs.materialList, systemImage: "checkmark.square")
                 }
         }
         .padding()

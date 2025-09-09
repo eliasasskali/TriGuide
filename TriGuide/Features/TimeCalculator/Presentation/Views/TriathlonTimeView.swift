@@ -52,18 +52,18 @@ private extension TriathlonTimeView {
 
     var triDistancePicker: some View {
         Menu {
-            Picker("Triathlon Distance", selection: $selectedTriDistance) {
-                Text("Select race").tag(nil as TriathlonDistance?)
+            Picker(Localizables.PaceCalculator.triathlonDistance, selection: $selectedTriDistance) {
+                Text(Localizables.PaceCalculator.race).tag(nil as TriathlonDistance?)
                 ForEach(TriathlonDistance.allCases, id: \.self) { distance in
                     Text(distance.displayName).tag(Optional(distance))
                 }
             }
         } label: {
             HStack {
-                Text("Triathlon Distance: ")
+                Text(Localizables.PaceCalculator.triathlonDistance)
                     .font(.Custom.Medium.font4)
                     .foregroundStyle(.black)
-                Text(selectedTriDistance?.displayName ?? "Select race")
+                Text(selectedTriDistance?.displayName ?? Localizables.PaceCalculator.race)
                     .font(.Custom.Regular.font4)
                 Spacer()
                 Image(systemName: "chevron.down")

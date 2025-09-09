@@ -63,7 +63,7 @@ private extension DecimalPickerView {
     var regularPickerLabel: some View {
         HStack {
             VStack(alignment: .leading) {
-                Text("\(title):")
+                Text(String("\(title):"))
                     .foregroundStyle(.black)
                 Text(compactValue)
                     .font(.subheadline)
@@ -81,7 +81,7 @@ private extension DecimalPickerView {
 
     var compactPickerLabel: some View {
         HStack {
-            Text("\(title): ")
+            Text(String("\(title): "))
                 .foregroundStyle(.black)
             Text(compactValue)
                 .font(.subheadline)
@@ -99,7 +99,7 @@ private extension DecimalPickerView {
         VStack(spacing: 8) {
             HStack(spacing: 0) {
                 pickerWheel($whole, values: Array(range))
-                Text(".").font(.title).frame(width: 10)
+                Text(String(".")).font(.title).frame(width: 10)
                 pickerWheel($decimal, values: Array(0...maxDecimal))
                 if let unit { Text(unit).padding(.leading, 8) }
             }
@@ -107,7 +107,7 @@ private extension DecimalPickerView {
 
             HStack {
                 Spacer()
-                Button("Done") {
+                Button(Localizables.Common.done) {
                     showPicker = false
                 }
                 .padding(.trailing)
@@ -121,7 +121,7 @@ private extension DecimalPickerView {
 
     func pickerWheel(_ selection: Binding<Int>, values: [Int]) -> some View {
         Picker(selection: selection, label: Text("")) {
-            ForEach(values, id: \.self) { Text("\($0)") }
+            ForEach(values, id: \.self) { Text(String("\($0)")) }
         }
         .pickerStyle(WheelPickerStyle())
         .frame(width: 60, height: 90)

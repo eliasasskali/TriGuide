@@ -16,10 +16,11 @@ class PaceCalculatorTests: XCTestCase {
         let pace = sut.calculatePace(
             duration: 929,
             distance: 5000,
-            unit: .minPerKm
+            paceUnit: .minPerKm
         )
+        let formattedPace = sut.formatPace(pace ?? 0, with: .minPerKm)
 
-        XCTAssertEqual(pace, "3:06 min/km")
+        XCTAssertEqual(formattedPace, "3:06 min/km")
     }
 
     func testRunPaceCalculator_givenMinPerMileUnits_returnsCorrectPace() async throws {
@@ -28,10 +29,12 @@ class PaceCalculatorTests: XCTestCase {
         let pace = sut.calculatePace(
             duration: 1858,
             distance: 10000,
-            unit: .minPerMile
+            paceUnit: .minPerMile
         )
 
-        XCTAssertEqual(pace, "4:59 min/mi")
+        let formattedPace = sut.formatPace(pace ?? 0, with: .minPerMile)
+
+        XCTAssertEqual(formattedPace, "4:59 min/mi")
     }
 
     // MARK: - Swimming
@@ -42,10 +45,12 @@ class PaceCalculatorTests: XCTestCase {
         let pace = sut.calculatePace(
             duration: 1050,
             distance: 1500,
-            unit: .minPer100m
+            paceUnit: .minPer100m
         )
+        
+        let formattedPace = sut.formatPace(pace ?? 0, with: .minPer100m)
 
-        XCTAssertEqual(pace, "1:10 min/100m")
+        XCTAssertEqual(formattedPace, "1:10 min/100m")
     }
 
     func testRunPaceCalculator_givenMinPer100yardsUnits_returnsCorrectPace() async throws {
@@ -54,10 +59,12 @@ class PaceCalculatorTests: XCTestCase {
         let pace = sut.calculatePace(
             duration: 1215,
             distance: 1500,
-            unit: .minPer100yds
+            paceUnit: .minPer100yds
         )
+        
+        let formattedPace = sut.formatPace(pace ?? 0, with: .minPer100yds)
 
-        XCTAssertEqual(pace, "1:21 min/100yds")
+        XCTAssertEqual(formattedPace, "1:21 min/100yds")
     }
 
     // MARK: - Cycling
@@ -68,10 +75,12 @@ class PaceCalculatorTests: XCTestCase {
         let pace = sut.calculatePace(
             duration: 14400,
             distance: 180000,
-            unit: .kmPerHour
+            paceUnit: .kmPerHour
         )
+        
+        let formattedPace = sut.formatPace(pace ?? 0, with: .kmPerHour)
 
-        XCTAssertEqual(pace, "45.00 km/h")
+        XCTAssertEqual(formattedPace, "45.00 km/h")
     }
 
     func testCyclingPaceCalculator_givenMphUnits_returnsCorrectSpeed() async throws {
@@ -80,9 +89,11 @@ class PaceCalculatorTests: XCTestCase {
         let pace = sut.calculatePace(
             duration: 9000,
             distance: 90000,
-            unit: .milesPerHour
+            paceUnit: .milesPerHour
         )
+        
+        let formattedPace = sut.formatPace(pace ?? 0, with: .milesPerHour)
 
-        XCTAssertEqual(pace, "22.37 mph")
+        XCTAssertEqual(formattedPace, "22.37 mph")
     }
 }
