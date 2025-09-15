@@ -7,13 +7,12 @@ import SwiftUI
 struct DistancePickerView: View {
     let title: String
     @Binding var distance: Double?
-    var unit: DistanceUnit?
+    @Binding var unit: DistanceUnit
     var onChangeDistance: (() -> Void)? = nil
 
     @State private var whole = 0
     @State private var decimal = 0
     @State private var showPicker = false
-    @State private var selectedUnit: DistanceUnit?
 
     var body: some View {
         Button {
@@ -61,7 +60,7 @@ private extension DistancePickerView {
                     distanceWheel(
                         $whole,
                         values: Array(stride(from: 0, through: 100000, by: 50)),
-                        label: selectedUnitLabel
+                        label: unit.localized
                     )
                     .frame(height: 100)
 
@@ -105,9 +104,9 @@ private extension DistancePickerView {
 
     var unitPicker: some View {
         Picker("", selection: Binding(
-            get: { selectedUnit ?? unit ?? .kilometers },
+            get: { unit },
             set: {
-                selectedUnit = $0
+                unit = $0
                 updateDistanceFromState()
             }
         )) {
@@ -128,9 +127,8 @@ private extension DistancePickerView {
 
 private extension DistancePickerView {
     var compactFormattedDistance: String {
-        guard let distance, let baseUnit = unit else { return "0 \(unitLabel)" }
-        let effectiveUnit = selectedUnit ?? baseUnit
-        let value = distance / effectiveUnit.factorToMeters
+        guard let distance else { return "0 \(unit.localized)" }
+        let value = distance / unit.factorToMeters
 
         if usesDecimals {
             let formatter = NumberFormatter()
@@ -138,9 +136,9 @@ private extension DistancePickerView {
             formatter.maximumFractionDigits = 3
             formatter.numberStyle = .decimal
             let formatted = formatter.string(from: NSNumber(value: value)) ?? "\(value)"
-            return "\(formatted) \(effectiveUnit.localized)"
+            return "\(formatted) \(unit.localized)"
         } else {
-            return "\(Int(value)) \(effectiveUnit.localized)"
+            return "\(Int(value)) \(unit.localized)"
         }
     }
 
@@ -155,21 +153,12 @@ private extension DistancePickerView {
         }
     }
 
-    var unitLabel: String {
-        unit?.localized ?? Localizables.PaceCalculator.unit
-    }
-
-    var selectedUnitLabel: String {
-        selectedUnit?.localized ?? unit?.localized ?? Localizables.PaceCalculator.unit
-    }
-
     // MARK: - State management
 
     func updateStateFromDistance() {
-        guard let distance, let baseUnit = unit else { return }
+        guard let distance else { return }
 
-        let effectiveUnit = selectedUnit ?? baseUnit
-        let value = distance / effectiveUnit.factorToMeters
+        let value = distance / unit.factorToMeters
         whole = Int(floor(value))
 
         if usesDecimals {
@@ -179,11 +168,8 @@ private extension DistancePickerView {
     }
 
     func updateDistanceFromState() {
-        guard let baseUnit = unit else { return }
-
-        let effectiveUnit = selectedUnit ?? baseUnit
         let value = Double(whole) + (usesDecimals ? Double(decimal) / 10.0 : 0)
-        distance = value * effectiveUnit.factorToMeters
+        distance = value * unit.factorToMeters
         onChangeDistance?()
     }
 }

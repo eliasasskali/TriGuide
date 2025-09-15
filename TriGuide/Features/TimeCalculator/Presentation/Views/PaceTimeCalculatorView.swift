@@ -59,7 +59,7 @@ private extension PaceTimeCalculatorView {
         DistancePickerView(
             title: Localizables.PaceCalculator.distance,
             distance: $viewModel.distance,
-            unit: sport.defaultDistanceUnit
+            unit: .constant(sport.defaultDistanceUnit)
         ) {
             selectedRaceDistance?.wrappedValue = nil
         }

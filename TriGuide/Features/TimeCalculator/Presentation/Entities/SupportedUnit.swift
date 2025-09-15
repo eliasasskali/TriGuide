@@ -13,34 +13,41 @@ enum SupportedUnit {
     case milesPerHour
     case minPer100m
     case minPer100yds
-
+    
     var distanceUnit: DistanceUnit {
-        switch self {
+        return switch self {
         case .minPerKm, .kmPerHour:
-            return .kilometers
+                .kilometers
         case .minPerMile, .milesPerHour:
-            return .miles
+                .miles
         case .minPer100m:
-            return .meters
+                .meters
         case .minPer100yds:
-            return .yards
+                .yards
         }
     }
-
+    
+    var defaultSplitsDistance: Double {
+        return switch self {
+        case .minPerKm, .kmPerHour, .minPerMile, .milesPerHour: 1000
+        case .minPer100m, .minPer100yds: 100
+        }
+    }
+    
     var localized: String {
-        switch self {
+        return switch self {
         case .minPerKm:
-            return Localizables.Units.minPerKmSymbol
+            Localizables.Units.minPerKmSymbol
         case .minPerMile:
-            return Localizables.Units.minPerMileSymbol
+            Localizables.Units.minPerMileSymbol
         case .kmPerHour:
-            return Localizables.Units.kmhSymbol
+            Localizables.Units.kmhSymbol
         case .milesPerHour:
-            return Localizables.Units.mphSymbol
+            Localizables.Units.mphSymbol
         case .minPer100m:
-            return Localizables.Units.minPer100mSymbol
+            Localizables.Units.minPer100mSymbol
         case .minPer100yds:
-            return Localizables.Units.minPer100ydSymbol
+            Localizables.Units.minPer100ydSymbol
         }
     }
 }

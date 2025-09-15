@@ -48,6 +48,7 @@ private extension PickerLabel {
             Spacer()
             icon()
         }
+        .lineLimit(1)
         .padding(8)
         .cardBackground(
             backgroundColor: Color(UIColor.lightGray).opacity(0.2)
