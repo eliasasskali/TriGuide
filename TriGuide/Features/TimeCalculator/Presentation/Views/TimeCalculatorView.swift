@@ -69,17 +69,61 @@ private extension TimeCalculatorView {
     }
     
     var swimTimeView: some View {
-        PaceTimeCalculatorView<SwimmingDistance>(
-            sport: .swim,
-            viewModel: swimViewModel
-        )
+        VStack {
+            PaceTimeCalculatorView<SwimmingDistance>(
+                sport: .swim,
+                viewModel: swimViewModel
+            )
+            
+            if let distance = swimViewModel.distance,
+               let pace = swimViewModel.pace,
+               let paceUnit = swimViewModel.paceUnit {
+                SplitsTableView(
+                    totalDistance: Binding(
+                        get: { distance },
+                        set: { swimViewModel.distance = $0 }
+                    ),
+                    pace: Binding(
+                        get: { pace },
+                        set: { swimViewModel.pace = $0 }
+                    ),
+                    paceUnit: Binding(
+                        get: { paceUnit },
+                        set: { swimViewModel.paceUnit = $0 }
+                    ),
+                    viewModel: swimSplitsViewModel
+                )
+            }
+        }
     }
     
     var bikeTimeView: some View {
-        PaceTimeCalculatorView<CyclingDistance>(
-            sport: .bike,
-            viewModel: bikeViewModel
-        )
+        VStack {
+            PaceTimeCalculatorView<CyclingDistance>(
+                sport: .bike,
+                viewModel: bikeViewModel
+            )
+            
+            if let distance = bikeViewModel.distance,
+               let speed = bikeViewModel.speed,
+               let paceUnit = bikeViewModel.paceUnit {
+                SplitsTableView(
+                    totalDistance: Binding(
+                        get: { distance },
+                        set: { bikeViewModel.distance = $0 }
+                    ),
+                    pace: Binding(
+                        get: { speed },
+                        set: { bikeViewModel.speed = $0 }
+                    ),
+                    paceUnit: Binding(
+                        get: { paceUnit },
+                        set: { bikeViewModel.paceUnit = $0 }
+                    ),
+                    viewModel: bikeSplitsViewModel
+                )
+            }
+        }
     }
     
     var runTimeView: some View {

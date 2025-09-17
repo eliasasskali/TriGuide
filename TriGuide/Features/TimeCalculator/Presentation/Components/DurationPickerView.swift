@@ -20,17 +20,20 @@ struct DurationPickerView: View {
     let title: String
     let mode: Mode
     let labelsBackgroundColor: Color
+    let showHours: Bool
     @Binding var duration: TimeInterval?
 
     init(
         title: String,
         mode: Mode = .regular,
         labelsBackgroundColor: Color = Color(UIColor.lightGray).opacity(0.2),
+        showHours: Bool = true,
         duration: Binding<TimeInterval?>
     ) {
         self.title = title
         self.mode = mode
         self.labelsBackgroundColor = labelsBackgroundColor
+        self.showHours = showHours
         self._duration = duration
     }
 
@@ -71,7 +74,7 @@ private extension DurationPickerView {
     var pickerSheet: some View {
         VStack(spacing: 8) {
             HStack(spacing: 8) {
-                if mode == .regular {
+                if mode == .regular && showHours {
                     durationWheel($hours, range: 0..<24, label: Localizables.Units.hourSymbol)
                 }
                 durationWheel($minutes, range: 0..<60, label: Localizables.Units.minuteSymbol)

@@ -24,11 +24,11 @@ struct RaceSplit: Equatable {
         let distanceInUnit = distance / factor
         let formatter = NumberFormatter()
         formatter.minimumFractionDigits = 0
-        formatter.maximumFractionDigits = 2
+        formatter.maximumFractionDigits = 3
 
         if let formatted = formatter.string(from: NSNumber(value: distanceInUnit)) {
             return String(formatted)
         }
-        return String(format: "%.2f", distanceInUnit)
+        return String(format: "%.3f", distanceInUnit)
     }
 }
