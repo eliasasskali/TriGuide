@@ -3,6 +3,7 @@
 //
 
 import SwiftUI
+import Localization
 
 struct TriathlonTimeView: View {
     @StateObject var viewModel: TriathlonTimeViewModel

@@ -9,47 +9,47 @@ public extension Localizables {
         // MARK: - Running
 
         public static var halfMarathon: String {
-            String(localized: "raceDistance_half-marathon")
+            String(localized: "raceDistance_half-marathon", bundle: .module)
         }
 
         public static var marathon: String {
-            String(localized: "raceDistance_marathon")
+            String(localized: "raceDistance_marathon", bundle: .module)
         }
 
         // MARK: - Triathlon
 
         public static var supersprint: String {
-            String(localized: "raceDistance_supersprint")
+            String(localized: "raceDistance_supersprint", bundle: .module)
         }
 
         public static var sprint: String {
-            String(localized: "raceDistance_sprint")
+            String(localized: "raceDistance_sprint", bundle: .module)
         }
 
         public static var triathlonOlympic: String {
-            String(localized: "raceDistance_triathlon-olympic")
+            String(localized: "raceDistance_triathlon-olympic", bundle: .module)
         }
 
         public static var triathlonMiddle: String {
-            String(localized: "raceDistance_triathlon-middle")
+            String(localized: "raceDistance_triathlon-middle", bundle: .module)
         }
 
         public static var triathlonFull: String {
-            String(localized: "raceDistance_triathlon-full")
+            String(localized: "raceDistance_triathlon-full", bundle: .module)
         }
 
         // MARK: - Duathlon
 
         public static var duathlonStandard: String {
-            String(localized: "raceDistance_duathlon-standard")
+            String(localized: "raceDistance_duathlon-standard", bundle: .module)
         }
 
         public static var duathlonMiddle: String {
-            String(localized: "raceDistance_duathlon-middle")
+            String(localized: "raceDistance_duathlon-middle", bundle: .module)
         }
 
         public static var duathlonLong: String {
-            String(localized: "raceDistance_duathlon-long")
+            String(localized: "raceDistance_duathlon-long", bundle: .module)
         }
     }
 }

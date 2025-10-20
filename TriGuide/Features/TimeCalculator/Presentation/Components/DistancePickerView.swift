@@ -3,6 +3,7 @@
 //
 
 import SwiftUI
+import Localization
 
 struct DistancePickerView: View {
     let title: String

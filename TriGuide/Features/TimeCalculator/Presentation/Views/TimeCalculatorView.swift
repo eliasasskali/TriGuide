@@ -3,6 +3,7 @@
 //
 
 import SwiftUI
+import Localization
 
 struct TimeCalculatorView: View {
     @State private var selectedSport: SupportedSport = .run

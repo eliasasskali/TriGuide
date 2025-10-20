@@ -3,6 +3,7 @@
 //
 
 import SwiftUI
+import Localization
 
 struct TotalTimeView: View {
     let time: String

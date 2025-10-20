@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		9C4D1E682EA625B1000744ED /* Localization in Frameworks */ = {isa = PBXBuildFile; productRef = 9C4D1E672EA625B1000744ED /* Localization */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		9CB979A82E141ACA001CBBD8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -29,9 +33,22 @@
 		9CB979B12E141ACA001CBBD8 /* TriGuideUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TriGuideUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		9C4D1E652EA6221B000744ED /* Exceptions for "TriGuide" folder in "TriGuide" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Common/Localization,
+			);
+			target = 9CB979962E141AC9001CBBD8 /* TriGuide */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		9CB979992E141AC9001CBBD8 /* TriGuide */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				9C4D1E652EA6221B000744ED /* Exceptions for "TriGuide" folder in "TriGuide" target */,
+			);
 			path = TriGuide;
 			sourceTree = "<group>";
 		};
@@ -52,6 +69,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9C4D1E682EA625B1000744ED /* Localization in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,6 +130,7 @@
 			);
 			name = TriGuide;
 			packageProductDependencies = (
+				9C4D1E672EA625B1000744ED /* Localization */,
 			);
 			productName = TriGuide;
 			productReference = 9CB979972E141AC9001CBBD8 /* TriGuide.app */;
@@ -195,6 +214,9 @@
 			);
 			mainGroup = 9CB9798E2E141AC9001CBBD8;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				9C4D1E662EA625B1000744ED /* XCLocalSwiftPackageReference "TriGuide/Common/Localization" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 9CB979982E141AC9001CBBD8 /* Products */;
 			projectDirPath = "";
@@ -560,6 +582,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		9C4D1E662EA625B1000744ED /* XCLocalSwiftPackageReference "TriGuide/Common/Localization" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = TriGuide/Common/Localization;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		9C4D1E672EA625B1000744ED /* Localization */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Localization;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 9CB9798F2E141AC9001CBBD8 /* Project object */;
 }
