@@ -15,6 +15,7 @@ struct TriathlonTimeView: View {
                 calculatorViews
                     .padding(.bottom)
             }
+            .scrollIndicators(.hidden)
 
             TotalTimeView(time: viewModel.formattedTotalTime)
         }
