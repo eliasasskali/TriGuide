@@ -4,6 +4,7 @@
 
 import SwiftUI
 import Localization
+import DesignSystem
 
 struct DecimalPickerView: View {
     enum Mode {

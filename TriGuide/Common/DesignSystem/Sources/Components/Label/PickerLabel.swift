@@ -4,18 +4,18 @@
 
 import SwiftUI
 
-enum PickerLabelOrientation {
+public enum PickerLabelOrientation {
     case horizontal
     case vertical
 }
 
-struct PickerLabel<Icon: View>: View {
+public struct PickerLabel<Icon: View>: View {
     let orientation: PickerLabelOrientation
     let title: String
     let value: String
     let icon: () -> Icon
 
-    init(
+    public init(
         orientation: PickerLabelOrientation,
         title: String,
         value: String,
@@ -27,7 +27,7 @@ struct PickerLabel<Icon: View>: View {
         self.icon = icon
     }
 
-    var body: some View {
+    public var body: some View {
         switch orientation {
         case .horizontal:
             horizontalPickerLabel

@@ -4,6 +4,7 @@
 
 import SwiftUI
 import Localization
+import DesignSystem
 
 struct DurationPickerView: View {
     enum Mode {

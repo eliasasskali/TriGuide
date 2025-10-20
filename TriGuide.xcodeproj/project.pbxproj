@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		9C4D1E682EA625B1000744ED /* Localization in Frameworks */ = {isa = PBXBuildFile; productRef = 9C4D1E672EA625B1000744ED /* Localization */; };
+		9C78AC5C2EA66CF200FB5BE8 /* DesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = 9C78AC5B2EA66CF200FB5BE8 /* DesignSystem */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -70,6 +71,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9C4D1E682EA625B1000744ED /* Localization in Frameworks */,
+				9C78AC5C2EA66CF200FB5BE8 /* DesignSystem in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -131,6 +133,7 @@
 			name = TriGuide;
 			packageProductDependencies = (
 				9C4D1E672EA625B1000744ED /* Localization */,
+				9C78AC5B2EA66CF200FB5BE8 /* DesignSystem */,
 			);
 			productName = TriGuide;
 			productReference = 9CB979972E141AC9001CBBD8 /* TriGuide.app */;
@@ -216,6 +219,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				9C4D1E662EA625B1000744ED /* XCLocalSwiftPackageReference "TriGuide/Common/Localization" */,
+				9C78AC5A2EA66CF200FB5BE8 /* XCLocalSwiftPackageReference "TriGuide/Common/DesignSystem" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 9CB979982E141AC9001CBBD8 /* Products */;
@@ -588,12 +592,20 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = TriGuide/Common/Localization;
 		};
+		9C78AC5A2EA66CF200FB5BE8 /* XCLocalSwiftPackageReference "TriGuide/Common/DesignSystem" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = TriGuide/Common/DesignSystem;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
 		9C4D1E672EA625B1000744ED /* Localization */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Localization;
+		};
+		9C78AC5B2EA66CF200FB5BE8 /* DesignSystem */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = DesignSystem;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

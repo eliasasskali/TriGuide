@@ -4,6 +4,7 @@
 
 import SwiftUI
 import Localization
+import DesignSystem
 
 struct TriathlonTimeView: View {
     @StateObject var viewModel: TriathlonTimeViewModel
@@ -18,7 +19,7 @@ struct TriathlonTimeView: View {
             }
             .scrollIndicators(.hidden)
 
-            TotalTimeView(time: viewModel.formattedTotalTime)
+            TotalTimeLabel(time: viewModel.formattedTotalTime)
         }
     }
 }
@@ -33,7 +34,7 @@ private extension TriathlonTimeView {
             DurationPickerView(
                 title: "T1 Time",
                 mode: .compact,
-                labelsBackgroundColor: Color.primaryWhite,
+                labelsBackgroundColor: Color.Primary.white,
                 duration: $viewModel.t1Time
             )
             .padding(.horizontal, 4)
@@ -43,7 +44,7 @@ private extension TriathlonTimeView {
             DurationPickerView(
                 title: "T2 Time",
                 mode: .compact,
-                labelsBackgroundColor: Color.primaryWhite,
+                labelsBackgroundColor: Color.Primary.white,
                 duration: $viewModel.t2Time
             )
             .padding(.horizontal, 4)

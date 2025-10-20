@@ -4,6 +4,7 @@
 
 import SwiftUI
 import Localization
+import DesignSystem
 
 struct DuathlonTimeView: View {
     @StateObject var viewModel: DuathlonTimeViewModel
@@ -19,7 +20,7 @@ struct DuathlonTimeView: View {
                 }
                 .scrollIndicators(.hidden)
 
-                TotalTimeView(time: viewModel.formattedTotalTime)
+                TotalTimeLabel(time: viewModel.formattedTotalTime)
             }
         }
     }
@@ -35,7 +36,7 @@ private extension DuathlonTimeView {
             DurationPickerView(
                 title: "T1 Time",
                 mode: .compact,
-                labelsBackgroundColor: Color.primaryWhite,
+                labelsBackgroundColor: Color.Primary.white,
                 duration: $viewModel.t1Time
             )
             .padding(.horizontal, 4)
@@ -45,7 +46,7 @@ private extension DuathlonTimeView {
             DurationPickerView(
                 title: "T2 Time",
                 mode: .compact,
-                labelsBackgroundColor: Color.primaryWhite,
+                labelsBackgroundColor: Color.Primary.white,
                 duration: $viewModel.t2Time
             )
             .padding(.horizontal, 4)
