@@ -3,6 +3,7 @@
 //
 
 import SwiftUI
+import Localization
 
 struct ContentView: View {
     var body: some View {

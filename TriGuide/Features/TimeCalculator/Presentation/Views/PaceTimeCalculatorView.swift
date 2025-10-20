@@ -3,6 +3,7 @@
 //
 
 import SwiftUI
+import Localization
 
 struct PaceTimeCalculatorView<Distance: RaceDistance & CaseIterable>: View where Distance.AllCases: RandomAccessCollection {
     let sport: SupportedSport

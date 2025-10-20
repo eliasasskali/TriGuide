@@ -3,6 +3,7 @@
 //
 
 import SwiftUI
+import Localization
 
 struct SplitsTableView: View {
     @Binding var totalDistance: Double

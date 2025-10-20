@@ -3,6 +3,7 @@
 //
 
 import SwiftUI
+import Localization
 
 @main
 struct TriGuideApp: App {
