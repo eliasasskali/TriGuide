@@ -50,7 +50,7 @@ private extension DistancePickerView {
             if usesDecimals {
                 HStack(spacing: 0) {
                     distanceWheel($whole, values: Array(0..<1000), label: "")
-                    Text(String("."))
+                    Text(".")
                         .font(.title)
                         .frame(width: 10)
                     distanceWheel($decimal, values: Array(0..<10), label: "")

@@ -62,46 +62,11 @@ private extension DecimalPickerView {
         }
     }
 
-    var regularPickerLabel: some View {
-        HStack {
-            VStack(alignment: .leading) {
-                Text(String("\(title):"))
-                    .foregroundStyle(.black)
-                Text(compactValue)
-                    .font(.subheadline)
-            }
-            Spacer()
-            Image(systemName: "chevron.down")
-                .rotationEffect(.degrees(showPicker ? 180 : 0))
-        }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 8)
-        .cardBackground(
-            backgroundColor: Color(UIColor.lightGray).opacity(0.2)
-        )
-    }
-
-    var compactPickerLabel: some View {
-        HStack {
-            Text(String("\(title): "))
-                .foregroundStyle(.black)
-            Text(compactValue)
-                .font(.subheadline)
-            Spacer()
-            Image(systemName: "chevron.down")
-                .rotationEffect(.degrees(showPicker ? 180 : 0))
-        }
-        .padding(8)
-        .cardBackground(
-            backgroundColor: Color(UIColor.lightGray).opacity(0.2)
-        )
-    }
-
     var pickerSheet: some View {
         VStack(spacing: 8) {
             HStack(spacing: 0) {
                 pickerWheel($whole, values: Array(range))
-                Text(String(".")).font(.title).frame(width: 10)
+                Text(".").font(.title).frame(width: 10)
                 pickerWheel($decimal, values: Array(0...maxDecimal))
                 if let unit { Text(unit).padding(.leading, 8) }
             }
@@ -123,7 +88,7 @@ private extension DecimalPickerView {
 
     func pickerWheel(_ selection: Binding<Int>, values: [Int]) -> some View {
         Picker(selection: selection, label: Text("")) {
-            ForEach(values, id: \.self) { Text(String("\($0)")) }
+            ForEach(values, id: \.self) { Text("\($0)") }
         }
         .pickerStyle(WheelPickerStyle())
         .frame(width: 60, height: 90)
