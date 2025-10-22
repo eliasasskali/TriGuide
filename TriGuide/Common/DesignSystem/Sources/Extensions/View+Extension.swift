@@ -4,26 +4,18 @@
 
 import SwiftUI
 
-struct CardBackground: ViewModifier {
-    let backgroundColor: Color
+public extension View {
 
-    func body(content: Content) -> some View {
-        content
-            .background(backgroundColor)
-            .cornerRadius(13)
-            .shadow(color: Color.black.opacity(0.15), radius: 3)
-    }
-}
-
-extension View {
+    // Applies card background to the view
     func cardBackground(
-        backgroundColor: Color = Color(.primaryWhite)
+        backgroundColor: Color = Color.Primary.white
     ) -> some View {
         modifier(
             CardBackground(backgroundColor: backgroundColor)
         )
     }
 
+    // Conditional modifier
     @ViewBuilder func `if`<Content: View>(
         _ condition: Bool,
         transform: (Self) -> Content

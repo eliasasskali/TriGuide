@@ -37,11 +37,11 @@ enum SwimmingDistance: RaceDistance, CaseIterable {
 
     var displayName: String {
         switch self {
-        case .a400m: return "400 m"
-        case .a750m: return "750 m"
-        case .a1500m: return "1500 m"
-        case .a1900m: return "1900 m"
-        case .a3800m: return "3800 m"
+        case .a400m: return "400m"
+        case .a750m: return "750m"
+        case .a1500m: return "1500m"
+        case .a1900m: return "1900m"
+        case .a3800m: return "3800m"
         }
     }
 }
@@ -78,17 +78,15 @@ enum RunningDistance: RaceDistance, Hashable, CaseIterable {
     var displayName: String {
         switch self {
         case .a1500m: return "1500m"
-        case .a2500m: return "2.5K"
+        case .a2500m: return "2500m"
         case .a3k: return "3K"
         case .a5k: return "5K"
         case .a10k: return "10K"
         case .halfMarathon: return Localizables.RaceDistance.halfMarathon
         case .marathon: return Localizables.RaceDistance.marathon
-        case .custom(let meters): return "\(meters)m"
+        case .custom(let meters): return "\((meters / 1000).formattedAsDecimal()) \(Localizables.Units.kmSymbol)"
         }
     }
-
-
 }
 
 // MARK: - Cycling Distances
@@ -117,14 +115,7 @@ enum CyclingDistance: RaceDistance, CaseIterable {
     }
 
     var displayName: String {
-        switch self {
-        case .a10k: return "10k"
-        case .a20k: return "20k"
-        case .a40k: return "40k"
-        case .a90k: return "90k"
-        case .a180k: return "180k"
-        case .custom(let meters): return "\(meters / 1000)k"
-        }
+        return "\((self.meters / 1000).formattedAsDecimal()) \(Localizables.Units.kmSymbol)"
     }
 }
 

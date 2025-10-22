@@ -4,6 +4,7 @@
 
 import SwiftUI
 import Localization
+import DesignSystem
 
 struct TriathlonTimeView: View {
     @StateObject var viewModel: TriathlonTimeViewModel
@@ -18,7 +19,7 @@ struct TriathlonTimeView: View {
             }
             .scrollIndicators(.hidden)
 
-            TotalTimeView(time: viewModel.formattedTotalTime)
+            TotalTimeLabel(time: viewModel.formattedTotalTime)
         }
     }
 }
@@ -31,9 +32,10 @@ private extension TriathlonTimeView {
             swimCalculatorView
 
             DurationPickerView(
-                title: "T1 Time",
+                title: Localizables.PaceCalculator.transitionTime(transitionNumber: 1),
                 mode: .compact,
-                labelsBackgroundColor: Color.primaryWhite,
+                labelsBackgroundColor: Color.Primary.white,
+                showHours: false,
                 duration: $viewModel.t1Time
             )
             .padding(.horizontal, 4)
@@ -41,9 +43,10 @@ private extension TriathlonTimeView {
             bikeCalculatorView
 
             DurationPickerView(
-                title: "T2 Time",
+                title: Localizables.PaceCalculator.transitionTime(transitionNumber: 2),
                 mode: .compact,
-                labelsBackgroundColor: Color.primaryWhite,
+                labelsBackgroundColor: Color.Primary.white,
+                showHours: false,
                 duration: $viewModel.t2Time
             )
             .padding(.horizontal, 4)
@@ -81,7 +84,8 @@ private extension TriathlonTimeView {
         PaceTimeCalculatorView<SwimmingDistance>(
             sport: .swim,
             viewModel: PaceCalculatorViewModel(
-                paceCalculator: SwimmingPaceCalculator()
+                paceCalculator: SwimmingPaceCalculator(),
+                paceUnit: .minPer100m
             ),
             selectedRaceDistance: Binding(
                 get: { selectedTriDistance?.swimmingDistance },
@@ -97,7 +101,8 @@ private extension TriathlonTimeView {
         PaceTimeCalculatorView<CyclingDistance>(
             sport: .bike,
             viewModel: PaceCalculatorViewModel(
-                paceCalculator: CyclingPaceCalculator()
+                paceCalculator: CyclingPaceCalculator(),
+                paceUnit: .kmPerHour
             ),
             selectedRaceDistance: Binding(
                 get: { selectedTriDistance?.cyclingDistance },
@@ -113,7 +118,8 @@ private extension TriathlonTimeView {
         PaceTimeCalculatorView<RunningDistance>(
             sport: .run,
             viewModel: PaceCalculatorViewModel(
-                paceCalculator: RunningPaceCalculator()
+                paceCalculator: RunningPaceCalculator(),
+                paceUnit: .minPerKm
             ),
             selectedRaceDistance: Binding(
                 get: { selectedTriDistance?.runningDistance },

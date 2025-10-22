@@ -41,5 +41,15 @@ public extension Localizables {
         public static var totalTime: String {
             String(localized: "paceCalculator_total-time", bundle: .module)
         }
+
+        public static func transitionTime(transitionNumber: Int) -> String {
+            String(
+                format: String(
+                    localized: "paceCalculator_transitionX-time",
+                    bundle: .module
+                ),
+                transitionNumber
+            )
+        }
     }
 }

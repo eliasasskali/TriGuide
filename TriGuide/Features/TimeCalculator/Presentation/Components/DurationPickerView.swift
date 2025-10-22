@@ -4,6 +4,7 @@
 
 import SwiftUI
 import Localization
+import DesignSystem
 
 struct DurationPickerView: View {
     enum Mode {
@@ -50,7 +51,7 @@ struct DurationPickerView: View {
             pickerLabel
         }
         .sheet(isPresented: $showPicker) {
-            pickerSheet
+            timePicker
         }
         .onAppear { updateStateFromDuration() }
         .onChange(of: duration) { updateStateFromDuration() }
@@ -64,7 +65,7 @@ private extension DurationPickerView {
         PickerLabel(
             orientation: mode.labelOrientation,
             title: "\(title): ",
-            value: compactFormattedDuration
+            value: formattedDuration
         ) {
             Image(systemName: "chevron.down")
                 .rotationEffect(.degrees(showPicker ? 180 : 0))
@@ -72,46 +73,24 @@ private extension DurationPickerView {
         }
     }
 
-    var pickerSheet: some View {
-        VStack(spacing: 8) {
-            HStack(spacing: 8) {
-                if mode == .regular && showHours {
-                    durationWheel($hours, range: 0..<24, label: Localizables.Units.hourSymbol)
-                }
-                durationWheel($minutes, range: 0..<60, label: Localizables.Units.minuteSymbol)
-                durationWheel($seconds, range: 0..<60, label: Localizables.Units.secondSymbol)
-            }
-            .frame(height: 100)
-
-            HStack {
-                Spacer()
-                Button(Localizables.Common.done) {
-                    updateDurationFromState()
-                    showPicker = false
-                }
-                .padding(.trailing)
-            }
+    var timePicker: some View {
+        TimePickerView(
+            hours: showHours ? $hours : nil,
+            minutes: $minutes,
+            seconds: $seconds,
+            maxHours: 100
+        ) {
+            updateDurationFromState()
+            showPicker = false
         }
-        .padding(12)
-        .cornerRadius(12)
-        .presentationDetents([.height(180)])
-        .presentationDragIndicator(.hidden)
-        .background(Color(UIColor.systemBackground))
-    }
-
-    func durationWheel(_ selection: Binding<Int>, range: Range<Int>, label: String) -> some View {
-        VStack(spacing: 4) {
-            Picker(selection: selection, label: Text(label)) {
-                ForEach(range, id: \.self) { Text(String($0)) }
-            }
-            .pickerStyle(WheelPickerStyle())
-            .onChange(of: selection.wrappedValue) {
-                updateDurationFromState()
-            }
-            .frame(width: 60, height: 90)
-            .clipped()
-
-            Text(label).font(.caption2)
+        .onChange(of: hours) {
+            updateDurationFromState()
+        }
+        .onChange(of: minutes) {
+            updateDurationFromState()
+        }
+        .onChange(of: seconds) {
+            updateDurationFromState()
         }
     }
 }
@@ -120,22 +99,6 @@ private extension DurationPickerView {
 
 private extension DurationPickerView {
     var formattedDuration: String {
-        var components: [String] = []
-
-        if hours > 0 {
-            components.append("\(hours)\(Localizables.Units.hourSymbol)")
-        }
-        if minutes > 0 {
-            components.append("\(minutes)\(Localizables.Units.minuteSymbol)")
-        }
-        if seconds > 0 || components.isEmpty {
-            components.append("\(seconds)\(Localizables.Units.secondSymbol)")
-        }
-
-        return components.joined()
-    }
-
-    var compactFormattedDuration: String {
         if hours > 0 {
             return String(format: "%d:%02d:%02d", hours, minutes, seconds)
         } else {

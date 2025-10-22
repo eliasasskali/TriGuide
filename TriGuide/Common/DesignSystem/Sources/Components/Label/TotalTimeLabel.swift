@@ -5,10 +5,14 @@
 import SwiftUI
 import Localization
 
-struct TotalTimeView: View {
+public struct TotalTimeLabel: View {
     let time: String
 
-    var body: some View {
+    public init(time: String) {
+        self.time = time
+    }
+
+    public var body: some View {
         HStack(spacing: 0) {
             Text(String("\(Localizables.PaceCalculator.totalTime): "))
                 .font(.Custom.Medium.font5)
@@ -24,7 +28,7 @@ struct TotalTimeView: View {
 }
 
 #Preview {
-    TotalTimeView(
+    TotalTimeLabel(
         time: "1:23:45"
     )
 }

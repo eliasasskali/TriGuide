@@ -9,15 +9,18 @@ struct TimeCalculatorView: View {
     @State private var selectedSport: SupportedSport = .run
     
     @StateObject private var runViewModel = PaceCalculatorViewModel(
-            paceCalculator: RunningPaceCalculator()
+            paceCalculator: RunningPaceCalculator(),
+            paceUnit: .minPerKm
         )
     
     @StateObject private var swimViewModel = PaceCalculatorViewModel(
-            paceCalculator: SwimmingPaceCalculator()
+            paceCalculator: SwimmingPaceCalculator(),
+            paceUnit: .minPer100m
         )
     
     @StateObject private var bikeViewModel = PaceCalculatorViewModel(
-            paceCalculator: CyclingPaceCalculator()
+            paceCalculator: CyclingPaceCalculator(),
+            paceUnit: .kmPerHour
         )
     
     @StateObject private var runSplitsViewModel = SplitsTableViewModel(
@@ -71,13 +74,16 @@ private extension TimeCalculatorView {
     
     var swimTimeView: some View {
         VStack {
+            // TODO: Revisar que pasa amb els viewmodels que mantenen el distanceUnit
             PaceTimeCalculatorView<SwimmingDistance>(
                 sport: .swim,
                 viewModel: swimViewModel
             )
             
             if let distance = swimViewModel.distance,
+               distance > 0,
                let pace = swimViewModel.pace,
+               pace > 0,
                let paceUnit = swimViewModel.paceUnit {
                 SplitsTableView(
                     totalDistance: Binding(
@@ -106,7 +112,9 @@ private extension TimeCalculatorView {
             )
             
             if let distance = bikeViewModel.distance,
+               distance > 0,
                let speed = bikeViewModel.speed,
+               speed > 0,
                let paceUnit = bikeViewModel.paceUnit {
                 SplitsTableView(
                     totalDistance: Binding(
@@ -135,7 +143,9 @@ private extension TimeCalculatorView {
             )
             
             if let distance = runViewModel.distance,
+               distance > 0,
                let pace = runViewModel.pace,
+               pace > 0,
                let paceUnit = runViewModel.paceUnit {
                 SplitsTableView(
                     totalDistance: Binding(

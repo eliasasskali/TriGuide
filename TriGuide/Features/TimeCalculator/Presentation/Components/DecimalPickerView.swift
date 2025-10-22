@@ -4,6 +4,7 @@
 
 import SwiftUI
 import Localization
+import DesignSystem
 
 struct DecimalPickerView: View {
     enum Mode {
@@ -20,8 +21,7 @@ struct DecimalPickerView: View {
 
     let title: String
     @Binding var value: Double?
-    let range: ClosedRange<Int>
-    let maxDecimal: Int = 9
+    let maxWhole: Int = 100
     let unit: String?
     let showUnitOnLabel: Bool
     let mode: Mode
@@ -54,80 +54,29 @@ private extension DecimalPickerView {
         PickerLabel(
             orientation: mode.labelOrientation,
             title: "\(title):",
-            value: compactValue
+            value: formattedValue
         ) {
             Image(systemName: "chevron.down")
                 .rotationEffect(.degrees(showPicker ? 180 : 0))
         }
     }
 
-    var regularPickerLabel: some View {
-        HStack {
-            VStack(alignment: .leading) {
-                Text(String("\(title):"))
-                    .foregroundStyle(.black)
-                Text(compactValue)
-                    .font(.subheadline)
-            }
-            Spacer()
-            Image(systemName: "chevron.down")
-                .rotationEffect(.degrees(showPicker ? 180 : 0))
-        }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 8)
-        .cardBackground(
-            backgroundColor: Color(UIColor.lightGray).opacity(0.2)
-        )
-    }
-
-    var compactPickerLabel: some View {
-        HStack {
-            Text(String("\(title): "))
-                .foregroundStyle(.black)
-            Text(compactValue)
-                .font(.subheadline)
-            Spacer()
-            Image(systemName: "chevron.down")
-                .rotationEffect(.degrees(showPicker ? 180 : 0))
-        }
-        .padding(8)
-        .cardBackground(
-            backgroundColor: Color(UIColor.lightGray).opacity(0.2)
-        )
-    }
-
     var pickerSheet: some View {
-        VStack(spacing: 8) {
-            HStack(spacing: 0) {
-                pickerWheel($whole, values: Array(range))
-                Text(String(".")).font(.title).frame(width: 10)
-                pickerWheel($decimal, values: Array(0...maxDecimal))
+        NumberPickerView(
+            whole: $whole,
+            decimal: $decimal,
+            maxWhole: maxWhole,
+            label: {
                 if let unit { Text(unit).padding(.leading, 8) }
             }
-            .frame(height: 100)
-
-            HStack {
-                Spacer()
-                Button(Localizables.Common.done) {
-                    showPicker = false
-                }
-                .padding(.trailing)
-            }
+        ) {
+            showPicker = false
         }
-        .padding(12)
-        .presentationDetents([.height(200)])
-        .presentationDragIndicator(.hidden)
-        .background(Color(UIColor.systemBackground))
-    }
-
-    func pickerWheel(_ selection: Binding<Int>, values: [Int]) -> some View {
-        Picker(selection: selection, label: Text("")) {
-            ForEach(values, id: \.self) { Text(String("\($0)")) }
+        .onChange(of: whole) {
+            updateValueFromState()
+            onChange?()
         }
-        .pickerStyle(WheelPickerStyle())
-        .frame(width: 60, height: 90)
-        .clipped()
-        .onChange(of: selection.wrappedValue) {
+        .onChange(of: decimal) {
             updateValueFromState()
             onChange?()
         }
@@ -137,9 +86,13 @@ private extension DecimalPickerView {
 // MARK: - Helpers
 
 private extension DecimalPickerView {
-    var compactValue: String {
-        guard let value else { return "0.0" }
-        return showUnitOnLabel ? String(format: "%.1f %@", value, unit ?? "") : String(format: "%.1f", value)
+    var decimalSeparator: String {
+        NumberFormatter().decimalSeparator ?? ","
+    }
+
+    var formattedValue: String {
+        guard let localizedValue = value?.formattedAsDecimal() else { return 0.formattedAsDecimal() }
+        return showUnitOnLabel ? "\(localizedValue) \(unit ?? "")" : localizedValue
     }
 
     func updateStateFromValue() {

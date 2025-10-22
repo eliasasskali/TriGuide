@@ -177,6 +177,28 @@
         }
       }
     },
+    "paceCalculator_transitionX-time" : {
+      "localizations" : {
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Temps transició %d "
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Transition %d time"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tiempo transición %d "
+          }
+        }
+      }
+    },
     "paceCalculator_triathlon-distance" : {
       "localizations" : {
         "ca" : {
