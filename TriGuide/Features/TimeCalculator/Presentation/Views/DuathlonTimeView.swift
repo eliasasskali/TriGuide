@@ -37,6 +37,7 @@ private extension DuathlonTimeView {
                 title: Localizables.PaceCalculator.transitionTime(transitionNumber: 1),
                 mode: .compact,
                 labelsBackgroundColor: Color.Primary.white,
+                showHours: false,
                 duration: $viewModel.t1Time
             )
             .padding(.horizontal, 4)
@@ -47,6 +48,7 @@ private extension DuathlonTimeView {
                 title: Localizables.PaceCalculator.transitionTime(transitionNumber: 2),
                 mode: .compact,
                 labelsBackgroundColor: Color.Primary.white,
+                showHours: false,
                 duration: $viewModel.t2Time
             )
             .padding(.horizontal, 4)
@@ -84,7 +86,8 @@ private extension DuathlonTimeView {
         PaceTimeCalculatorView<RunningDistance>(
             sport: .run,
             viewModel: PaceCalculatorViewModel(
-                paceCalculator: RunningPaceCalculator()
+                paceCalculator: RunningPaceCalculator(),
+                paceUnit: .minPerKm
             ),
             selectedRaceDistance: Binding(
                 get: { selectedDuathlonDistance?.firstRunDistance },
@@ -100,7 +103,8 @@ private extension DuathlonTimeView {
         PaceTimeCalculatorView<CyclingDistance>(
             sport: .bike,
             viewModel: PaceCalculatorViewModel(
-                paceCalculator: CyclingPaceCalculator()
+                paceCalculator: CyclingPaceCalculator(),
+                paceUnit: .kmPerHour
             ),
             selectedRaceDistance: Binding(
                 get: { selectedDuathlonDistance?.cyclingDistance },
@@ -116,7 +120,8 @@ private extension DuathlonTimeView {
         PaceTimeCalculatorView<RunningDistance>(
             sport: .run,
             viewModel: PaceCalculatorViewModel(
-                paceCalculator: RunningPaceCalculator()
+                paceCalculator: RunningPaceCalculator(),
+                paceUnit: .minPerKm
             ),
             selectedRaceDistance: Binding(
                 get: { selectedDuathlonDistance?.secondRunDistance },

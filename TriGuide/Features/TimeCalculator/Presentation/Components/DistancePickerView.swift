@@ -37,7 +37,7 @@ private extension DistancePickerView {
         PickerLabel(
             orientation: .horizontal,
             title: "\(title): ",
-            value: compactFormattedDistance
+            value: formattedDistance
         ) {
             Image(systemName: "chevron.down")
                 .rotationEffect(.degrees(showPicker ? 180 : 0))
@@ -46,61 +46,22 @@ private extension DistancePickerView {
     }
 
     var pickerSheet: some View {
-        VStack(spacing: 8) {
-            if usesDecimals {
-                HStack(spacing: 0) {
-                    distanceWheel($whole, values: Array(0..<1000), label: "")
-                    Text(".")
-                        .font(.title)
-                        .frame(width: 10)
-                    distanceWheel($decimal, values: Array(0..<10), label: "")
-                    unitPicker
-                }
-                .frame(height: 100)
-            } else {
-                HStack() {
-                    distanceWheel(
-                        $whole,
-                        values: Array(stride(from: 0, through: 100000, by: 50)),
-                        label: unit.localized
-                    )
-                    .frame(height: 100)
-
-                    unitPicker
-                }
+        NumberPickerView(
+            whole: $whole,
+            decimal: usesDecimals ? $decimal : nil,
+            maxWhole: usesDecimals ? 1000 : 100000,
+            wholeStep: usesDecimals ? 1 : 50,
+            label: {
+                unitPicker
             }
-
-            HStack {
-                Spacer()
-                Button(Localizables.Common.done) {
-                    updateDistanceFromState()
-                    showPicker = false
-                }
-                .padding(.trailing)
-            }
+        ) {
+            showPicker = false
         }
-        .padding(12)
-        .cornerRadius(12)
-        .presentationDetents([.height(200)])
-        .presentationDragIndicator(.hidden)
-        .background(Color(UIColor.systemBackground))
-    }
-
-    func distanceWheel(_ selection: Binding<Int>, values: [Int], label: String) -> some View {
-        VStack(spacing: 4) {
-            Picker(selection: selection, label: Text(label)) {
-                ForEach(values, id: \.self) { Text(String($0)) }
-            }
-            .pickerStyle(WheelPickerStyle())
-            .onChange(of: selection.wrappedValue) {
-                updateDistanceFromState()
-            }
-            .frame(width: 150, height: 90)
-            .clipped()
-
-            if !label.isEmpty {
-                Text(label).font(.caption2)
-            }
+        .onChange(of: whole) {
+            updateDistanceFromState()
+        }
+        .onChange(of: decimal) {
+            updateDistanceFromState()
         }
     }
 
@@ -128,20 +89,11 @@ private extension DistancePickerView {
 // MARK: - Helpers
 
 private extension DistancePickerView {
-    var compactFormattedDistance: String {
+    var formattedDistance: String {
         guard let distance else { return "0 \(unit.localized)" }
         let value = distance / unit.factorToMeters
 
-        if usesDecimals {
-            let formatter = NumberFormatter()
-            formatter.minimumFractionDigits = 0
-            formatter.maximumFractionDigits = 3
-            formatter.numberStyle = .decimal
-            let formatted = formatter.string(from: NSNumber(value: value)) ?? "\(value)"
-            return "\(formatted) \(unit.localized)"
-        } else {
-            return "\(Int(value)) \(unit.localized)"
-        }
+        return "\(value.formattedAsDecimal()) \(unit.localized)"
     }
 
     var usesDecimals: Bool {
@@ -150,8 +102,6 @@ private extension DistancePickerView {
             true
         case .meters, .yards:
             false
-        default:
-            true
         }
     }
 
@@ -170,7 +120,7 @@ private extension DistancePickerView {
     }
 
     func updateDistanceFromState() {
-        let value = Double(whole) + (usesDecimals ? Double(decimal) / 10.0 : 0)
+        let value = Double(whole) + Double(decimal) / 10.0
         distance = value * unit.factorToMeters
         onChangeDistance?()
     }

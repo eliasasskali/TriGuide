@@ -9,7 +9,7 @@ class PaceCalculatorViewModel: ObservableObject {
     let paceCalculator: PaceCalculator
 
     @Published var distance: Double? {
-        didSet { updateFromPace() }
+        didSet { updateFromPaceOrSpeed() }
     }
 
     @Published var duration: TimeInterval? {
@@ -22,14 +22,14 @@ class PaceCalculatorViewModel: ObservableObject {
     @Published var pace: TimeInterval? {
         didSet {
             guard !isUpdating else { return }
-            updateFromPace()
+            updateFromPaceOrSpeed()
         }
     }
 
     @Published var speed: Double? {
         didSet {
             guard !isUpdating else { return }
-            updateFromSpeed()
+            updateFromPaceOrSpeed()
         }
     }
 
@@ -39,7 +39,9 @@ class PaceCalculatorViewModel: ObservableObject {
         }
     }
 
-    @Published var distanceUnit: DistanceUnit?
+    @Published var distanceUnit: DistanceUnit? {
+        didSet { updateFromPaceOrSpeed() }
+    }
 
     private var isUpdating = false
 
@@ -78,20 +80,13 @@ private extension PaceCalculatorViewModel {
         isUpdating = false
     }
 
-    func updateFromPace() {
-        guard let pace, let distance, let paceUnit else { return }
+    func updateFromPaceOrSpeed() {
+        guard let paceOrSpeed = pace ?? speed,
+              let distance,
+              let paceUnit
+        else { return }
         isUpdating = true
-        duration = paceCalculator.calculateTime(pace: pace, distance: distance, paceUnit: paceUnit)
-        speed = nil
-        isUpdating = false
-    }
-
-    private func updateFromSpeed() {
-        guard let speed, let distance, let paceUnit else { return }
-        isUpdating = true
-        let time = paceCalculator.calculateTime(pace: speed, distance: distance, paceUnit: paceUnit)
-        duration = time
-        pace = nil
+        duration = paceCalculator.calculateTime(pace: paceOrSpeed, distance: distance, paceUnit: paceUnit)
         isUpdating = false
     }
 
@@ -108,6 +103,4 @@ private extension PaceCalculatorViewModel {
         }
         isUpdating = false
     }
-
-    // TODO: update from distance?
 }

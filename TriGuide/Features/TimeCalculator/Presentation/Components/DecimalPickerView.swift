@@ -21,8 +21,7 @@ struct DecimalPickerView: View {
 
     let title: String
     @Binding var value: Double?
-    let range: ClosedRange<Int>
-    let maxDecimal: Int = 9
+    let maxWhole: Int = 100
     let unit: String?
     let showUnitOnLabel: Bool
     let mode: Mode
@@ -55,7 +54,7 @@ private extension DecimalPickerView {
         PickerLabel(
             orientation: mode.labelOrientation,
             title: "\(title):",
-            value: compactValue
+            value: formattedValue
         ) {
             Image(systemName: "chevron.down")
                 .rotationEffect(.degrees(showPicker ? 180 : 0))
@@ -63,37 +62,21 @@ private extension DecimalPickerView {
     }
 
     var pickerSheet: some View {
-        VStack(spacing: 8) {
-            HStack(spacing: 0) {
-                pickerWheel($whole, values: Array(range))
-                Text(".").font(.title).frame(width: 10)
-                pickerWheel($decimal, values: Array(0...maxDecimal))
+        NumberPickerView(
+            whole: $whole,
+            decimal: $decimal,
+            maxWhole: maxWhole,
+            label: {
                 if let unit { Text(unit).padding(.leading, 8) }
             }
-            .frame(height: 100)
-
-            HStack {
-                Spacer()
-                Button(Localizables.Common.done) {
-                    showPicker = false
-                }
-                .padding(.trailing)
-            }
+        ) {
+            showPicker = false
         }
-        .padding(12)
-        .presentationDetents([.height(200)])
-        .presentationDragIndicator(.hidden)
-        .background(Color(UIColor.systemBackground))
-    }
-
-    func pickerWheel(_ selection: Binding<Int>, values: [Int]) -> some View {
-        Picker(selection: selection, label: Text("")) {
-            ForEach(values, id: \.self) { Text("\($0)") }
+        .onChange(of: whole) {
+            updateValueFromState()
+            onChange?()
         }
-        .pickerStyle(WheelPickerStyle())
-        .frame(width: 60, height: 90)
-        .clipped()
-        .onChange(of: selection.wrappedValue) {
+        .onChange(of: decimal) {
             updateValueFromState()
             onChange?()
         }
@@ -103,9 +86,13 @@ private extension DecimalPickerView {
 // MARK: - Helpers
 
 private extension DecimalPickerView {
-    var compactValue: String {
-        guard let value else { return "0.0" }
-        return showUnitOnLabel ? String(format: "%.1f %@", value, unit ?? "") : String(format: "%.1f", value)
+    var decimalSeparator: String {
+        NumberFormatter().decimalSeparator ?? ","
+    }
+
+    var formattedValue: String {
+        guard let localizedValue = value?.formattedAsDecimal() else { return 0.formattedAsDecimal() }
+        return showUnitOnLabel ? "\(localizedValue) \(unit ?? "")" : localizedValue
     }
 
     func updateStateFromValue() {
