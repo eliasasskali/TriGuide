@@ -4,25 +4,24 @@
 import PackageDescription
 
 let package = Package(
-    name: "DesignSystem",
+    name: "TriGuideDomain",
     platforms: [.iOS(.v17)],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
-            name: "DesignSystem",
-            targets: ["DesignSystem"]),
+            name: "TriGuideDomain",
+            targets: ["TriGuideDomain"]),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
-            name: "DesignSystem",
-            path: "Sources",
-            resources: [.process("Resources")]
+            name: "TriGuideDomain",
+            path: "Sources"
         ),
         .testTarget(
-            name: "DesignSystemTests",
-            dependencies: ["DesignSystem"]
+            name: "TriGuideDomainTests",
+            dependencies: ["TriGuideDomain"]
         ),
     ]
 )

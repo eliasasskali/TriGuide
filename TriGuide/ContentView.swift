@@ -4,6 +4,7 @@
 
 import SwiftUI
 import Localization
+import RaceCalculatorSPM
 
 struct ContentView: View {
     var body: some View {
