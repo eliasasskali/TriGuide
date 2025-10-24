@@ -42,6 +42,6 @@ struct CyclingPaceCalculator: PaceCalculator {
     }
 
     func formatPace(_ pace: Double, with paceUnit: SpeedUnit) -> String {
-        String(format: "%.2f %@", pace, paceUnit.localized)
+        "\(pace.formattedAsDecimal(maxFractionDigits: 2)) \(paceUnit.localized)"
     }
 }
