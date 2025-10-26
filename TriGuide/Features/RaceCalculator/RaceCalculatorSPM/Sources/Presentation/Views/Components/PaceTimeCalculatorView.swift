@@ -5,6 +5,7 @@
 import SwiftUI
 import Localization
 import TriGuideDomain
+import DesignSystem
 
 struct PaceTimeCalculatorView<Distance: RaceDistance & CaseIterable>: View where Distance.AllCases: RandomAccessCollection {
     let sport: SupportedSport
@@ -48,8 +49,7 @@ struct PaceTimeCalculatorView<Distance: RaceDistance & CaseIterable>: View where
         .onChange(of: selectedRaceDistance?.wrappedValue) { _, newValue in
             viewModel.distance = newValue?.meters
         }
-        .padding()
-        .cardBackground()
+        .cardBackground(innerPadding: 16)
         .frame(maxWidth: .infinity)
         .padding(.horizontal, 4)
     }

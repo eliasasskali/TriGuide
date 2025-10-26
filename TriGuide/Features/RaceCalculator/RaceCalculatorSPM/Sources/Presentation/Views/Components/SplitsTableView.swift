@@ -5,6 +5,7 @@
 import TriGuideDomain
 import SwiftUI
 import Localization
+import DesignSystem
 
 struct SplitsTableView: View {
     @Binding var totalDistance: Double
@@ -37,8 +38,7 @@ struct SplitsTableView: View {
             
             splitsGrid
         }
-        .padding()
-        .cardBackground()
+        .cardBackground(innerPadding: 16)
         .padding(4)
         .onAppear { updateSplits() }
         .onChange(of: totalDistance) { updateSplits() }

@@ -5,12 +5,19 @@
 import SwiftUI
 
 struct CardBackground: ViewModifier {
-    let backgroundColor: Color
+    var backgroundColor: Color = .Primary.white
+    var innerPadding: CGFloat
 
+    let cornerRadius: CGFloat = 10
+    let shadowRadius: CGFloat = 2
+    
     func body(content: Content) -> some View {
         content
-            .background(backgroundColor)
-            .cornerRadius(13)
-            .shadow(color: Color.black.opacity(0.15), radius: 3)
+            .padding(innerPadding)
+            .background(
+                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                    .fill(backgroundColor)
+                    .shadow(color: .black.opacity(0.15), radius: shadowRadius)
+            )
     }
 }

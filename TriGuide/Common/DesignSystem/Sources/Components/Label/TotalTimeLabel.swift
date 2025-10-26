@@ -19,10 +19,10 @@ public struct TotalTimeLabel: View {
             Text(time)
                 .font(.Custom.Regular.font5)
         }
-        .padding(8)
         .frame(maxWidth: .infinity)
         .cardBackground(
-            backgroundColor: Color(UIColor.lightGray).opacity(0.2)
+            backgroundColor: Color(UIColor.lightGray).opacity(0.2),
+            innerPadding: 8
         )
     }
 }

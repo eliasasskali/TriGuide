@@ -49,9 +49,9 @@ private extension PickerLabel {
             icon()
         }
         .lineLimit(1)
-        .padding(8)
         .cardBackground(
-            backgroundColor: Color(UIColor.lightGray).opacity(0.2)
+            backgroundColor: Color(UIColor.lightGray).opacity(0.2),
+            innerPadding: 8
         )
     }
     var verticalPickerLabel: some View {
@@ -66,10 +66,9 @@ private extension PickerLabel {
             Spacer()
             icon()
         }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 8)
         .cardBackground(
-            backgroundColor: Color(UIColor.lightGray).opacity(0.2)
+            backgroundColor: Color(UIColor.lightGray).opacity(0.2),
+            innerPadding: 8
         )
     }
 }
