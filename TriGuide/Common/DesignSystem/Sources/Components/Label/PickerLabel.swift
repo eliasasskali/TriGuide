@@ -43,15 +43,17 @@ private extension PickerLabel {
             Text(title)
                 .foregroundStyle(.black)
                 .font(.Custom.Medium.font3)
+                .lineLimit(1)
             Text(value)
                 .font(.Custom.Regular.font3)
+                .layoutPriority(1)
             Spacer()
             icon()
+                .fixedSize()
         }
-        .lineLimit(1)
-        .padding(8)
         .cardBackground(
-            backgroundColor: Color(UIColor.lightGray).opacity(0.2)
+            backgroundColor: Color(UIColor.lightGray).opacity(0.2),
+            innerPadding: 8
         )
     }
     var verticalPickerLabel: some View {
@@ -66,10 +68,9 @@ private extension PickerLabel {
             Spacer()
             icon()
         }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 8)
         .cardBackground(
-            backgroundColor: Color(UIColor.lightGray).opacity(0.2)
+            backgroundColor: Color(UIColor.lightGray).opacity(0.2),
+            innerPadding: 8
         )
     }
 }

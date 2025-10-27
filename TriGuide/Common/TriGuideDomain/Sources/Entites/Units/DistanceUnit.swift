@@ -9,7 +9,7 @@ import Localization
 
 public enum UnitTransformationConstants {
     public static let metersInKm = 1000.0
-    public static let metersInMile = 1609.34
+    public static let metersInMile = 1609.344
     public static let metersInYard = 0.9144
 }
 

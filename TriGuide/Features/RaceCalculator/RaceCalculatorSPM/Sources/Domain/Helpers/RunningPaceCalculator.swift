@@ -47,6 +47,17 @@ struct RunningPaceCalculator: PaceCalculator {
         }
     }
 
+    func calculateDistance(pace: Double, duration: TimeInterval, paceUnit: SpeedUnit) -> Double? {
+        switch paceUnit {
+        case .minPerKm:
+            return (duration / pace) * 1000.0
+        case .minPerMile:
+            return (duration / pace) * UnitTransformationConstants.metersInMile
+        default:
+            return nil
+        }
+    }
+
     func formatPace(_ pace: Double, with paceUnit: SpeedUnit) -> String {
         PaceCalculatorHelper.formatPace(paceSeconds: pace, with: paceUnit)
     }

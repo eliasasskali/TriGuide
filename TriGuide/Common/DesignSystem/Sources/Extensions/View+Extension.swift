@@ -8,10 +8,14 @@ public extension View {
 
     // Applies card background to the view
     func cardBackground(
-        backgroundColor: Color = Color.Primary.white
+        backgroundColor: Color = .Primary.white,
+        innerPadding: CGFloat
     ) -> some View {
         modifier(
-            CardBackground(backgroundColor: backgroundColor)
+            CardBackground(
+                backgroundColor: backgroundColor,
+                innerPadding: innerPadding
+            )
         )
     }
 
