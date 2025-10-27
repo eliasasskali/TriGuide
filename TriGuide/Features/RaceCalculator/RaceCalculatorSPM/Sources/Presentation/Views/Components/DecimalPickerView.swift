@@ -91,7 +91,9 @@ private extension DecimalPickerView {
     }
 
     var formattedValue: String {
-        guard let localizedValue = value?.formattedAsDecimal() else { return 0.formattedAsDecimal() }
+        guard let localizedValue = value?.formattedAsDecimal(minFractionDigits: 1) else {
+            return 0.formattedAsDecimal(minFractionDigits: 1)
+        }
         return showUnitOnLabel ? "\(localizedValue) \(unit ?? "")" : localizedValue
     }
 

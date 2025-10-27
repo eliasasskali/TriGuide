@@ -47,7 +47,8 @@ struct PaceTimeCalculatorView<Distance: RaceDistance & CaseIterable>: View where
             duration?.wrappedValue = newValue
         }
         .onChange(of: selectedRaceDistance?.wrappedValue) { _, newValue in
-            viewModel.distance = newValue?.meters
+            guard let newValue else { return }
+            viewModel.distance = newValue.meters
         }
         .cardBackground(innerPadding: 16)
         .frame(maxWidth: .infinity)
@@ -100,7 +101,7 @@ private extension PaceTimeCalculatorView {
                     viewModel.paceUnit = unit
                 } label: {
                     Text(unit.localized)
-                        .font(.Custom.Regular.font3) // menu item font
+                        .font(.Custom.Regular.font3)
                 }
             }
         } label: {
@@ -108,7 +109,7 @@ private extension PaceTimeCalculatorView {
                 Text(viewModel.paceUnit?.localized ?? Localizables.PaceCalculator.unit)
                 Image(systemName: "chevron.up.chevron.down")
             }
-            .font(.Custom.Regular.font3) // label font
+            .font(.Custom.Regular.font3)
         }
     }
 
@@ -126,7 +127,7 @@ private extension PaceTimeCalculatorView {
             }
         } label: {
             HStack {
-                Text(selectedRaceDistance?.wrappedValue?.displayName ?? Localizables.PaceCalculator.race)
+                Text(Localizables.PaceCalculator.race)
                 Image(systemName: "chevron.up.chevron.down")
             }
             .font(.Custom.Regular.font3)

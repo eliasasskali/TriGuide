@@ -5,7 +5,7 @@
 import Foundation
 import TriGuideDomain
 
-protocol PaceCalculator {
+public protocol PaceCalculator {
     func calculatePace(
         duration: TimeInterval,
         distance: Double,
@@ -15,6 +15,12 @@ protocol PaceCalculator {
     func calculateTime(
         pace: Double,
         distance: Double,
+        paceUnit: SpeedUnit
+    ) -> Double?
+
+    func calculateDistance(
+        pace: Double,
+        duration: TimeInterval,
         paceUnit: SpeedUnit
     ) -> Double?
 

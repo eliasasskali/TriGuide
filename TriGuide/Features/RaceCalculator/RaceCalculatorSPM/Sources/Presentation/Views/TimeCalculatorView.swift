@@ -77,7 +77,6 @@ private extension TimeCalculatorView {
     
     var swimTimeView: some View {
         VStack {
-            // TODO: Revisar que pasa amb els viewmodels que mantenen el distanceUnit
             PaceTimeCalculatorView<SwimmingDistance>(
                 sport: .swim,
                 viewModel: swimViewModel

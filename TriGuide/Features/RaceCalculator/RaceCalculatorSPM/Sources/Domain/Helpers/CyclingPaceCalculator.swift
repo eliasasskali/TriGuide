@@ -41,6 +41,19 @@ struct CyclingPaceCalculator: PaceCalculator {
         }
     }
 
+    func calculateDistance(pace: Double, duration: TimeInterval, paceUnit: SpeedUnit) -> Double? {
+        guard pace > 0, duration > 0 else { return nil }
+
+        switch paceUnit {
+        case .kmPerHour:
+            return (pace * (duration / 3600.0)) * 1000
+        case .milesPerHour:
+            return (pace * (duration / 3600.0)) * UnitTransformationConstants.metersInMile
+        default:
+            return nil
+        }
+    }
+
     func formatPace(_ pace: Double, with paceUnit: SpeedUnit) -> String {
         "\(pace.formattedAsDecimal(maxFractionDigits: 2)) \(paceUnit.localized)"
     }

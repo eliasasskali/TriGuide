@@ -43,12 +43,14 @@ private extension PickerLabel {
             Text(title)
                 .foregroundStyle(.black)
                 .font(.Custom.Medium.font3)
+                .lineLimit(1)
             Text(value)
                 .font(.Custom.Regular.font3)
+                .layoutPriority(1)
             Spacer()
             icon()
+                .fixedSize()
         }
-        .lineLimit(1)
         .cardBackground(
             backgroundColor: Color(UIColor.lightGray).opacity(0.2),
             innerPadding: 8
