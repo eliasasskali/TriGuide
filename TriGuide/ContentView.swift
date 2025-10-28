@@ -5,6 +5,7 @@
 import SwiftUI
 import Localization
 import RaceCalculatorSPM
+import CarbItemsSPM
 
 struct ContentView: View {
     var body: some View {
@@ -14,7 +15,7 @@ struct ContentView: View {
                     Label(Localizables.Tabs.calculator, systemImage: "plusminus")
                 }
 
-            Text(Localizables.Tabs.home)
+            CarbItemsViewFactoryDefault.makeView()
                 .tabItem {
                     Label(Localizables.Tabs.home, systemImage: "house")
                 }
