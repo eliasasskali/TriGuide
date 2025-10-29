@@ -12,7 +12,7 @@ public struct LoadCarbItemsUseCase: UseCase {
 }
 
 extension LoadCarbItemsUseCase {
-    func execute() async throws -> [CarbItem] {
-        try await repository.getCarbItems()
+    func execute(forceRefresh: Bool = false) async throws -> [CarbItem] {
+        try await repository.getCarbItems(forceRefresh: forceRefresh)
     }
 }

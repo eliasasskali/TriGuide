@@ -6,19 +6,26 @@ import Foundation
 
 public final class CarbItemsViewFactoryDefault: CarbItemsViewFactory {
     public struct Dependencies {
-        let carbItemsDataSource: CarbItemsDataSource
+        let remoteCarbItemsDataSource: CarbItemsDataSource
+        let localCarbItemsDataSource: LocalCarbItemsDataSource
         let carbItemsRepository: CarbItemsRepository
         let loadCarbItemsUseCase: LoadCarbItemsUseCase
 
         public init(
-            carbItemsDataSource: CarbItemsDataSource? = nil,
+            remoteCarbItemsDataSource: CarbItemsDataSource? = nil,
+            localCarbItemsDataSource: LocalCarbItemsDataSource? = nil,
             carbItemsRepository: CarbItemsRepository? = nil,
             loadCarbItemsUseCase: LoadCarbItemsUseCase? = nil
         ) {
-            let dataSource = carbItemsDataSource ?? CarbItemsDataSourceDefault()
-            let repository = carbItemsRepository ?? CarbItemsRepositoryDefault(dataSource: dataSource)
+            let remoteDataSource = remoteCarbItemsDataSource ?? CarbItemsDataSourceDefault()
+            let localDataSource = localCarbItemsDataSource ?? LocalCarbItemsDataSourceDefault()
+            let repository = carbItemsRepository ?? CarbItemsRepositoryDefault(
+                remoteDataSource: remoteDataSource,
+                localDataSource: localDataSource
+            )
 
-            self.carbItemsDataSource = dataSource
+            self.remoteCarbItemsDataSource = remoteDataSource
+            self.localCarbItemsDataSource = localDataSource
             self.carbItemsRepository = repository
             self.loadCarbItemsUseCase = loadCarbItemsUseCase ?? LoadCarbItemsUseCase(repository: repository)
         }

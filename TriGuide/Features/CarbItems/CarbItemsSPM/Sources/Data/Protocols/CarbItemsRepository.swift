@@ -5,5 +5,5 @@
 import Foundation
 
 public protocol CarbItemsRepository: Sendable {
-    func getCarbItems() async throws -> [CarbItem]
+    func getCarbItems(forceRefresh: Bool) async throws -> [CarbItem]
 }

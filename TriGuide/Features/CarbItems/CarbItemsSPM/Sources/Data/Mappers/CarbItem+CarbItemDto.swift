@@ -4,9 +4,9 @@
 
 import Foundation
 
-extension CarbItemDto {
-    func toDomain() -> CarbItem {
-        CarbItem(
+extension CarbItem {
+    func toDto() -> CarbItemDto {
+        CarbItemDto(
             id: self.id,
             name: self.name,
             gramsOfCarbs: self.gramsOfCarbs,

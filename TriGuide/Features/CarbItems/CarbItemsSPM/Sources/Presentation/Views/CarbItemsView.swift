@@ -18,10 +18,13 @@ public struct CarbItemsView: View {
                     Text(carbItem.name)
                 }
             }
-
-            if viewModel.state == .loading {
-                ProgressView()
-                    .frame(maxWidth: .infinity, idealHeight: 80)
+            .refreshable {
+                await viewModel.loadCarbItems(forceRefresh: true)
+            }
+            .overlay {
+                if viewModel.state == .loading {
+                    ProgressView()
+                }
             }
         }
         .task {
@@ -35,7 +38,8 @@ public struct CarbItemsView: View {
         viewModel: CarbItemsViewModel(
             loadCarbItemsUseCase: LoadCarbItemsUseCase(
                 repository: CarbItemsRepositoryDefault(
-                    dataSource: CarbItemsDataSourceDefault()
+                    remoteDataSource: CarbItemsDataSourceDefault(),
+                    localDataSource: LocalCarbItemsDataSourceDefault()
                 )
             )
         )

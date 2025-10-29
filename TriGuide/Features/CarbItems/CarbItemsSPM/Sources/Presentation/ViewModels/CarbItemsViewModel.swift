@@ -24,11 +24,11 @@ public class CarbItemsViewModel: ObservableObject {
 }
 
 extension CarbItemsViewModel {
-    func loadCarbItems() async {
+    func loadCarbItems(forceRefresh: Bool = false) async {
         state = .loading
         do {
             let useCase = loadCarbItemsUseCase
-            carbItems = try await useCase.execute()
+            carbItems = try await useCase.execute(forceRefresh: forceRefresh)
             state = .loaded
         } catch {
             handle(error)

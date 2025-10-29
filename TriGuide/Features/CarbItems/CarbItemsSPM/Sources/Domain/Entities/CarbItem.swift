@@ -11,6 +11,8 @@ public struct CarbItem: Sendable {
     let caffeine: Double?
     let waterVolumeML: Double?
     let type: CarbType
+    let brand: String?
+    let isCustom: Bool = false
 }
 
 // MARK: - Hashable

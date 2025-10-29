@@ -11,4 +11,5 @@ public struct CarbItemDto: Codable, Sendable {
     let caffeine: Double?
     let waterVolumeML: Double?
     let type: CarbType
+    let brand: String?
 }

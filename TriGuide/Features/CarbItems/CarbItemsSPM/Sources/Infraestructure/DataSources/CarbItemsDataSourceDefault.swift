@@ -29,7 +29,6 @@ struct CarbItemsDataSourceDefault: CarbItemsDataSource {
               (200...299).contains(httpResponse.statusCode) else {
             throw URLError(.badServerResponse)
         }
-
         return try JSONDecoder().decode([CarbItemDto].self, from: data)
     }
 }
