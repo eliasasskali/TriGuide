@@ -17,9 +17,14 @@ public class CarbItemsViewModel: ObservableObject {
     @Published var carbItems: [CarbItem] = []
 
     let loadCarbItemsUseCase: LoadCarbItemsUseCase
+    let searchCarbItemsUseCase: SearchCarbItemsUseCase
 
-    init(loadCarbItemsUseCase: LoadCarbItemsUseCase) {
+    init(
+        loadCarbItemsUseCase: LoadCarbItemsUseCase,
+        searchCarbItemsUseCase: SearchCarbItemsUseCase
+    ) {
         self.loadCarbItemsUseCase = loadCarbItemsUseCase
+        self.searchCarbItemsUseCase = searchCarbItemsUseCase
     }
 }
 
@@ -34,6 +39,10 @@ extension CarbItemsViewModel {
             handle(error)
             state = .unloaded
         }
+    }
+
+    func filterCarbItems(by searchText: String) -> [CarbItem] {
+        searchCarbItemsUseCase.execute(carbItems: carbItems, searchText: searchText)
     }
 }
 

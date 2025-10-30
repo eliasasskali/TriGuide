@@ -10,12 +10,14 @@ public final class CarbItemsViewFactoryDefault: CarbItemsViewFactory {
         let localCarbItemsDataSource: LocalCarbItemsDataSource
         let carbItemsRepository: CarbItemsRepository
         let loadCarbItemsUseCase: LoadCarbItemsUseCase
+        let searchCarbItemsUseCase: SearchCarbItemsUseCase
 
         public init(
             remoteCarbItemsDataSource: CarbItemsDataSource? = nil,
             localCarbItemsDataSource: LocalCarbItemsDataSource? = nil,
             carbItemsRepository: CarbItemsRepository? = nil,
-            loadCarbItemsUseCase: LoadCarbItemsUseCase? = nil
+            loadCarbItemsUseCase: LoadCarbItemsUseCase? = nil,
+            searchCarbItemsUseCase: SearchCarbItemsUseCase? = nil
         ) {
             let remoteDataSource = remoteCarbItemsDataSource ?? CarbItemsDataSourceDefault()
             let localDataSource = localCarbItemsDataSource ?? LocalCarbItemsDataSourceDefault()
@@ -27,7 +29,8 @@ public final class CarbItemsViewFactoryDefault: CarbItemsViewFactory {
             self.remoteCarbItemsDataSource = remoteDataSource
             self.localCarbItemsDataSource = localDataSource
             self.carbItemsRepository = repository
-            self.loadCarbItemsUseCase = loadCarbItemsUseCase ?? LoadCarbItemsUseCase(repository: repository)
+            self.loadCarbItemsUseCase = loadCarbItemsUseCase ?? LoadCarbItemsUseCaseDefault(repository: repository)
+            self.searchCarbItemsUseCase = searchCarbItemsUseCase ?? SearchCarbItemsUseCaseDefault()
         }
     }
 
@@ -39,7 +42,8 @@ public final class CarbItemsViewFactoryDefault: CarbItemsViewFactory {
 
     @MainActor public func buildCarbItemsView() -> CarbItemsView {
         let viewModel = CarbItemsViewModel(
-            loadCarbItemsUseCase: dependencies.loadCarbItemsUseCase
+            loadCarbItemsUseCase: dependencies.loadCarbItemsUseCase,
+            searchCarbItemsUseCase: dependencies.searchCarbItemsUseCase
         )
 
         return CarbItemsView(viewModel: viewModel)

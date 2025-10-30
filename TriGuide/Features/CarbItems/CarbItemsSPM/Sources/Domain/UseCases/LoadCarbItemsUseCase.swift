@@ -7,12 +7,18 @@ import TriGuideDomain
 
 // MARK: - LoadCarbItemsUseCase
 
-public struct LoadCarbItemsUseCase: UseCase {
+public protocol LoadCarbItemsUseCase: UseCase {
+    func execute(forceRefresh: Bool) async throws -> [CarbItem]
+}
+
+// MARK: - LoadCarbItemsUseCaseDefault
+
+public struct LoadCarbItemsUseCaseDefault {
     let repository: CarbItemsRepository
 }
 
-extension LoadCarbItemsUseCase {
-    func execute(forceRefresh: Bool = false) async throws -> [CarbItem] {
+extension LoadCarbItemsUseCaseDefault: LoadCarbItemsUseCase {
+    public func execute(forceRefresh: Bool = false) async throws -> [CarbItem] {
         try await repository.getCarbItems(forceRefresh: forceRefresh)
     }
 }
