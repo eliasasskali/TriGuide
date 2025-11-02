@@ -4,6 +4,6 @@
 
 import Foundation
 
-public protocol CarbItemsDataSource: Sendable {
+public protocol RemoteCarbItemsDataSource: Sendable {
     func fetchCarbItems() async throws -> [CarbItemDto]
 }

@@ -58,15 +58,20 @@ public struct CarbItemsView: View {
 }
 
 #Preview {
-    CarbItemsView(
-        viewModel: CarbItemsViewModel(
-            loadCarbItemsUseCase: LoadCarbItemsUseCaseDefault(
-                repository: CarbItemsRepositoryDefault(
-                    remoteDataSource: CarbItemsDataSourceDefault(),
-                    localDataSource: LocalCarbItemsDataSourceDefault()
-                )
-            ),
+    do {
+        let repository = try CarbItemsRepositoryDefault(
+            remoteCarbItemsDataSource: RemoteCarbItemsDataSourceDefault(),
+            cachedCarbItemsDataSource: CachedCarbItemsDataSourceDefault(),
+            userCarbItemsDataSource: UserCarbItemsDataSourceDefault()
+        )
+
+        let viewModel = CarbItemsViewModel(
+            loadCarbItemsUseCase: LoadCarbItemsUseCaseDefault(repository: repository),
             searchCarbItemsUseCase: SearchCarbItemsUseCaseDefault()
         )
-    )
+
+        return CarbItemsView(viewModel: viewModel)
+    } catch {
+        return Text("Preview failed: \(error.localizedDescription)")
+    }
 }

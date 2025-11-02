@@ -42,6 +42,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Common/Localization,
+				Common/StorageKit,
 				Common/TriGuideDomain,
 				Features/RaceCalculator/RaceCalculatorSPM,
 			);

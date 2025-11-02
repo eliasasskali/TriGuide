@@ -4,7 +4,7 @@
 
 import Foundation
 
-struct CarbItemsDataSourceDefault: CarbItemsDataSource {
+struct RemoteCarbItemsDataSourceDefault: RemoteCarbItemsDataSource {
     static let carbItemsUrlString = "https://raw.githubusercontent.com/eliasasskali/TriGuideData/master/nutrition/carb_items.json"
 
     private let session: URLSession
@@ -12,7 +12,7 @@ struct CarbItemsDataSourceDefault: CarbItemsDataSource {
 
     init(
         session: URLSession = .shared,
-        urlString: String = CarbItemsDataSourceDefault.carbItemsUrlString
+        urlString: String = RemoteCarbItemsDataSourceDefault.carbItemsUrlString
     ) {
         self.session = session
         self.urlString = urlString

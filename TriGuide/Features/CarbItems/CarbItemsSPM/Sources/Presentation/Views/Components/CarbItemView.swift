@@ -98,6 +98,7 @@ private extension CarbItemView {
             name: "Maurten Gel 100 Caf 100",
             gramsOfCarbs: 25,
             caffeine: 100,
+            sodium: 55,
             waterVolumeML: 500,
             type: .gel,
             brand: "maurten"

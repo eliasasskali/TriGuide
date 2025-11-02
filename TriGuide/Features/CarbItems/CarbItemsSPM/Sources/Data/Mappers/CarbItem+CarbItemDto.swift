@@ -11,7 +11,7 @@ extension CarbItem {
             name: self.name,
             gramsOfCarbs: self.gramsOfCarbs,
             caffeine: self.caffeine,
-            sodium: nil, // TODO: Add sodium to CarbItem entity when needed
+            sodium: self.sodium,
             waterVolumeML: self.waterVolumeML,
             type: self.type,
             brand: self.brand

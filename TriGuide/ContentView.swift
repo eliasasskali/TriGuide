@@ -10,11 +10,12 @@ import CarbItemsSPM
 struct ContentView: View {
     var body: some View {
         TabView {
-            CarbItemsViewFactoryDefault.makeView()
-                .tabItem {
-                    Label(Localizables.Tabs.home, systemImage: "fork.knife")
-                }
-
+            if let carbItemsView = CarbItemsViewFactoryDefault.makeViewOrNil() {
+                carbItemsView
+                    .tabItem {
+                        Label(Localizables.Tabs.home, systemImage: "fork.knife")
+                    }
+            }
 //            Text(Localizables.Tabs.home)
 //                .tabItem {
 //                    Label(Localizables.Tabs.home, systemImage: "home")
