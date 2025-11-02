@@ -123,8 +123,8 @@ actor CarbItemsRepositoryDefault: CarbItemsRepository {
         userItems.append(item)
     }
 
-    func removeUserCarbItem(_ item: CarbItem) async throws {
-        try await userItemsDataSource.deleteCarbItem(id: item.id)
-        userItems.removeAll { $0.id == item.id }
+    func removeUserCarbItem(with id: String) async throws {
+        try await userItemsDataSource.deleteCarbItem(id: id)
+        userItems.removeAll { $0.id == id }
     }
 }

@@ -8,8 +8,44 @@ import Localization
 struct CarbItemView: View {
     let item: CarbItem
 
+    @State private var isExpanded: Bool = false
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
+        itemView
+            .cardBackground(innerPadding: isExpanded ? 16 : 12)
+            .fixedSize(horizontal: false, vertical: true)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .onTapGesture {
+                withAnimation {
+                    isExpanded.toggle()
+                }
+            }
+    }
+}
+
+// MARK: - Private methods
+
+private extension CarbItemView {
+    @ViewBuilder
+    var itemView: some View {
+        if isExpanded {
+            expandedItemView
+        } else {
+            collapsedItemView
+        }
+    }
+
+    @ViewBuilder
+    var collapsedItemView: some View {
+        HStack {
+            Text(Localizables.CarbItems.carbsValue(grams: item.gramsOfCarbs))
+                .font(.Custom.Regular.font2)
+
+            Image(systemName: "bolt.fill")
+                .foregroundColor(.yellow)
+
+            Divider()
+
             VStack(spacing: 0) {
                 Text(item.name)
                     .font(.Custom.Medium.font3)
@@ -20,13 +56,40 @@ struct CarbItemView: View {
                         .font(.Custom.Regular.font2)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
-
-                Divider()
-                    .background(Color(.separator))
-                    .padding(.vertical, 8)
             }
 
-            HStack(spacing: 8) {
+            Spacer()
+
+            Image(systemName: "chevron.down")
+        }
+    }
+
+    @ViewBuilder
+    var expandedItemView: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            HStack(alignment: .center) {
+                VStack(spacing: 0) {
+                    Text(item.name)
+                        .font(.Custom.Medium.font3)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+
+                    if let brand = item.brand, !brand.isEmpty {
+                        Text(brand.capitalizingFirstLetter())
+                            .font(.Custom.Regular.font2)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.up")
+            }
+
+            Divider()
+                .background(Color(.separator))
+                .padding(.vertical, 8)
+
+            VStack(alignment: .leading, spacing: 8) {
                 infoCell(
                     label: Localizables.CarbItems.carbsLabel,
                     value: Localizables.CarbItems.carbsValue(grams: item.gramsOfCarbs),
@@ -54,20 +117,21 @@ struct CarbItemView: View {
                     )
                 }
 
-                Spacer()
+                if let sodium = item.sodium, sodium > 0 {
+                    Divider()
+                    infoCell(
+                        label: Localizables.CarbItems.sodiumLabel,
+                        value: Localizables.CarbItems.sodiumValue(miliGrams: sodium),
+                        systemImageName: "pill",
+                        imageColor: .gray
+                    )
+                }
             }
             .padding(.top, 8)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .cardBackground(innerPadding: 16)
-        .fixedSize(horizontal: false, vertical: true)
-        .frame(maxWidth: .infinity, alignment: .leading)
     }
-}
 
-// MARK: - Private methods
-
-private extension CarbItemView {
     @ViewBuilder
     func infoCell(
         label: String,
@@ -78,6 +142,7 @@ private extension CarbItemView {
         HStack(spacing: 4) {
             Image(systemName: systemImageName)
                 .foregroundColor(imageColor)
+                .frame(width: 25, alignment: .center)
             Text(label)
                 .font(.Custom.Medium.font2)
             Text(value)

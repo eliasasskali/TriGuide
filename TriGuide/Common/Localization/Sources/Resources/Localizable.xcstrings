@@ -6,6 +6,28 @@
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
+            "value" : "Cafeïna:"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Caffeine:"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cafeína:"
+          }
+        }
+      }
+    },
+    "carbItems_caffeine_label_short" : {
+      "localizations" : {
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
             "value" : "Caf:"
           }
         },
@@ -50,6 +72,28 @@
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
+            "value" : "Hidrats de carboni:"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carbohydrates:"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carbohidratos:"
+          }
+        }
+      }
+    },
+    "carbItems_carbs_label_short" : {
+      "localizations" : {
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
             "value" : "HC:"
           }
         },
@@ -62,7 +106,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "HC:"
+            "value" : "CH:"
           }
         }
       }
@@ -85,6 +129,52 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%.0f g"
+          }
+        }
+      }
+    },
+    "carbItems_sodium_label" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sodi:"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sodium:"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sodio:"
+          }
+        }
+      }
+    },
+    "carbItems_sodium_value" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%.0f mg"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%.0f mg"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%.0f mg"
           }
         }
       }
@@ -112,6 +202,28 @@
       }
     },
     "carbItems_volume_label" : {
+      "localizations" : {
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volum d’aigua:"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Water volume:"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volumen de agua:"
+          }
+        }
+      }
+    },
+    "carbItems_volume_label_short" : {
       "localizations" : {
         "ca" : {
           "stringUnit" : {

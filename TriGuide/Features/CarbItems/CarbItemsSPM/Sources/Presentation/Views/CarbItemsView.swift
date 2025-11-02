@@ -67,6 +67,8 @@ public struct CarbItemsView: View {
 
         let viewModel = CarbItemsViewModel(
             loadCarbItemsUseCase: LoadCarbItemsUseCaseDefault(repository: repository),
+            addUserCarbItemUseCase: AddUserCarbItemUseCaseDefault(repository: repository),
+            deleteUserCarbItemUseCase: DeleteUserCarbItemUseCaseDefault(repository: repository),
             searchCarbItemsUseCase: SearchCarbItemsUseCaseDefault()
         )
 
