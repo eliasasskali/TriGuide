@@ -35,5 +35,9 @@ public enum Localizables {
         public static var materialList: String {
             String(localized: "tabs_material_list", bundle: .module)
         }
+
+        public static var sportNutrition: String {
+            String(localized: "tabs_sport_nutrition", bundle: .module)
+        }
     }
 }
