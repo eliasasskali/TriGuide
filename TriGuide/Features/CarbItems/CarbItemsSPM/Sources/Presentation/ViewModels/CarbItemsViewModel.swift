@@ -51,12 +51,25 @@ extension CarbItemsViewModel {
         searchCarbItemsUseCase.execute(carbItems: carbItems, searchText: searchText)
     }
 
-    func addUserCarbItem(carbItem: CarbItem) async {
-
+    func addUserCarbItem(item: CarbItem) async {
+        state = .loading
+        do {
+            try await addUserCarbItemUseCase.execute(item: item)
+            state = .loaded
+        } catch {
+            handle(error)
+            state = .unloaded
+        }
     }
 
-    func deleteUserCarbItem(carbItem: CarbItem) async {
-
+    func deleteUserCarbItem(item: CarbItem) async {
+        do {
+            try await deleteUserCarbItemUseCase.execute(item: item)
+            state = .loaded
+        } catch {
+            handle(error)
+            state = .unloaded
+        }
     }
 }
 

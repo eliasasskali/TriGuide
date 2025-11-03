@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import FormKit
 
 public final class CarbItemsViewFactoryDefault: CarbItemsViewFactory {
     public struct Dependencies {
@@ -60,6 +61,20 @@ public final class CarbItemsViewFactoryDefault: CarbItemsViewFactory {
         )
 
         return CarbItemsView(viewModel: viewModel)
+    }
+
+    @MainActor public func buildCarbItemFormView(
+        sections: [FormSection]?,
+        existingItem: CarbItem?,
+        saveAction: @escaping (CarbItem) -> Void
+    ) -> CarbItemFormView {
+        CarbItemFormView(
+            viewModel: CarbItemFormViewModel(
+                sections: sections ?? CarbItemFormViewModel.defaultSections,
+                existingItem: existingItem,
+                saveAction: saveAction
+            )
+        )
     }
 }
 

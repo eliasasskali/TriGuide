@@ -33,6 +33,17 @@ public struct CarbItemsView: View {
             )
             .navigationTitle(Localizables.CarbItems.title)
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        // TODO: Open Carb Item form
+                    } label: {
+                        Image(systemName: "plus.circle.fill")
+                            .font(.title2)
+                    }
+                    .accessibilityLabel("Add Carb Item")
+                }
+            }
             .overlay {
                 if viewModel.state == .loading {
                     ProgressView()

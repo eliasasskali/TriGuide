@@ -12,7 +12,10 @@ struct CarbItemView: View {
 
     var body: some View {
         itemView
-            .cardBackground(innerPadding: isExpanded ? 16 : 12)
+            .cardBackground(
+                innerHorizontalPadding: 16,
+                innerVerticalPadding: isExpanded ? 16 : 8
+            )
             .fixedSize(horizontal: false, vertical: true)
             .frame(maxWidth: .infinity, alignment: .leading)
             .onTapGesture {

@@ -19,6 +19,10 @@ public enum Localizables {
         public static var sport: String {
             String(localized: "sport", bundle: .module)
         }
+
+        public static var save: String {
+            String(localized: "save", bundle: .module)
+        }
     }
 
     // MARK: - App tabs
