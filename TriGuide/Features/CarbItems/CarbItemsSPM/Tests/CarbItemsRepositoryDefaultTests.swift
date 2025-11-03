@@ -137,7 +137,7 @@ extension CarbItemsRepositoryDefaultTests {
         try await sut.addUserCarbItem(item)
 
         // Act
-        try await sut.removeUserCarbItem(item)
+        try await sut.removeUserCarbItem(with: item.id)
         let items = try await sut.getUserCarbItems()
 
         // Assert

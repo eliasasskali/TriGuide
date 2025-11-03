@@ -22,7 +22,8 @@ public struct TotalTimeLabel: View {
         .frame(maxWidth: .infinity)
         .cardBackground(
             backgroundColor: Color(UIColor.lightGray).opacity(0.2),
-            innerPadding: 8
+            innerHorizontalPadding: 8,
+            innerVerticalPadding: 8
         )
     }
 }

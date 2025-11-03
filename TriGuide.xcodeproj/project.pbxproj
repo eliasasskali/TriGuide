@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		9C4D1E682EA625B1000744ED /* Localization in Frameworks */ = {isa = PBXBuildFile; productRef = 9C4D1E672EA625B1000744ED /* Localization */; };
+		9C5D3D172EB8A28200E55E2E /* FormKit in Frameworks */ = {isa = PBXBuildFile; productRef = 9C5D3D162EB8A28200E55E2E /* FormKit */; };
 		9C5FAFFE2EB160AD00815332 /* CarbItemsSPM in Frameworks */ = {isa = PBXBuildFile; productRef = 9C5FAFFD2EB160AD00815332 /* CarbItemsSPM */; };
 		9C78AC5C2EA66CF200FB5BE8 /* DesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = 9C78AC5B2EA66CF200FB5BE8 /* DesignSystem */; };
 		9CF7F49A2EAA7A1200085B77 /* TriGuideDomain in Frameworks */ = {isa = PBXBuildFile; productRef = 9CF7F4992EAA7A1200085B77 /* TriGuideDomain */; };
@@ -41,6 +42,7 @@
 		9C4D1E652EA6221B000744ED /* Exceptions for "TriGuide" folder in "TriGuide" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Common/FormKit,
 				Common/Localization,
 				Common/StorageKit,
 				Common/TriGuideDomain,
@@ -79,6 +81,7 @@
 				9C4D1E682EA625B1000744ED /* Localization in Frameworks */,
 				9C78AC5C2EA66CF200FB5BE8 /* DesignSystem in Frameworks */,
 				9CF7F49D2EAAA9C500085B77 /* RaceCalculatorSPM in Frameworks */,
+				9C5D3D172EB8A28200E55E2E /* FormKit in Frameworks */,
 				9C5FAFFE2EB160AD00815332 /* CarbItemsSPM in Frameworks */,
 				9CF7F49A2EAA7A1200085B77 /* TriGuideDomain in Frameworks */,
 			);
@@ -146,6 +149,7 @@
 				9CF7F4992EAA7A1200085B77 /* TriGuideDomain */,
 				9CF7F49C2EAAA9C500085B77 /* RaceCalculatorSPM */,
 				9C5FAFFD2EB160AD00815332 /* CarbItemsSPM */,
+				9C5D3D162EB8A28200E55E2E /* FormKit */,
 			);
 			productName = TriGuide;
 			productReference = 9CB979972E141AC9001CBBD8 /* TriGuide.app */;
@@ -235,6 +239,7 @@
 				9CF7F4982EAA7A1200085B77 /* XCLocalSwiftPackageReference "TriGuide/Common/TriGuideDomain" */,
 				9CF7F49B2EAAA9C500085B77 /* XCLocalSwiftPackageReference "TriGuide/Features/RaceCalculator/RaceCalculatorSPM" */,
 				9C5FAFFC2EB160AD00815332 /* XCLocalSwiftPackageReference "TriGuide/Features/CarbItems/CarbItemsSPM" */,
+				9C5D3D152EB8A28200E55E2E /* XCLocalSwiftPackageReference "TriGuide/Common/FormKit" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 9CB979982E141AC9001CBBD8 /* Products */;
@@ -607,6 +612,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = TriGuide/Common/Localization;
 		};
+		9C5D3D152EB8A28200E55E2E /* XCLocalSwiftPackageReference "TriGuide/Common/FormKit" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = TriGuide/Common/FormKit;
+		};
 		9C5FAFFC2EB160AD00815332 /* XCLocalSwiftPackageReference "TriGuide/Features/CarbItems/CarbItemsSPM" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = TriGuide/Features/CarbItems/CarbItemsSPM;
@@ -629,6 +638,10 @@
 		9C4D1E672EA625B1000744ED /* Localization */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Localization;
+		};
+		9C5D3D162EB8A28200E55E2E /* FormKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = FormKit;
 		};
 		9C5FAFFD2EB160AD00815332 /* CarbItemsSPM */ = {
 			isa = XCSwiftPackageProductDependency;

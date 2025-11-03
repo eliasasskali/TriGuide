@@ -17,13 +17,19 @@ public class CarbItemsViewModel: ObservableObject {
     @Published var carbItems: [CarbItem] = []
 
     let loadCarbItemsUseCase: LoadCarbItemsUseCase
+    let addUserCarbItemUseCase: AddUserCarbItemUseCase
+    let deleteUserCarbItemUseCase: DeleteUserCarbItemUseCase
     let searchCarbItemsUseCase: SearchCarbItemsUseCase
 
     init(
         loadCarbItemsUseCase: LoadCarbItemsUseCase,
-        searchCarbItemsUseCase: SearchCarbItemsUseCase
+        addUserCarbItemUseCase: AddUserCarbItemUseCase,
+        deleteUserCarbItemUseCase: DeleteUserCarbItemUseCase,
+        searchCarbItemsUseCase: SearchCarbItemsUseCase,
     ) {
         self.loadCarbItemsUseCase = loadCarbItemsUseCase
+        self.addUserCarbItemUseCase = addUserCarbItemUseCase
+        self.deleteUserCarbItemUseCase = deleteUserCarbItemUseCase
         self.searchCarbItemsUseCase = searchCarbItemsUseCase
     }
 }
@@ -43,6 +49,27 @@ extension CarbItemsViewModel {
 
     func filterCarbItems(by searchText: String) -> [CarbItem] {
         searchCarbItemsUseCase.execute(carbItems: carbItems, searchText: searchText)
+    }
+
+    func addUserCarbItem(item: CarbItem) async {
+        state = .loading
+        do {
+            try await addUserCarbItemUseCase.execute(item: item)
+            state = .loaded
+        } catch {
+            handle(error)
+            state = .unloaded
+        }
+    }
+
+    func deleteUserCarbItem(item: CarbItem) async {
+        do {
+            try await deleteUserCarbItemUseCase.execute(item: item)
+            state = .loaded
+        } catch {
+            handle(error)
+            state = .unloaded
+        }
     }
 }
 

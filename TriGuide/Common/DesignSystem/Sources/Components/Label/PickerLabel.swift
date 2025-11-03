@@ -53,7 +53,8 @@ private extension PickerLabel {
         }
         .cardBackground(
             backgroundColor: Color(UIColor.lightGray).opacity(0.2),
-            innerPadding: 8
+            innerHorizontalPadding: 8,
+            innerVerticalPadding: 8
         )
     }
     var verticalPickerLabel: some View {
@@ -70,7 +71,8 @@ private extension PickerLabel {
         }
         .cardBackground(
             backgroundColor: Color(UIColor.lightGray).opacity(0.2),
-            innerPadding: 8
+            innerHorizontalPadding: 8,
+            innerVerticalPadding: 8
         )
     }
 }

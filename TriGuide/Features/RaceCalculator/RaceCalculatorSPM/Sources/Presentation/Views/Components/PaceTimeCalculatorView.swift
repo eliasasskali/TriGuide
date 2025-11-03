@@ -50,7 +50,7 @@ struct PaceTimeCalculatorView<Distance: RaceDistance & CaseIterable>: View where
             guard let newValue else { return }
             viewModel.distance = newValue.meters
         }
-        .cardBackground(innerPadding: 16)
+        .cardBackground()
         .frame(maxWidth: .infinity)
         .padding(.horizontal, 4)
     }

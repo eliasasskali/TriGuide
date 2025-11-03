@@ -38,7 +38,7 @@ struct SplitsTableView: View {
             
             splitsGrid
         }
-        .cardBackground(innerPadding: 16)
+        .cardBackground()
         .padding(4)
         .onAppear { updateSplits() }
         .onChange(of: totalDistance) { updateSplits() }
