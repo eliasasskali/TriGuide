@@ -375,6 +375,9 @@
         }
       }
     },
+    "carbItems_all_items_section_title" : {
+
+    },
     "carbItems_caffeine_label" : {
       "localizations" : {
         "ca" : {
@@ -575,6 +578,9 @@
         }
       }
     },
+    "carbItems_user_items_section_title" : {
+
+    },
     "carbItems_volume_label" : {
       "localizations" : {
         "ca" : {
@@ -641,6 +647,9 @@
         }
       }
     },
+    "delete" : {
+
+    },
     "done" : {
       "localizations" : {
         "ca" : {
@@ -662,6 +671,9 @@
           }
         }
       }
+    },
+    "edit" : {
+
     },
     "formErrors_between_min_and_max" : {
       "localizations" : {

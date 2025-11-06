@@ -12,6 +12,7 @@ public final class CarbItemsViewFactoryDefault: CarbItemsViewFactory {
         let userCarbItemsDataSource: UserCarbItemsDataSource
         let carbItemsRepository: CarbItemsRepository
         let loadCarbItemsUseCase: LoadCarbItemsUseCase
+        let loadUserCarbItemsUseCase: LoadUserCarbItemsUseCase
         let addUserCarbItemUseCase: AddUserCarbItemUseCase
         let deleteUserCarbItemUseCase: DeleteUserCarbItemUseCase
         let searchCarbItemsUseCase: SearchCarbItemsUseCase
@@ -22,6 +23,7 @@ public final class CarbItemsViewFactoryDefault: CarbItemsViewFactory {
             userCarbItemsDataSource: UserCarbItemsDataSource? = nil,
             carbItemsRepository: CarbItemsRepository? = nil,
             loadCarbItemsUseCase: LoadCarbItemsUseCase? = nil,
+            loadUserCarbItemsUseCase: LoadUserCarbItemsUseCase? = nil,
             addUserCarbItemUseCase: AddUserCarbItemUseCase? = nil,
             deleteUserCarbItemUseCase: DeleteUserCarbItemUseCase? = nil,
             searchCarbItemsUseCase: SearchCarbItemsUseCase? = nil
@@ -40,6 +42,7 @@ public final class CarbItemsViewFactoryDefault: CarbItemsViewFactory {
             self.userCarbItemsDataSource = userItemsDataSource
             self.carbItemsRepository = repository
             self.loadCarbItemsUseCase = loadCarbItemsUseCase ?? LoadCarbItemsUseCaseDefault(repository: repository)
+            self.loadUserCarbItemsUseCase = loadUserCarbItemsUseCase ?? LoadUserCarbItemsUseCaseDefault(repository: repository)
             self.addUserCarbItemUseCase = addUserCarbItemUseCase ?? AddUserCarbItemUseCaseDefault(repository: repository)
             self.deleteUserCarbItemUseCase = deleteUserCarbItemUseCase ?? DeleteUserCarbItemUseCaseDefault(repository: repository)
             self.searchCarbItemsUseCase = searchCarbItemsUseCase ?? SearchCarbItemsUseCaseDefault()
@@ -55,6 +58,7 @@ public final class CarbItemsViewFactoryDefault: CarbItemsViewFactory {
     @MainActor public func buildCarbItemsView() -> CarbItemsView {
         let viewModel = CarbItemsViewModel(
             loadCarbItemsUseCase: dependencies.loadCarbItemsUseCase,
+            loadUserCarbItemsUseCase: dependencies.loadUserCarbItemsUseCase,
             addUserCarbItemUseCase: dependencies.addUserCarbItemUseCase,
             deleteUserCarbItemUseCase: dependencies.deleteUserCarbItemUseCase,
             searchCarbItemsUseCase: dependencies.searchCarbItemsUseCase
