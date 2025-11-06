@@ -6,24 +6,23 @@ import SwiftUI
 import Localization
 
 public struct CarbItemsView: View {
-    @ObservedObject var viewModel: CarbItemsViewModel
-
-    private enum Route: Hashable {
-        case form(existingItem: CarbItem?)
-    }
-
-    @State private var path: [Route] = []
+    @ObservedObject private var viewModel: CarbItemsViewModel
+    @ObservedObject private var coordinator: CarbItemsCoordinator
 
     @State private var searchText = ""
     @State private var filteredItems: [CarbItem] = []
     @State private var filteredUserItems: [CarbItem] = []
 
-    public init(viewModel: CarbItemsViewModel) {
+    public init(
+        viewModel: CarbItemsViewModel,
+        coordinator: CarbItemsCoordinator
+    ) {
         self.viewModel = viewModel
+        self.coordinator = coordinator
     }
 
     public var body: some View {
-        NavigationStack(path: $path) {
+        NavigationStack(path: coordinator.pathBinding) {
             List {
                 if !filteredUserItems.isEmpty {
                     userItemsSection
@@ -48,7 +47,7 @@ public struct CarbItemsView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
-                        path.append(.form(existingItem: nil))
+                        coordinator.presentCarbItemForm()
                     } label: {
                         Image(systemName: "plus.circle.fill")
                             .font(.title2)
@@ -62,13 +61,13 @@ public struct CarbItemsView: View {
             }
             .onChange(of: viewModel.carbItems) { _, newItems in
                 filteredItems = searchText.isEmpty
-                    ? newItems
-                    : viewModel.filterCarbItems(by: searchText)
+                ? newItems
+                : viewModel.filterCarbItems(by: searchText)
             }
             .onChange(of: viewModel.userCarbItems) { _, newUserItems in
                 filteredUserItems = searchText.isEmpty
-                    ? newUserItems
-                    : viewModel.filterUserCarbItems(by: searchText)
+                ? newUserItems
+                : viewModel.filterUserCarbItems(by: searchText)
             }
             .onChange(of: searchText) { _, newSearchText in
                 updateFilteredItems(with: newSearchText)
@@ -77,10 +76,10 @@ public struct CarbItemsView: View {
                 await viewModel.loadCarbItems()
                 await viewModel.loadUserCarbItems()
             }
-            .navigationDestination(for: Route.self) { route in
+            .navigationDestination(for: CarbItemsCoordinator.Route.self) { route in
                 switch route {
                 case .form(let existing):
-                    buildFormView(for: existing)
+                    coordinator.buildFormView(for: existing)
                 }
             }
         }
@@ -105,7 +104,7 @@ private extension CarbItemsView {
                         }
 
                         Button {
-                            path.append(.form(existingItem: carbItem))
+                            coordinator.presentCarbItemForm(for: carbItem)
                         } label: {
                             Label(Localizables.Common.edit, systemImage: "pencil")
                         }
@@ -126,32 +125,14 @@ private extension CarbItemsView {
         .listSectionSeparator(.hidden)
     }
 
-    @ViewBuilder
-    func buildFormView(for existingItem: CarbItem? = nil) -> some View {
-        let formViewModel = CarbItemFormViewModel(
-            existingItem: existingItem,
-            saveAction: { savedItem in
-                Task {
-                    if let existingItem {
-                        await viewModel.editUserCarbItem(newItem: savedItem, oldItem: existingItem)
-                    } else {
-                        await viewModel.addUserCarbItem(item: savedItem)
-                    }
-                }
-            }
-        )
-
-        CarbItemFormView(viewModel: formViewModel)
-    }
-
     func updateFilteredItems(with searchText: String) {
         filteredItems = searchText.isEmpty
-            ? viewModel.carbItems
-            : viewModel.filterCarbItems(by: searchText)
+        ? viewModel.carbItems
+        : viewModel.filterCarbItems(by: searchText)
 
         filteredUserItems = searchText.isEmpty
-            ? viewModel.userCarbItems
-            : viewModel.filterUserCarbItems(by: searchText)
+        ? viewModel.userCarbItems
+        : viewModel.filterUserCarbItems(by: searchText)
     }
 }
 
@@ -178,8 +159,12 @@ private struct PreviewWrapper: View {
             deleteUserCarbItemUseCase: DeleteUserCarbItemUseCaseDefault(repository: repository),
             searchCarbItemsUseCase: SearchCarbItemsUseCaseDefault()
         )
+        let coordinator = CarbItemsCoordinator(factory: CarbItemsViewFactoryDefault(dependencies: try! .init()))
 
-        self.view = CarbItemsView(viewModel: viewModel)
+        self.view = CarbItemsView(
+            viewModel: viewModel,
+            coordinator: coordinator
+        )
     }
 
     var body: some View {

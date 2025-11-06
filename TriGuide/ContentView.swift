@@ -8,20 +8,32 @@ import RaceCalculatorSPM
 import CarbItemsSPM
 
 struct ContentView: View {
+    @StateObject private var carbItemsCoordinator: CarbItemsCoordinator
+    @StateObject private var raceCalculatorCoordinator: RaceCalculatorCoordinator
+
+    init() {
+        let carbItemsFactory = CarbItemsViewFactoryDefault(dependencies: try! .init())
+        _carbItemsCoordinator = StateObject(
+            wrappedValue: CarbItemsCoordinator(factory: carbItemsFactory)
+        )
+        let raceCalculatorFactory = RaceCalculatorViewFactoryDefault(dependencies: .init())
+        _raceCalculatorCoordinator = StateObject(
+            wrappedValue: RaceCalculatorCoordinator(factory: raceCalculatorFactory)
+        )
+    }
+
     var body: some View {
         TabView {
-            if let carbItemsView = CarbItemsViewFactoryDefault.makeViewOrNil() {
-                carbItemsView
-                    .tabItem {
-                        Label(Localizables.Tabs.home, systemImage: "fork.knife")
-                    }
-            }
+            carbItemsCoordinator.start()
+                .tabItem {
+                    Label(Localizables.Tabs.home, systemImage: "fork.knife")
+                }
 //            Text(Localizables.Tabs.home)
 //                .tabItem {
 //                    Label(Localizables.Tabs.home, systemImage: "home")
 //                }
 
-            TimeCalculatorView()
+            raceCalculatorCoordinator.start()
                 .tabItem {
                     Label(Localizables.Tabs.calculator, systemImage: "plusminus")
                 }

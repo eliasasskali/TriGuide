@@ -5,7 +5,7 @@
 import Foundation
 import FormKit
 
-public final class CarbItemsViewFactoryDefault: CarbItemsViewFactory {
+public final class CarbItemsViewFactoryDefault {
     public struct Dependencies {
         let remoteCarbItemsDataSource: RemoteCarbItemsDataSource
         let localCarbItemsDataSource: CachedCarbItemsDataSource
@@ -54,21 +54,33 @@ public final class CarbItemsViewFactoryDefault: CarbItemsViewFactory {
     public init(dependencies: Dependencies) {
         self.dependencies = dependencies
     }
+}
 
-    @MainActor public func buildCarbItemsView() -> CarbItemsView {
-        let viewModel = CarbItemsViewModel(
+// MARK: - CarbItemsViewFactory
+
+extension CarbItemsViewFactoryDefault: CarbItemsViewFactory {
+    @MainActor public func buildCarbItemsView(
+        viewModel: CarbItemsViewModel,
+        coordinator: CarbItemsCoordinator
+    ) -> CarbItemsView {
+        CarbItemsView(
+            viewModel: viewModel,
+            coordinator: coordinator
+        )
+    }
+
+    @MainActor public func buildCarbItemsViewModel() -> CarbItemsViewModel {
+        CarbItemsViewModel(
             loadCarbItemsUseCase: dependencies.loadCarbItemsUseCase,
             loadUserCarbItemsUseCase: dependencies.loadUserCarbItemsUseCase,
             addUserCarbItemUseCase: dependencies.addUserCarbItemUseCase,
             deleteUserCarbItemUseCase: dependencies.deleteUserCarbItemUseCase,
             searchCarbItemsUseCase: dependencies.searchCarbItemsUseCase
         )
-
-        return CarbItemsView(viewModel: viewModel)
     }
 
     @MainActor public func buildCarbItemFormView(
-        sections: [FormSection]?,
+        sections: [FormSection]? = nil,
         existingItem: CarbItem?,
         saveAction: @escaping (CarbItem) -> Void
     ) -> CarbItemFormView {
@@ -79,19 +91,5 @@ public final class CarbItemsViewFactoryDefault: CarbItemsViewFactory {
                 saveAction: saveAction
             )
         )
-    }
-}
-
-// MARK: - Convenience initializer without parameters
-
-public extension CarbItemsViewFactoryDefault {
-    @MainActor
-    static func makeViewOrNil() -> CarbItemsView? {
-        do {
-            return try CarbItemsViewFactoryDefault(dependencies: .init())
-                .buildCarbItemsView()
-        } catch {
-            return nil
-        }
     }
 }

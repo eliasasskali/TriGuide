@@ -44,8 +44,9 @@ private extension CarbItemView {
             Text(Localizables.CarbItems.carbsValue(grams: item.gramsOfCarbs))
                 .font(.Custom.Regular.font2)
 
-            Image(systemName: "bolt.fill")
-                .foregroundColor(.yellow)
+            // TODO: use start.fill for favs
+//            Image(systemName: "bolt.fill")
+//                .foregroundColor(.yellow)
 
             Divider()
 

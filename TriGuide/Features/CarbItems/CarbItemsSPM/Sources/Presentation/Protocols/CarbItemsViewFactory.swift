@@ -5,8 +5,12 @@
 import Foundation
 import FormKit
 
-protocol CarbItemsViewFactory {
-    @MainActor func buildCarbItemsView() -> CarbItemsView
+public protocol CarbItemsViewFactory {
+    @MainActor func buildCarbItemsView(
+        viewModel: CarbItemsViewModel,
+        coordinator: CarbItemsCoordinator
+    ) -> CarbItemsView
+    @MainActor func buildCarbItemsViewModel() -> CarbItemsViewModel
     @MainActor func buildCarbItemFormView(
         sections: [FormSection]?,
         existingItem: CarbItem?,
