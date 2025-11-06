@@ -6,26 +6,37 @@ import SwiftUI
 import Localization
 
 public struct CarbItemsView: View {
-    @ObservedObject var viewModel: CarbItemsViewModel
+    @ObservedObject private var viewModel: CarbItemsViewModel
+    @ObservedObject private var coordinator: CarbItemsCoordinator
+
     @State private var searchText = ""
     @State private var filteredItems: [CarbItem] = []
+    @State private var filteredUserItems: [CarbItem] = []
 
-    public init(viewModel: CarbItemsViewModel) {
+    public init(
+        viewModel: CarbItemsViewModel,
+        coordinator: CarbItemsCoordinator
+    ) {
         self.viewModel = viewModel
+        self.coordinator = coordinator
     }
 
     public var body: some View {
-        NavigationStack {
+        NavigationStack(path: coordinator.pathBinding) {
             List {
-                ForEach(filteredItems, id: \.self) { carbItem in
-                    CarbItemView(item: carbItem)
-                        .listRowSeparator(.hidden)
+                if !filteredUserItems.isEmpty {
+                    userItemsSection
+                }
+
+                if !filteredItems.isEmpty {
+                    itemsSection
                 }
             }
             .listStyle(.plain)
             .scrollContentBackground(.hidden)
             .refreshable {
                 await viewModel.loadCarbItems(forceRefresh: true)
+                await viewModel.loadUserCarbItems(forceRefresh: true)
             }
             .searchable(
                 text: $searchText,
@@ -36,12 +47,11 @@ public struct CarbItemsView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
-                        // TODO: Open Carb Item form
+                        coordinator.presentCarbItemForm()
                     } label: {
                         Image(systemName: "plus.circle.fill")
                             .font(.title2)
                     }
-                    .accessibilityLabel("Add Carb Item")
                 }
             }
             .overlay {
@@ -51,16 +61,26 @@ public struct CarbItemsView: View {
             }
             .onChange(of: viewModel.carbItems) { _, newItems in
                 filteredItems = searchText.isEmpty
-                    ? newItems
-                    : viewModel.filterCarbItems(by: searchText)
+                ? newItems
+                : viewModel.filterCarbItems(by: searchText)
+            }
+            .onChange(of: viewModel.userCarbItems) { _, newUserItems in
+                filteredUserItems = searchText.isEmpty
+                ? newUserItems
+                : viewModel.filterUserCarbItems(by: searchText)
             }
             .onChange(of: searchText) { _, newSearchText in
-                filteredItems = newSearchText.isEmpty
-                    ? viewModel.carbItems
-                    : viewModel.filterCarbItems(by: newSearchText)
+                updateFilteredItems(with: newSearchText)
             }
             .task {
                 await viewModel.loadCarbItems()
+                await viewModel.loadUserCarbItems()
+            }
+            .navigationDestination(for: CarbItemsCoordinator.Route.self) { route in
+                switch route {
+                case .form(let existing):
+                    coordinator.buildFormView(for: existing)
+                }
             }
         }
         .background(Color(.systemGroupedBackground))
@@ -68,9 +88,65 @@ public struct CarbItemsView: View {
     }
 }
 
+private extension CarbItemsView {
+    var userItemsSection: some View {
+        Section(header: Text(Localizables.CarbItems.userItemsSectionTitle)) {
+            ForEach(filteredUserItems, id: \.self) { carbItem in
+                CarbItemView(item: carbItem)
+                    .listRowSeparator(.hidden)
+                    .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                        Button(role: .destructive) {
+                            Task {
+                                await viewModel.deleteUserCarbItem(item: carbItem)
+                            }
+                        } label: {
+                            Label(Localizables.Common.delete, systemImage: "trash")
+                        }
+
+                        Button {
+                            coordinator.presentCarbItemForm(for: carbItem)
+                        } label: {
+                            Label(Localizables.Common.edit, systemImage: "pencil")
+                        }
+                        .tint(.blue)
+                    }
+            }
+        }
+        .listSectionSeparator(.hidden)
+    }
+
+    var itemsSection: some View {
+        Section(header: Text(Localizables.CarbItems.allItemsSectionTitle)) {
+            ForEach(filteredItems, id: \.self) { carbItem in
+                CarbItemView(item: carbItem)
+                    .listRowSeparator(.hidden)
+            }
+        }
+        .listSectionSeparator(.hidden)
+    }
+
+    func updateFilteredItems(with searchText: String) {
+        filteredItems = searchText.isEmpty
+        ? viewModel.carbItems
+        : viewModel.filterCarbItems(by: searchText)
+
+        filteredUserItems = searchText.isEmpty
+        ? viewModel.userCarbItems
+        : viewModel.filterUserCarbItems(by: searchText)
+    }
+}
+
+// MARK: - Preview
+
 #Preview {
-    do {
-        let repository = try CarbItemsRepositoryDefault(
+    PreviewWrapper()
+}
+
+private struct PreviewWrapper: View {
+    let view: CarbItemsView
+
+    init() {
+        let repository = try! CarbItemsRepositoryDefault(
             remoteCarbItemsDataSource: RemoteCarbItemsDataSourceDefault(),
             cachedCarbItemsDataSource: CachedCarbItemsDataSourceDefault(),
             userCarbItemsDataSource: UserCarbItemsDataSourceDefault()
@@ -78,13 +154,20 @@ public struct CarbItemsView: View {
 
         let viewModel = CarbItemsViewModel(
             loadCarbItemsUseCase: LoadCarbItemsUseCaseDefault(repository: repository),
+            loadUserCarbItemsUseCase: LoadUserCarbItemsUseCaseDefault(repository: repository),
             addUserCarbItemUseCase: AddUserCarbItemUseCaseDefault(repository: repository),
             deleteUserCarbItemUseCase: DeleteUserCarbItemUseCaseDefault(repository: repository),
             searchCarbItemsUseCase: SearchCarbItemsUseCaseDefault()
         )
+        let coordinator = CarbItemsCoordinator(factory: CarbItemsViewFactoryDefault(dependencies: try! .init()))
 
-        return CarbItemsView(viewModel: viewModel)
-    } catch {
-        return Text("Preview failed: \(error.localizedDescription)")
+        self.view = CarbItemsView(
+            viewModel: viewModel,
+            coordinator: coordinator
+        )
+    }
+
+    var body: some View {
+        view
     }
 }

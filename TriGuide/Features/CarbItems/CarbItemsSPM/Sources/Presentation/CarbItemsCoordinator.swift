@@ -1,0 +1,53 @@
+//
+// TriGuide 2025
+//
+
+import Foundation
+import SwiftUI
+import NavigationKit
+
+public class CarbItemsCoordinator: BaseCoordinator<CarbItemsCoordinator.Route, Never, CarbItemsView> {
+    public enum Route: Hashable {
+        case form(existingItem: CarbItem?)
+    }
+
+    let factory: CarbItemsViewFactory
+    @Published public var viewModel: CarbItemsViewModel
+
+    public init(factory: CarbItemsViewFactory) {
+        self.factory = factory
+        self.viewModel = factory.buildCarbItemsViewModel()
+        super.init()
+    }
+
+    public override func start() -> CarbItemsView {
+        factory.buildCarbItemsView(
+            viewModel: viewModel,
+            coordinator: self
+        )
+    }
+
+    func presentCarbItemForm(for existingItem: CarbItem? = nil) {
+        push(.form(existingItem: existingItem))
+    }
+
+    @ViewBuilder
+    public func buildFormView(for existingItem: CarbItem? = nil) -> CarbItemFormView {
+        let saveAction: (CarbItem) -> Void = { [weak self] savedItem in
+            Task { @MainActor in
+                guard let self = self else { return }
+                if let old = existingItem {
+                    await self.viewModel.editUserCarbItem(newItem: savedItem, oldItem: old)
+                } else {
+                    await self.viewModel.addUserCarbItem(item: savedItem)
+                }
+            }
+        }
+
+        factory.buildCarbItemFormView(
+            sections: CarbItemFormViewModel.defaultSections,
+            existingItem: existingItem,
+            saveAction: saveAction
+        )
+    }
+}

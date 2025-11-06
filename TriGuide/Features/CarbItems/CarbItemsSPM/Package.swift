@@ -18,6 +18,7 @@ let package = Package(
         .package(path: "../../../Common/Localization"),
         .package(path: "../../../Common/StorageKit"),
         .package(path: "../../../Common/FormKit"),
+        .package(path: "../../../Common/NavigationKit"),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -29,7 +30,8 @@ let package = Package(
                 "TriGuideDomain",
                 "Localization",
                 "StorageKit",
-                "FormKit"
+                "FormKit",
+                "NavigationKit"
             ],
             path: "Sources"
         ),

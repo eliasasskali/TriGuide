@@ -23,6 +23,14 @@ public enum Localizables {
         public static var save: String {
             String(localized: "save", bundle: .module)
         }
+
+        public static var delete: String {
+            String(localized: "delete", bundle: .module)
+        }
+
+        public static var edit: String {
+            String(localized: "edit", bundle: .module)
+        }
     }
 
     // MARK: - App tabs

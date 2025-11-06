@@ -10,6 +10,14 @@ public extension Localizables {
             String(localized: "carbItems_title", bundle: .module)
         }
 
+        public static var userItemsSectionTitle: String {
+            String(localized: "carbItems_user_items_section_title", bundle: .module)
+        }
+
+        public static var allItemsSectionTitle: String {
+            String(localized: "carbItems_all_items_section_title", bundle: .module)
+        }
+
         public static var carbsLabel: String {
             String(localized: "carbItems_carbs_label", bundle: .module)
         }

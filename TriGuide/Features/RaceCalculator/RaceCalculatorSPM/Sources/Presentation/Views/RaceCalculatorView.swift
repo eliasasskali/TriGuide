@@ -6,37 +6,32 @@ import SwiftUI
 import Localization
 import TriGuideDomain
 
-public struct TimeCalculatorView: View {
+public struct RaceCalculatorView: View {
     @State private var selectedSport: SupportedSport = .run
     
-    @StateObject private var runViewModel = PaceCalculatorViewModel(
-            paceCalculator: RunningPaceCalculator(),
-            paceUnit: .minPerKm
-        )
-    
-    @StateObject private var swimViewModel = PaceCalculatorViewModel(
-            paceCalculator: SwimmingPaceCalculator(),
-            paceUnit: .minPer100m
-        )
-    
-    @StateObject private var bikeViewModel = PaceCalculatorViewModel(
-            paceCalculator: CyclingPaceCalculator(),
-            paceUnit: .kmPerHour
-        )
-    
-    @StateObject private var runSplitsViewModel = SplitsTableViewModel(
-            paceCalculator: RunningPaceCalculator()
-        )
-    
-    @StateObject private var swimSplitsViewModel = SplitsTableViewModel(
-            paceCalculator: SwimmingPaceCalculator()
-        )
-    
-    @StateObject private var bikeSplitsViewModel = SplitsTableViewModel(
-            paceCalculator: CyclingPaceCalculator()
-        )
+    @StateObject private var runViewModel: PaceCalculatorViewModel
+    @StateObject private var swimViewModel: PaceCalculatorViewModel
+    @StateObject private var bikeViewModel: PaceCalculatorViewModel
 
-    public init() {}
+    @StateObject private var runSplitsViewModel: SplitsTableViewModel
+    @StateObject private var swimSplitsViewModel: SplitsTableViewModel
+    @StateObject private var bikeSplitsViewModel: SplitsTableViewModel
+
+    public init(
+        runViewModel: PaceCalculatorViewModel,
+        swimViewModel: PaceCalculatorViewModel,
+        bikeViewModel: PaceCalculatorViewModel,
+        runSplitsViewModel: SplitsTableViewModel,
+        swimSplitsViewModel: SplitsTableViewModel,
+        bikeSplitsViewModel: SplitsTableViewModel
+    ) {
+        _runViewModel = StateObject(wrappedValue: runViewModel)
+        _swimViewModel = StateObject(wrappedValue: swimViewModel)
+        _bikeViewModel = StateObject(wrappedValue: bikeViewModel)
+        _runSplitsViewModel = StateObject(wrappedValue: runSplitsViewModel)
+        _swimSplitsViewModel = StateObject(wrappedValue: swimSplitsViewModel)
+        _bikeSplitsViewModel = StateObject(wrappedValue: bikeSplitsViewModel)
+    }
 
     public var body: some View {
         VStack(spacing: 0) {
@@ -63,7 +58,7 @@ public struct TimeCalculatorView: View {
     }
 }
 
-private extension TimeCalculatorView {
+private extension RaceCalculatorView {
     @ViewBuilder
     var selectedSportView: some View {
         switch selectedSport {
@@ -182,5 +177,27 @@ private extension TimeCalculatorView {
 }
 
 #Preview {
-    TimeCalculatorView()
+    RaceCalculatorView(
+        runViewModel: PaceCalculatorViewModel(
+            paceCalculator: RunningPaceCalculator(),
+            paceUnit: .minPerKm
+        ),
+        swimViewModel: PaceCalculatorViewModel(
+            paceCalculator: SwimmingPaceCalculator(),
+            paceUnit: .minPer100m
+        ),
+        bikeViewModel: PaceCalculatorViewModel(
+            paceCalculator: CyclingPaceCalculator(),
+            paceUnit: .kmPerHour
+        ),
+        runSplitsViewModel: SplitsTableViewModel(
+            paceCalculator: RunningPaceCalculator()
+        ),
+        swimSplitsViewModel: SplitsTableViewModel(
+            paceCalculator: SwimmingPaceCalculator()
+        ),
+        bikeSplitsViewModel: SplitsTableViewModel(
+            paceCalculator: CyclingPaceCalculator()
+        )
+    )
 }

@@ -16,6 +16,7 @@ let package = Package(
         .package(path: "../../../Common/DesignSystem"),
         .package(path: "../../../Common/TriGuideDomain"),
         .package(path: "../../../Common/Localization"),
+        .package(path: "../../../Common/NavigationKit"),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -25,7 +26,8 @@ let package = Package(
             dependencies: [
                 "DesignSystem",
                 "TriGuideDomain",
-                "Localization"
+                "Localization",
+                "NavigationKit"
             ],
             path: "Sources"
         ),

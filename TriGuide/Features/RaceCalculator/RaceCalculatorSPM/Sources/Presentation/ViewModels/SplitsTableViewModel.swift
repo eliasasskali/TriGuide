@@ -6,12 +6,12 @@ import Foundation
 import TriGuideDomain
 
 @MainActor
-final class SplitsTableViewModel: ObservableObject {
+public final class SplitsTableViewModel: ObservableObject {
     let paceCalculator: PaceCalculator
     
     @Published var splits: [RaceSplit] = []
 
-    init(paceCalculator: PaceCalculator) {
+    public init(paceCalculator: PaceCalculator) {
         self.paceCalculator = paceCalculator
     }
     

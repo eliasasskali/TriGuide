@@ -7,7 +7,7 @@ import Combine
 import TriGuideDomain
 
 @MainActor
-class PaceCalculatorViewModel: ObservableObject {
+public class PaceCalculatorViewModel: ObservableObject {
     let paceCalculator: PaceCalculator
     
     @Published var distance: Double? {
@@ -61,7 +61,7 @@ class PaceCalculatorViewModel: ObservableObject {
         pace ?? speed
     }
 
-    init(
+    public init(
         paceCalculator: PaceCalculator,
         distance: Double? = nil,
         duration: TimeInterval? = nil,

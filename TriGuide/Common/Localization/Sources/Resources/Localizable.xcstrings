@@ -375,6 +375,28 @@
         }
       }
     },
+    "carbItems_all_items_section_title" : {
+      "localizations" : {
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suggerits"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suggested"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sugeridos"
+          }
+        }
+      }
+    },
     "carbItems_caffeine_label" : {
       "localizations" : {
         "ca" : {
@@ -575,6 +597,28 @@
         }
       }
     },
+    "carbItems_user_items_section_title" : {
+      "localizations" : {
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Els teus hidrats de carboni"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your carbohydrates"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tus hidratos de carbono"
+          }
+        }
+      }
+    },
     "carbItems_volume_label" : {
       "localizations" : {
         "ca" : {
@@ -641,6 +685,28 @@
         }
       }
     },
+    "delete" : {
+      "localizations" : {
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elimina"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eliminar"
+          }
+        }
+      }
+    },
     "done" : {
       "localizations" : {
         "ca" : {
@@ -659,6 +725,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hecho"
+          }
+        }
+      }
+    },
+    "edit" : {
+      "localizations" : {
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edita"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edit"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Editar"
           }
         }
       }
