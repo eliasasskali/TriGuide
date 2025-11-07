@@ -15,11 +15,13 @@ private extension CarbItemsRepositoryDefaultTests {
     func givenSut(
         remote: RemoteCarbItemsDataSourceMock = RemoteCarbItemsDataSourceMock(),
         cache: CachedCarbItemsDataSourceMock = CachedCarbItemsDataSourceMock(),
+        favoriteDataSource: FavoriteCarbItemsDataSourceMock = FavoriteCarbItemsDataSourceMock(),
         userDataSource: UserCarbItemsDataSourceMock = UserCarbItemsDataSourceMock()
     ) -> CarbItemsRepositoryDefault {
         CarbItemsRepositoryDefault(
             remoteCarbItemsDataSource: remote,
             cachedCarbItemsDataSource: cache,
+            favoriteCarbItemsDataSource: favoriteDataSource,
             userCarbItemsDataSource: userDataSource
         )
     }
@@ -143,4 +145,31 @@ extension CarbItemsRepositoryDefaultTests {
         // Assert
         #expect(items.isEmpty)
     }
+
+    // MARK: - Favorite Items
+
+    @Test("Toggles favorite status correctly.")
+    func test_whenToggleFavoriteStatus_thenItTogglesCorrectly() async throws {
+        // Arrange
+        let item = dto(id: "f1", name: "Gel")
+        let remote = RemoteCarbItemsDataSourceMock(dtos: [item])
+        let sut = givenSut(remote: remote)
+
+        // Act
+        _ = try await sut.getCarbItems()
+        await sut.toggleFavorite(with: item.id)
+        var items = try await sut.getCarbItems()
+
+        // Assert
+        #expect(items.count == 1)
+        #expect(items.first?.isFavorite == true)
+
+        // Act - toggle again to remove from favorites
+        await sut.toggleFavorite(with: item.id)
+        items = try await sut.getCarbItems()
+
+        // Assert
+        #expect(items.first?.isFavorite == false)
+    }
+
 }

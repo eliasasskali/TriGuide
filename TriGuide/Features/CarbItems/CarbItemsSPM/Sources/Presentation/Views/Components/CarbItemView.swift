@@ -44,10 +44,10 @@ private extension CarbItemView {
             Text(Localizables.CarbItems.carbsValue(grams: item.gramsOfCarbs))
                 .font(.Custom.Regular.font2)
 
-            // TODO: use start.fill for favs
-//            Image(systemName: "bolt.fill")
-//                .foregroundColor(.yellow)
-
+            if item.isFavorite {
+                Image(systemName: "star.fill")
+                    .foregroundColor(.yellow)
+            }
             Divider()
 
             VStack(spacing: 0) {
@@ -82,6 +82,11 @@ private extension CarbItemView {
                             .font(.Custom.Regular.font2)
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
+                }
+
+                if item.isFavorite {
+                    Image(systemName: "star.fill")
+                        .foregroundColor(.yellow)
                 }
 
                 Spacer()

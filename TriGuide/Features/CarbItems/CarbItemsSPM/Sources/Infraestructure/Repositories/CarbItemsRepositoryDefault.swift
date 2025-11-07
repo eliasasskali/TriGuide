@@ -22,6 +22,7 @@ actor CarbItemsRepositoryDefault: CarbItemsRepository {
 
     private let remoteItemsDataSource: RemoteCarbItemsDataSource
     private let cachedItemsDataSource: CachedCarbItemsDataSource
+    private let favoriteCarbItemsDataSource: FavoriteCarbItemsDataSource
     private let userItemsDataSource: UserCarbItemsDataSource
     private let timeToRefresh: TimeInterval
 
@@ -29,22 +30,32 @@ actor CarbItemsRepositoryDefault: CarbItemsRepository {
     private var lastLoadedAt: Date?
     private var userItems: [CarbItem] = []
     private var hasLoadedOnce = false
+    private var favoriteIds: [String] = []
 
     init(
         remoteCarbItemsDataSource: RemoteCarbItemsDataSource,
         cachedCarbItemsDataSource: CachedCarbItemsDataSource,
+        favoriteCarbItemsDataSource: FavoriteCarbItemsDataSource,
         userCarbItemsDataSource: UserCarbItemsDataSource,
         timeToRefresh: TimeInterval = 600
     ) {
         self.remoteItemsDataSource = remoteCarbItemsDataSource
         self.cachedItemsDataSource = cachedCarbItemsDataSource
+        self.favoriteCarbItemsDataSource = favoriteCarbItemsDataSource
         self.userItemsDataSource = userCarbItemsDataSource
         self.timeToRefresh = timeToRefresh
     }
+}
 
-    // MARK: - Remote/Cached Carb Items
+// MARK: - Remote/Cached Carb Items
 
+extension CarbItemsRepositoryDefault {
     func getCarbItems(forceRefresh: Bool = false) async throws -> [CarbItem] {
+        let items = try await getCarbItemsWithoutFavourites(forceRefresh: forceRefresh)
+        return await mapWithFavourites(items)
+    }
+
+    private func getCarbItemsWithoutFavourites(forceRefresh: Bool = false) async throws -> [CarbItem] {
         if hasLoadedOnce && !forceRefresh {
             if let lastLoadedAt, Date().timeIntervalSince(lastLoadedAt) < timeToRefresh {
                 return items
@@ -100,8 +111,23 @@ actor CarbItemsRepositoryDefault: CarbItemsRepository {
         }
     }
 
-    // MARK: - User Carb Items
+    // MARK: - Favorites
 
+    func toggleFavorite(with id: String) async {
+        if await favoriteCarbItemsDataSource.isFavorite(id) {
+            await favoriteCarbItemsDataSource.removeFavoriteId(id)
+        } else {
+            await favoriteCarbItemsDataSource.addFavoriteId(id)
+        }
+
+        favoriteIds = await favoriteCarbItemsDataSource.getFavoriteIds()
+        items = await mapWithFavourites(items)
+    }
+}
+
+// MARK: - User Carb Items
+
+extension CarbItemsRepositoryDefault {
     func getUserCarbItems(forceRefresh: Bool = false) async throws -> [CarbItem] {
         if !userItems.isEmpty && !forceRefresh {
             return userItems
@@ -126,5 +152,20 @@ actor CarbItemsRepositoryDefault: CarbItemsRepository {
     func removeUserCarbItem(with id: String) async throws {
         try await userItemsDataSource.deleteCarbItem(id: id)
         userItems.removeAll { $0.id == id }
+    }
+}
+
+// MARK: - Private Helpers
+
+private extension CarbItemsRepositoryDefault {
+    func mapWithFavourites(_ items: [CarbItem]) async -> [CarbItem] {
+        if favoriteIds.isEmpty {
+            favoriteIds = await favoriteCarbItemsDataSource.getFavoriteIds()
+        }
+        return items.map { item in
+            var newItem = item
+            newItem.isFavorite = favoriteIds.contains(item.id)
+            return newItem
+        }
     }
 }

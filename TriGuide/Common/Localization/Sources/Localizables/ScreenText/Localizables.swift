@@ -31,6 +31,14 @@ public enum Localizables {
         public static var edit: String {
             String(localized: "edit", bundle: .module)
         }
+
+        public static var addToFavorites: String {
+            String(localized: "add_to_favorites", bundle: .module)
+        }
+
+        public static var removeFromFavorites: String {
+            String(localized: "remove_from_favorites", bundle: .module)
+        }
     }
 
     // MARK: - App tabs

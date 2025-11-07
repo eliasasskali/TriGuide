@@ -17,10 +17,15 @@ public class CarbItemsViewModel: ObservableObject {
     @Published var carbItems: [CarbItem] = []
     @Published var userCarbItems: [CarbItem] = []
 
+    var favoriteCarbITems: [CarbItem] {
+        carbItems.filter(\.isFavorite)
+    }
+
     let loadCarbItemsUseCase: LoadCarbItemsUseCase
     let loadUserCarbItemsUseCase: LoadUserCarbItemsUseCase
     let addUserCarbItemUseCase: AddUserCarbItemUseCase
     let deleteUserCarbItemUseCase: DeleteUserCarbItemUseCase
+    let toggleFavoriteCarbItemUseCase: ToggleFavoriteCarbItemUseCase
     let searchCarbItemsUseCase: SearchCarbItemsUseCase
 
     init(
@@ -28,12 +33,14 @@ public class CarbItemsViewModel: ObservableObject {
         loadUserCarbItemsUseCase: LoadUserCarbItemsUseCase,
         addUserCarbItemUseCase: AddUserCarbItemUseCase,
         deleteUserCarbItemUseCase: DeleteUserCarbItemUseCase,
-        searchCarbItemsUseCase: SearchCarbItemsUseCase,
+        toggleFavoriteCarbItemUseCase: ToggleFavoriteCarbItemUseCase,
+        searchCarbItemsUseCase: SearchCarbItemsUseCase
     ) {
         self.loadCarbItemsUseCase = loadCarbItemsUseCase
         self.loadUserCarbItemsUseCase = loadUserCarbItemsUseCase
         self.addUserCarbItemUseCase = addUserCarbItemUseCase
         self.deleteUserCarbItemUseCase = deleteUserCarbItemUseCase
+        self.toggleFavoriteCarbItemUseCase = toggleFavoriteCarbItemUseCase
         self.searchCarbItemsUseCase = searchCarbItemsUseCase
     }
 }
@@ -45,7 +52,8 @@ extension CarbItemsViewModel {
         state = .loading
         do {
             let useCase = loadCarbItemsUseCase
-            carbItems = try await useCase.execute(forceRefresh: forceRefresh)
+            let items = try await useCase.execute(forceRefresh: forceRefresh)
+            carbItems = sortCarbItemsByFavourites(items)
             state = .loaded
         } catch {
             handle(error)
@@ -55,6 +63,13 @@ extension CarbItemsViewModel {
 
     func filterCarbItems(by searchText: String) -> [CarbItem] {
         searchCarbItemsUseCase.execute(carbItems: carbItems, searchText: searchText)
+    }
+
+    // MARK: - Favorite Carb Items methods
+
+    func toggleFavorite(for item: CarbItem) async {
+        await toggleFavoriteCarbItemUseCase.execute(id: item.id)
+        await loadCarbItems()
     }
 }
 
@@ -117,6 +132,16 @@ extension CarbItemsViewModel {
 private extension CarbItemsViewModel {
     func handle(_ error: Error) {
         errorMessage = "TODO: handle error"
+    }
+
+    private func sortCarbItemsByFavourites(_ items: [CarbItem]) -> [CarbItem] {
+        items.sorted { lhs, rhs in
+            if lhs.isFavorite == rhs.isFavorite {
+                lhs.name.localizedCaseInsensitiveCompare(rhs.name) == .orderedAscending
+            } else {
+                lhs.isFavorite && !rhs.isFavorite
+            }
+        }
     }
 }
 

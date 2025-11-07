@@ -9,42 +9,50 @@ public final class CarbItemsViewFactoryDefault {
     public struct Dependencies {
         let remoteCarbItemsDataSource: RemoteCarbItemsDataSource
         let localCarbItemsDataSource: CachedCarbItemsDataSource
+        let favoriteCarbItemsDataSource: FavoriteCarbItemsDataSource
         let userCarbItemsDataSource: UserCarbItemsDataSource
         let carbItemsRepository: CarbItemsRepository
         let loadCarbItemsUseCase: LoadCarbItemsUseCase
         let loadUserCarbItemsUseCase: LoadUserCarbItemsUseCase
         let addUserCarbItemUseCase: AddUserCarbItemUseCase
         let deleteUserCarbItemUseCase: DeleteUserCarbItemUseCase
+        let toggleFavoriteCarbItemUseCase: ToggleFavoriteCarbItemUseCase
         let searchCarbItemsUseCase: SearchCarbItemsUseCase
 
         public init(
             remoteCarbItemsDataSource: RemoteCarbItemsDataSource? = nil,
             cachedCarbItemsDataSource: CachedCarbItemsDataSource? = nil,
+            favoriteCarbItemsDataSource: FavoriteCarbItemsDataSource? = nil,
             userCarbItemsDataSource: UserCarbItemsDataSource? = nil,
             carbItemsRepository: CarbItemsRepository? = nil,
             loadCarbItemsUseCase: LoadCarbItemsUseCase? = nil,
             loadUserCarbItemsUseCase: LoadUserCarbItemsUseCase? = nil,
             addUserCarbItemUseCase: AddUserCarbItemUseCase? = nil,
             deleteUserCarbItemUseCase: DeleteUserCarbItemUseCase? = nil,
+            toggleFavoriteCarbItemUseCase: ToggleFavoriteCarbItemUseCase? = nil,
             searchCarbItemsUseCase: SearchCarbItemsUseCase? = nil
         ) throws {
             let remoteItemsDataSource = remoteCarbItemsDataSource ?? RemoteCarbItemsDataSourceDefault()
             let cachedItemsDataSource = try cachedCarbItemsDataSource ?? CachedCarbItemsDataSourceDefault()
             let userItemsDataSource = try userCarbItemsDataSource ?? UserCarbItemsDataSourceDefault()
+            let favoriteCarbItemsDataSource = favoriteCarbItemsDataSource ?? FavoriteCarbItemsDataSourceDefault()
             let repository = carbItemsRepository ?? CarbItemsRepositoryDefault(
                 remoteCarbItemsDataSource: remoteItemsDataSource,
                 cachedCarbItemsDataSource: cachedItemsDataSource,
+                favoriteCarbItemsDataSource: favoriteCarbItemsDataSource,
                 userCarbItemsDataSource: userItemsDataSource
             )
 
             self.remoteCarbItemsDataSource = remoteItemsDataSource
             self.localCarbItemsDataSource = cachedItemsDataSource
+            self.favoriteCarbItemsDataSource = favoriteCarbItemsDataSource
             self.userCarbItemsDataSource = userItemsDataSource
             self.carbItemsRepository = repository
             self.loadCarbItemsUseCase = loadCarbItemsUseCase ?? LoadCarbItemsUseCaseDefault(repository: repository)
             self.loadUserCarbItemsUseCase = loadUserCarbItemsUseCase ?? LoadUserCarbItemsUseCaseDefault(repository: repository)
             self.addUserCarbItemUseCase = addUserCarbItemUseCase ?? AddUserCarbItemUseCaseDefault(repository: repository)
             self.deleteUserCarbItemUseCase = deleteUserCarbItemUseCase ?? DeleteUserCarbItemUseCaseDefault(repository: repository)
+            self.toggleFavoriteCarbItemUseCase = toggleFavoriteCarbItemUseCase ?? ToggleFavoriteCarbItemUseCaseDefault(repository: repository)
             self.searchCarbItemsUseCase = searchCarbItemsUseCase ?? SearchCarbItemsUseCaseDefault()
         }
     }
@@ -75,6 +83,7 @@ extension CarbItemsViewFactoryDefault: CarbItemsViewFactory {
             loadUserCarbItemsUseCase: dependencies.loadUserCarbItemsUseCase,
             addUserCarbItemUseCase: dependencies.addUserCarbItemUseCase,
             deleteUserCarbItemUseCase: dependencies.deleteUserCarbItemUseCase,
+            toggleFavoriteCarbItemUseCase: dependencies.toggleFavoriteCarbItemUseCase,
             searchCarbItemsUseCase: dependencies.searchCarbItemsUseCase
         )
     }

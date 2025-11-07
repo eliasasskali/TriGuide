@@ -120,6 +120,20 @@ private extension CarbItemsView {
             ForEach(filteredItems, id: \.self) { carbItem in
                 CarbItemView(item: carbItem)
                     .listRowSeparator(.hidden)
+                    .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                        Button {
+                            Task {
+                                await viewModel.toggleFavorite(for: carbItem)
+                            }
+                        } label: {
+                            if carbItem.isFavorite {
+                                Label(Localizables.Common.removeFromFavorites, systemImage: "star.fill")
+                            } else {
+                                Label(Localizables.Common.addToFavorites, systemImage: "star")
+                            }
+                        }
+                        .tint(carbItem.isFavorite ? .red : .yellow)
+                    }
             }
         }
         .listSectionSeparator(.hidden)
@@ -149,6 +163,7 @@ private struct PreviewWrapper: View {
         let repository = try! CarbItemsRepositoryDefault(
             remoteCarbItemsDataSource: RemoteCarbItemsDataSourceDefault(),
             cachedCarbItemsDataSource: CachedCarbItemsDataSourceDefault(),
+            favoriteCarbItemsDataSource: FavoriteCarbItemsDataSourceDefault(),
             userCarbItemsDataSource: UserCarbItemsDataSourceDefault()
         )
 
@@ -157,6 +172,7 @@ private struct PreviewWrapper: View {
             loadUserCarbItemsUseCase: LoadUserCarbItemsUseCaseDefault(repository: repository),
             addUserCarbItemUseCase: AddUserCarbItemUseCaseDefault(repository: repository),
             deleteUserCarbItemUseCase: DeleteUserCarbItemUseCaseDefault(repository: repository),
+            toggleFavoriteCarbItemUseCase: ToggleFavoriteCarbItemUseCaseDefault(repository: repository),
             searchCarbItemsUseCase: SearchCarbItemsUseCaseDefault()
         )
         let coordinator = CarbItemsCoordinator(factory: CarbItemsViewFactoryDefault(dependencies: try! .init()))
