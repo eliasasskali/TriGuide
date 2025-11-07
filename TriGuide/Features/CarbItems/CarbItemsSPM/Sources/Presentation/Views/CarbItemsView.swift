@@ -47,7 +47,7 @@ public struct CarbItemsView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
-                        coordinator.presentCarbItemForm()
+                        coordinator.pushCarbItemForm()
                     } label: {
                         Image(systemName: "plus.circle.fill")
                             .font(.title2)
@@ -104,7 +104,7 @@ private extension CarbItemsView {
                         }
 
                         Button {
-                            coordinator.presentCarbItemForm(for: carbItem)
+                            coordinator.pushCarbItemForm(for: carbItem)
                         } label: {
                             Label(Localizables.Common.edit, systemImage: "pencil")
                         }

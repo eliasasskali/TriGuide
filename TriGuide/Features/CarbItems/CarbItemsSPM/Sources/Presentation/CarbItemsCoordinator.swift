@@ -26,13 +26,17 @@ public class CarbItemsCoordinator: BaseCoordinator<CarbItemsCoordinator.Route, N
             coordinator: self
         )
     }
+}
 
-    func presentCarbItemForm(for existingItem: CarbItem? = nil) {
+// MARK: - Navigation
+
+public extension CarbItemsCoordinator {
+    func pushCarbItemForm(for existingItem: CarbItem? = nil) {
         push(.form(existingItem: existingItem))
     }
 
     @ViewBuilder
-    public func buildFormView(for existingItem: CarbItem? = nil) -> CarbItemFormView {
+    func buildFormView(for existingItem: CarbItem? = nil) -> CarbItemFormView {
         let saveAction: (CarbItem) -> Void = { [weak self] savedItem in
             Task { @MainActor in
                 guard let self = self else { return }

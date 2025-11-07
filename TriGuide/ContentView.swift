@@ -5,16 +5,21 @@
 import SwiftUI
 import Localization
 import RaceCalculatorSPM
-import CarbItemsSPM
+import RaceNutritionSPM
 
 struct ContentView: View {
-    @StateObject private var carbItemsCoordinator: CarbItemsCoordinator
+//    @StateObject private var carbItemsCoordinator: CarbItemsCoordinator
     @StateObject private var raceCalculatorCoordinator: RaceCalculatorCoordinator
+    @StateObject private var raceNutritionCoordinator: RaceNutritionCoordinator
 
     init() {
-        let carbItemsFactory = CarbItemsViewFactoryDefault(dependencies: try! .init())
-        _carbItemsCoordinator = StateObject(
-            wrappedValue: CarbItemsCoordinator(factory: carbItemsFactory)
+//        let carbItemsFactory = CarbItemsViewFactoryDefault(dependencies: try! .init())
+//        _carbItemsCoordinator = StateObject(
+//            wrappedValue: CarbItemsCoordinator(factory: carbItemsFactory)
+//        )
+        let raceNutritionFactory = RaceNutritionViewFactoryDefault(dependencies: .init())
+        _raceNutritionCoordinator = StateObject(
+            wrappedValue: RaceNutritionCoordinator(factory: raceNutritionFactory)
         )
         let raceCalculatorFactory = RaceCalculatorViewFactoryDefault(dependencies: .init())
         _raceCalculatorCoordinator = StateObject(
@@ -24,7 +29,7 @@ struct ContentView: View {
 
     var body: some View {
         TabView {
-            carbItemsCoordinator.start()
+            raceNutritionCoordinator.start()
                 .tabItem {
                     Label(Localizables.Tabs.home, systemImage: "fork.knife")
                 }
