@@ -14,6 +14,7 @@ public struct CarbItem: Sendable, Decodable {
     let type: CarbType
     let brand: String?
     let isCustom: Bool
+    public var isFavorite: Bool
 
     init(
         id: String,
@@ -24,7 +25,8 @@ public struct CarbItem: Sendable, Decodable {
         waterVolumeML: Double? = nil,
         type: CarbType,
         brand: String? = nil,
-        isCustom: Bool = false
+        isCustom: Bool = false,
+        isFavorite: Bool = false
     ) {
         self.id = id
         self.name = name
@@ -35,6 +37,7 @@ public struct CarbItem: Sendable, Decodable {
         self.type = type
         self.brand = brand
         self.isCustom = isCustom
+        self.isFavorite = isFavorite
     }
 }
 
@@ -49,7 +52,8 @@ extension CarbItem: Hashable {
         lhs.sodium == rhs.sodium &&
         lhs.waterVolumeML == rhs.waterVolumeML &&
         lhs.type == rhs.type &&
-        lhs.brand == rhs.brand
+        lhs.brand == rhs.brand &&
+        lhs.isFavorite == rhs.isFavorite
     }
 
     public func hash(into hasher: inout Hasher) {
@@ -61,5 +65,6 @@ extension CarbItem: Hashable {
         hasher.combine(waterVolumeML)
         hasher.combine(type)
         hasher.combine(brand)
+        hasher.combine(isFavorite)
     }
 }

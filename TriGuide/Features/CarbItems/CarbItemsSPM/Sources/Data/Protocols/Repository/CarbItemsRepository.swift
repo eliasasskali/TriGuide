@@ -9,4 +9,5 @@ public protocol CarbItemsRepository: Sendable {
     func getUserCarbItems(forceRefresh: Bool) async throws -> [CarbItem]
     func addUserCarbItem(_ item: CarbItem) async throws
     func removeUserCarbItem(with id: String) async throws
+    func toggleFavorite(with id: String) async
 }
