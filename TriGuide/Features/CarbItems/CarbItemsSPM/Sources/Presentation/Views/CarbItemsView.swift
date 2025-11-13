@@ -4,14 +4,28 @@
 
 import SwiftUI
 import Localization
+import DesignSystem
 
 public struct CarbItemsView: View {
+    @Environment(\.dismiss) private var dismiss
+
     @ObservedObject private var viewModel: CarbItemsViewModel
     @ObservedObject private var coordinator: CarbItemsCoordinator
 
     @State private var searchText = ""
-    @State private var filteredItems: [CarbItem] = []
-    @State private var filteredUserItems: [CarbItem] = []
+    @State private var quantities: [String: Int] = [:]
+
+    private var inSelectionMode: Bool {
+        viewModel.totalCarbGrams != nil
+    }
+
+    var progressText: String {
+        let carbs = viewModel.selectedItemsCarbsSum.formattedAsDecimal(maxFractionDigits: 1)
+        let total = (viewModel.totalCarbGrams ?? 0).formattedAsDecimal(maxFractionDigits: 1)
+        return "\(carbs) / \(total)\(Localizables.Units.gSymbol)"
+    }
+
+    // MARK: - Init
 
     public init(
         viewModel: CarbItemsViewModel,
@@ -21,61 +35,47 @@ public struct CarbItemsView: View {
         self.coordinator = coordinator
     }
 
+    // MARK: - Filtering
+
+    private var filteredItems: [CarbItem] {
+        searchText.isEmpty
+        ? viewModel.carbItems
+        : viewModel.filterCarbItems(by: searchText)
+    }
+
+    private var filteredUserItems: [CarbItem] {
+        searchText.isEmpty
+        ? viewModel.userCarbItems
+        : viewModel.filterUserCarbItems(by: searchText)
+    }
+
+    // MARK: - Body
+
     public var body: some View {
         NavigationStack(path: coordinator.pathBinding) {
-            List {
-                if !filteredUserItems.isEmpty {
-                    userItemsSection
-                }
+            VStack(spacing: 0) {
+                listContent
 
-                if !filteredItems.isEmpty {
-                    itemsSection
-                }
-            }
-            .listStyle(.plain)
-            .scrollContentBackground(.hidden)
-            .refreshable {
-                await viewModel.loadCarbItems(forceRefresh: true)
-                await viewModel.loadUserCarbItems(forceRefresh: true)
-            }
-            .searchable(
-                text: $searchText,
-                placement: .navigationBarDrawer(displayMode: .always)
-            )
-            .navigationTitle(Localizables.CarbItems.title)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        coordinator.pushCarbItemForm()
-                    } label: {
-                        Image(systemName: "plus.circle.fill")
-                            .font(.title2)
+                if inSelectionMode {
+                    Divider()
+                    selectedItemsProgressView
+                        .padding()
+                    ActionButton(
+                        Localizables.Common.continueLabel,
+                        isLoading: viewModel.state == .loading
+                    ) {
+                        dismiss()
+                        coordinator.onCompleteSelection?(viewModel.selectedCarbItems)
                     }
+                    .padding(.bottom)
+                    .padding(.horizontal)
                 }
             }
+            .background(Color(.systemGroupedBackground))
             .overlay {
-                if viewModel.state == .loading {
-                    ProgressView()
-                }
+                if viewModel.state == .loading { ProgressView() }
             }
-            .onChange(of: viewModel.carbItems) { _, newItems in
-                filteredItems = searchText.isEmpty
-                ? newItems
-                : viewModel.filterCarbItems(by: searchText)
-            }
-            .onChange(of: viewModel.userCarbItems) { _, newUserItems in
-                filteredUserItems = searchText.isEmpty
-                ? newUserItems
-                : viewModel.filterUserCarbItems(by: searchText)
-            }
-            .onChange(of: searchText) { _, newSearchText in
-                updateFilteredItems(with: newSearchText)
-            }
-            .task {
-                await viewModel.loadCarbItems()
-                await viewModel.loadUserCarbItems()
-            }
+            .task { await refreshAll() }
             .navigationDestination(for: CarbItemsCoordinator.Route.self) { route in
                 switch route {
                 case .form(let existing):
@@ -83,70 +83,144 @@ public struct CarbItemsView: View {
                 }
             }
         }
-        .background(Color(.systemGroupedBackground))
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 
 private extension CarbItemsView {
-    var userItemsSection: some View {
-        Section(header: Text(Localizables.CarbItems.userItemsSectionTitle)) {
-            ForEach(filteredUserItems, id: \.self) { carbItem in
-                CarbItemView(item: carbItem)
-                    .listRowSeparator(.hidden)
-                    .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                        Button(role: .destructive) {
-                            Task {
-                                await viewModel.deleteUserCarbItem(item: carbItem)
-                            }
-                        } label: {
-                            Label(Localizables.Common.delete, systemImage: "trash")
-                        }
 
-                        Button {
-                            coordinator.pushCarbItemForm(for: carbItem)
-                        } label: {
-                            Label(Localizables.Common.edit, systemImage: "pencil")
-                        }
-                        .tint(.blue)
+    // MARK: - List and Sections
+
+    var listContent: some View {
+        List {
+            Group {
+                if !filteredUserItems.isEmpty {
+                    carbItemSection(
+                        title: Localizables.CarbItems.userItemsSectionTitle,
+                        items: filteredUserItems,
+                        allowSwipeActions: true,
+                        isUserItem: true
+                    )
+                }
+
+                if !filteredItems.isEmpty {
+                    carbItemSection(
+                        title: Localizables.CarbItems.allItemsSectionTitle,
+                        items: filteredItems,
+                        allowSwipeActions: true,
+                        isUserItem: false
+                    )
+                }
+            }
+            .listRowBackground(Color.clear)
+            .background(Color(.systemGroupedBackground))
+        }
+        .listStyle(.plain)
+        .scrollContentBackground(.hidden)
+        .searchable(text: $searchText)
+        .refreshable {
+            await refreshAll()
+        }
+        .navigationTitle(Localizables.CarbItems.title)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar { addButton }
+    }
+
+    func carbItemSection(
+        title: String,
+        items: [CarbItem],
+        allowSwipeActions: Bool,
+        isUserItem: Bool
+    ) -> some View {
+        Section(header: Text(title)) {
+            ForEach(items, id: \.self) { carbItem in
+                CarbItemView(
+                    item: carbItem,
+                    quantity: Binding(
+                        get: { quantities[carbItem.id, default: 0] },
+                        set: { quantities[carbItem.id] = $0 }
+                    ),
+                    selectable: inSelectionMode
+                ) { quantity in
+                    let selection = CarbItemSelection(item: carbItem, quantity: Double(quantity))
+                    viewModel.onSelectCarbItem(selection)
+                }
+                .listRowSeparator(.hidden)
+                .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                    if isUserItem {
+                        userItemSwipeActions(for: carbItem)
+                    } else {
+                        defaultItemSwipeActions(for: carbItem)
                     }
+                }
             }
         }
         .listSectionSeparator(.hidden)
     }
 
-    var itemsSection: some View {
-        Section(header: Text(Localizables.CarbItems.allItemsSectionTitle)) {
-            ForEach(filteredItems, id: \.self) { carbItem in
-                CarbItemView(item: carbItem)
-                    .listRowSeparator(.hidden)
-                    .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                        Button {
-                            Task {
-                                await viewModel.toggleFavorite(for: carbItem)
-                            }
-                        } label: {
-                            if carbItem.isFavorite {
-                                Label(Localizables.Common.removeFromFavorites, systemImage: "star.fill")
-                            } else {
-                                Label(Localizables.Common.addToFavorites, systemImage: "star")
-                            }
-                        }
-                        .tint(carbItem.isFavorite ? .red : .yellow)
-                    }
+    // MARK: - Swipe Actions
+
+    func userItemSwipeActions(for carbItem: CarbItem) -> some View {
+        Group {
+            Button(role: .destructive) {
+                Task { await viewModel.deleteUserCarbItem(item: carbItem) }
+            } label: {
+                Label(Localizables.Common.delete, systemImage: "trash")
             }
+
+            Button {
+                coordinator.pushCarbItemForm(for: carbItem)
+            } label: {
+                Label(Localizables.Common.edit, systemImage: "pencil")
+            }
+            .tint(.blue)
         }
-        .listSectionSeparator(.hidden)
     }
 
-    func updateFilteredItems(with searchText: String) {
-        filteredItems = searchText.isEmpty
-        ? viewModel.carbItems
-        : viewModel.filterCarbItems(by: searchText)
+    func defaultItemSwipeActions(for carbItem: CarbItem) -> some View {
+        Button {
+            Task { await viewModel.toggleFavorite(for: carbItem) }
+        } label: {
+            Label(
+                carbItem.isFavorite
+                ? Localizables.Common.removeFromFavorites
+                : Localizables.Common.addToFavorites,
+                systemImage: carbItem.isFavorite ? "star.fill" : "star"
+            )
+        }
+        .tint(carbItem.isFavorite ? .red : .yellow)
+    }
 
-        filteredUserItems = searchText.isEmpty
-        ? viewModel.userCarbItems
-        : viewModel.filterUserCarbItems(by: searchText)
+    // MARK: - Toolbar
+
+    private var addButton: some ToolbarContent {
+        ToolbarItem(placement: .topBarTrailing) {
+            Button {
+                coordinator.pushCarbItemForm()
+            } label: {
+                Image(systemName: "plus.circle.fill")
+                    .font(.title2)
+            }
+        }
+    }
+
+    // MARK:  - Selected Items Progress
+
+    var selectedItemsProgressView: some View {
+        ProgressBarWithLabelView(
+            label: Localizables.CarbItems.carbsLabel,
+            value: progressText,
+            progress: viewModel.selectedItemsProgress
+        )
+    }
+
+    // MARK: - Helpers
+
+    func refreshAll() async {
+        await viewModel.loadCarbItems(forceRefresh: true)
+        await viewModel.loadUserCarbItems(forceRefresh: true)
+        quantities = Dictionary(
+            uniqueKeysWithValues: viewModel.selectedCarbItems.map { ($0.item.id, Int($0.quantity)) }
+        )
     }
 }
 

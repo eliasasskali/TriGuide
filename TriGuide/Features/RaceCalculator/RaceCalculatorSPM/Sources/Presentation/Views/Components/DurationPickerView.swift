@@ -6,12 +6,12 @@ import SwiftUI
 import Localization
 import DesignSystem
 
-struct DurationPickerView: View {
-    enum Mode {
+public struct DurationPickerView: View {
+    public enum Mode {
         case regular
         case compact
 
-        var labelOrientation: PickerLabelOrientation {
+        public var labelOrientation: PickerLabelOrientation {
             switch self {
             case .regular: return .vertical
             case .compact: return .horizontal
@@ -25,7 +25,7 @@ struct DurationPickerView: View {
     let showHours: Bool
     @Binding var duration: TimeInterval?
 
-    init(
+    public init(
         title: String,
         mode: Mode = .regular,
         labelsBackgroundColor: Color = Color(UIColor.lightGray).opacity(0.2),
@@ -44,7 +44,7 @@ struct DurationPickerView: View {
     @State private var seconds = 0
     @State private var showPicker = false
 
-    var body: some View {
+    public var body: some View {
         Button {
             showPicker.toggle()
         } label: {

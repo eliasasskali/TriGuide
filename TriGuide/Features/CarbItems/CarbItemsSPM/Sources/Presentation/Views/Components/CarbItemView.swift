@@ -4,11 +4,27 @@
 
 import SwiftUI
 import Localization
+import DesignSystem
 
 struct CarbItemView: View {
     let item: CarbItem
+    let selectable: Bool
+    let onQuantityChange: ((Double) -> Void)?
 
     @State private var isExpanded: Bool = false
+    @Binding var quantity: Int?
+
+    init(
+        item: CarbItem,
+        quantity: Binding<Int?> = .constant(nil),
+        selectable: Bool = false,
+        onQuantityChange: ((Double) -> Void)? = nil,
+    ) {
+        self.item = item
+        self._quantity = quantity
+        self.selectable = selectable
+        self.onQuantityChange = onQuantityChange
+    }
 
     var body: some View {
         itemView
@@ -18,11 +34,6 @@ struct CarbItemView: View {
             )
             .fixedSize(horizontal: false, vertical: true)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .onTapGesture {
-                withAnimation {
-                    isExpanded.toggle()
-                }
-            }
     }
 }
 
@@ -41,37 +52,17 @@ private extension CarbItemView {
     @ViewBuilder
     var collapsedItemView: some View {
         HStack {
-            Text(Localizables.CarbItems.carbsValue(grams: item.gramsOfCarbs))
-                .font(.Custom.Regular.font2)
+            HStack {
+                Text(Localizables.CarbItems.carbsValue(grams: item.gramsOfCarbs))
+                    .font(.Custom.Regular.font2)
 
-            if item.isFavorite {
-                Image(systemName: "star.fill")
-                    .foregroundColor(.yellow)
-            }
-            Divider()
-
-            VStack(spacing: 0) {
-                Text(item.name)
-                    .font(.Custom.Medium.font3)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-
-                if let brand = item.brand, !brand.isEmpty {
-                    Text(brand.capitalizingFirstLetter())
-                        .font(.Custom.Regular.font2)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                if item.isFavorite {
+                    Image(systemName: "star.fill")
+                        .foregroundColor(.yellow)
                 }
-            }
+                
+                Divider()
 
-            Spacer()
-
-            Image(systemName: "chevron.down")
-        }
-    }
-
-    @ViewBuilder
-    var expandedItemView: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            HStack(alignment: .center) {
                 VStack(spacing: 0) {
                     Text(item.name)
                         .font(.Custom.Medium.font3)
@@ -84,14 +75,59 @@ private extension CarbItemView {
                     }
                 }
 
-                if item.isFavorite {
-                    Image(systemName: "star.fill")
-                        .foregroundColor(.yellow)
-                }
-
                 Spacer()
 
-                Image(systemName: "chevron.up")
+                Image(systemName: "chevron.down")
+            }
+            .contentShape(Rectangle())
+            .onTapGesture {
+                withAnimation {
+                    isExpanded.toggle()
+                }
+            }
+
+            if selectable {
+                quantityPicker
+            }
+        }
+    }
+
+    @ViewBuilder
+    var expandedItemView: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            HStack(alignment: .center) {
+                HStack {
+                    if item.isFavorite {
+                        Image(systemName: "star.fill")
+                            .foregroundColor(.yellow)
+                    }
+
+                    VStack(spacing: 0) {
+                        Text(item.name)
+                            .font(.Custom.Medium.font3)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+
+                        if let brand = item.brand, !brand.isEmpty {
+                            Text(brand.capitalizingFirstLetter())
+                                .font(.Custom.Regular.font2)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                    }
+
+                    Spacer()
+
+                    Image(systemName: "chevron.up")
+                }
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    withAnimation {
+                        isExpanded.toggle()
+                    }
+                }
+
+                if selectable {
+                    quantityPicker
+                }
             }
 
             Divider()
@@ -160,6 +196,27 @@ private extension CarbItemView {
         .fixedSize()
     }
 
+    @ViewBuilder
+    var quantityPicker: some View {
+        if quantity != nil {
+            QuantityPickerView(
+                quantity: Binding(
+                    get: { quantity ?? 0 },
+                    set: { quantity = $0 }
+                ),
+                onIncrementQuantity: { newQuantity in
+                    onQuantityChange?(Double(newQuantity))
+                },
+                onDecrementQuantity: { newQuantity in
+                    onQuantityChange?(Double(newQuantity))
+                },
+                orientation: .horizontal
+            )
+        } else {
+            EmptyView()
+        }
+    }
+
     func formattedValue(_ value: Double) -> String {
         value.formattedAsDecimal(minFractionDigits: 0, maxFractionDigits: 2)
     }
@@ -177,5 +234,21 @@ private extension CarbItemView {
             type: .gel,
             brand: "maurten"
         )
+    )
+
+    CarbItemView(
+        item: CarbItem(
+            id: "maurten-gel-100-caf-100",
+            name: "Maurten Gel 100 Caf 100",
+            gramsOfCarbs: 25,
+            caffeine: 100,
+            sodium: 55,
+            waterVolumeML: 500,
+            type: .gel,
+            brand: "maurten",
+            isFavorite: true
+        ),
+        quantity: .constant(0),
+        selectable: true
     )
 }

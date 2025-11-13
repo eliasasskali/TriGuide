@@ -6,20 +6,26 @@ import CarbItemsSPM
 import NavigationKit
 import SwiftUI
 
-public class RaceNutritionCoordinator: BaseCoordinator<Never, RaceNutritionCoordinator.Sheet, RaceNutritionView> {
-    public enum Sheet: Identifiable {
-        case carbItems
+public class RaceNutritionCoordinator: BaseCoordinator<RaceNutritionCoordinator.Path, RaceNutritionCoordinator.Sheet, RaceNutritionView> {
+    public enum Path: Hashable {
+        case raceNutritionResult(result: [CarbItemSelection])
+    }
+
+    public enum Sheet: Identifiable, Equatable {
+        case carbItems(totalGrams: Double)
 
         public var id: String {
             switch self {
-            case .carbItems:
-                return "carbItems"
+            case .carbItems(let totalGrams):
+                return "carbItems_\(totalGrams)"
             }
         }
     }
 
     let factory: RaceNutritionViewFactory
     @Published public var viewModel: RaceNutritionViewModel
+
+    private var carbItemsCoordinator: CarbItemsCoordinator?
 
     public init(factory: RaceNutritionViewFactory) {
         self.factory = factory
@@ -38,13 +44,27 @@ public class RaceNutritionCoordinator: BaseCoordinator<Never, RaceNutritionCoord
 // MARK: - Navigation
 
 public extension RaceNutritionCoordinator {
-    func presentCarbItems() {
-        presentSheet(sheet: .carbItems)
+    func presentCarbItems(totalCarbGrams: Double) {
+        presentSheet(sheet: .carbItems(totalGrams: totalCarbGrams))
     }
 
-    func buildCarbItemsView() -> CarbItemsView? {
+    func pushRaceNutritionResultView(result: [CarbItemSelection]) {
+        push(.raceNutritionResult(result: result))
+    }
+
+    func buildCarbItemsView(totalCarbGrams: Double) -> CarbItemsView? {
         do {
-            return try factory.buildCarbItemsCoordinator().start()
+            guard let carbItemsCoordinator else {
+                carbItemsCoordinator = try factory.buildCarbItemsCoordinator(
+                    totalCarbGrams: totalCarbGrams,
+                    onCompleteSelection: { [weak self] result in
+                        self?.pushRaceNutritionResultView(result: result)
+                    }
+                )
+                return carbItemsCoordinator?.start()
+            }
+            carbItemsCoordinator.viewModel.totalCarbGrams = totalCarbGrams
+            return carbItemsCoordinator.start()
         } catch {
             return nil
         }

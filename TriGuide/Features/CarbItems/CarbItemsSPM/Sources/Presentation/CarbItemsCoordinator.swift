@@ -12,10 +12,16 @@ public class CarbItemsCoordinator: BaseCoordinator<CarbItemsCoordinator.Route, N
     }
 
     let factory: CarbItemsViewFactory
+    public let onCompleteSelection: (([CarbItemSelection]) -> Void)?
+
     @Published public var viewModel: CarbItemsViewModel
 
-    public init(factory: CarbItemsViewFactory) {
+    public init(
+        factory: CarbItemsViewFactory,
+        onCompleteSelection: (([CarbItemSelection]) -> Void)? = nil
+    ) {
         self.factory = factory
+        self.onCompleteSelection = onCompleteSelection
         self.viewModel = factory.buildCarbItemsViewModel()
         super.init()
     }

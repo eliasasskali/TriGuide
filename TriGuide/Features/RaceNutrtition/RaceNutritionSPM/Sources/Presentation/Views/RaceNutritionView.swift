@@ -19,14 +19,21 @@ public struct RaceNutritionView: View {
     public var body: some View {
         NavigationStack(path: coordinator.pathBinding) {
             VStack {
-                Button("Test: Present Carb items") {
-                    coordinator.presentCarbItems()
-                }
+                RaceNutritionCalculatorView(
+                    viewModel: viewModel,
+                    coordinator: coordinator
+                )
             }
             .sheet(item: coordinator.sheetBinding) { sheet in
                 switch sheet {
-                case .carbItems:
-                    coordinator.buildCarbItemsView()
+                case .carbItems(let totalGrams):
+                    coordinator.buildCarbItemsView(totalCarbGrams: totalGrams)
+                }
+            }
+            .navigationDestination(for: RaceNutritionCoordinator.Path.self) { path in
+                switch path {
+                case .raceNutritionResult(let result):
+                    RaceNutritionResultView(items: result)
                 }
             }
         }

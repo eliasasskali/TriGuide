@@ -8,15 +8,10 @@ import RaceCalculatorSPM
 import RaceNutritionSPM
 
 struct ContentView: View {
-//    @StateObject private var carbItemsCoordinator: CarbItemsCoordinator
     @StateObject private var raceCalculatorCoordinator: RaceCalculatorCoordinator
     @StateObject private var raceNutritionCoordinator: RaceNutritionCoordinator
 
     init() {
-//        let carbItemsFactory = CarbItemsViewFactoryDefault(dependencies: try! .init())
-//        _carbItemsCoordinator = StateObject(
-//            wrappedValue: CarbItemsCoordinator(factory: carbItemsFactory)
-//        )
         let raceNutritionFactory = RaceNutritionViewFactoryDefault(dependencies: .init())
         _raceNutritionCoordinator = StateObject(
             wrappedValue: RaceNutritionCoordinator(factory: raceNutritionFactory)

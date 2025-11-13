@@ -37,10 +37,14 @@ extension RaceNutritionViewFactoryDefault: RaceNutritionViewFactory {
         RaceNutritionViewModel()
     }
 
-    @MainActor public func buildCarbItemsCoordinator() throws -> CarbItemsCoordinator {
-        let carbItemsFactory = CarbItemsViewFactoryDefault(dependencies: try .init())
+    @MainActor public func buildCarbItemsCoordinator(
+        totalCarbGrams: Double,
+        onCompleteSelection: (([CarbItemSelection]) -> Void)?
+    ) throws -> CarbItemsCoordinator {
+        let carbItemsFactory = CarbItemsViewFactoryDefault(dependencies: try .init(totalCarbGrams: totalCarbGrams))
         return CarbItemsCoordinator(
-            factory: carbItemsFactory
+            factory: carbItemsFactory,
+            onCompleteSelection: onCompleteSelection
         )
     }
 }

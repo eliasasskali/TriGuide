@@ -50,7 +50,6 @@ public struct ActionButton: View {
         .disabled(isDisabled || isLoading)
         .controlSize(.large)
         .applyNativeStyle(style: style)
-        .padding(.horizontal)
     }
 }
 

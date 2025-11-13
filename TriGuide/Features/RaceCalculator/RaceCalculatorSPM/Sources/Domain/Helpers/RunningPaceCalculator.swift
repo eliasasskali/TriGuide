@@ -5,8 +5,11 @@
 import Foundation
 import TriGuideDomain
 
-struct RunningPaceCalculator: PaceCalculator {
-    func calculatePace(
+public struct RunningPaceCalculator: PaceCalculator {
+
+    public init() {}
+
+    public func calculatePace(
         duration: TimeInterval,
         distance: Double,
         paceUnit: SpeedUnit
@@ -30,7 +33,7 @@ struct RunningPaceCalculator: PaceCalculator {
         }
     }
 
-    func calculateTime(pace: Double, distance: Double, paceUnit: SpeedUnit) -> Double? {
+    public func calculateTime(pace: Double, distance: Double, paceUnit: SpeedUnit) -> Double? {
         switch paceUnit {
         case .minPerKm:
             let distanceInKm = Double(distance) / 1000.0
@@ -47,7 +50,7 @@ struct RunningPaceCalculator: PaceCalculator {
         }
     }
 
-    func calculateDistance(pace: Double, duration: TimeInterval, paceUnit: SpeedUnit) -> Double? {
+    public func calculateDistance(pace: Double, duration: TimeInterval, paceUnit: SpeedUnit) -> Double? {
         switch paceUnit {
         case .minPerKm:
             return (duration / pace) * 1000.0
@@ -58,7 +61,7 @@ struct RunningPaceCalculator: PaceCalculator {
         }
     }
 
-    func formatPace(_ pace: Double, with paceUnit: SpeedUnit) -> String {
+    public func formatPace(_ pace: Double, with paceUnit: SpeedUnit) -> String {
         PaceCalculatorHelper.formatPace(paceSeconds: pace, with: paceUnit)
     }
 }

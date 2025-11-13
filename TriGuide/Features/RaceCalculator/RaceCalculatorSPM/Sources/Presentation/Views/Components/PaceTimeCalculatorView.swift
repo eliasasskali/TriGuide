@@ -7,14 +7,26 @@ import Localization
 import TriGuideDomain
 import DesignSystem
 
-struct PaceTimeCalculatorView<Distance: RaceDistance & CaseIterable>: View where Distance.AllCases: RandomAccessCollection {
+public struct PaceTimeCalculatorView<Distance: RaceDistance & CaseIterable>: View where Distance.AllCases: RandomAccessCollection {
     let sport: SupportedSport
     @StateObject var viewModel: PaceCalculatorViewModel
 
     var selectedRaceDistance: Binding<Distance?>? = nil
     var duration: Binding<TimeInterval?>? = nil
 
-    var body: some View {
+    public init(
+        sport: SupportedSport,
+        viewModel: PaceCalculatorViewModel,
+        selectedRaceDistance: Binding<Distance?>? = nil,
+        duration: Binding<TimeInterval?>? = nil
+    ) {
+        self.sport = sport
+        self._viewModel = StateObject(wrappedValue: viewModel)
+        self.selectedRaceDistance = selectedRaceDistance
+        self.duration = duration
+    }
+
+    public var body: some View {
         VStack(spacing: 8) {
             HStack {
                 Image(systemName: sport.representativeIcon)

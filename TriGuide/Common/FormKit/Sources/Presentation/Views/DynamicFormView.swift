@@ -56,6 +56,7 @@ public struct DynamicFormView: View {
                 action: handleSave
             )
             .background(Color(uiColor: .systemGroupedBackground))
+            .padding(.horizontal)
         }
         .background(Color(uiColor: .systemGroupedBackground))
     }

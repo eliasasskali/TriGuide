@@ -12,5 +12,8 @@ public protocol RaceNutritionViewFactory {
     ) -> RaceNutritionView
 
     @MainActor func buildRaceNutritionViewModel() -> RaceNutritionViewModel
-    @MainActor func buildCarbItemsCoordinator() throws -> CarbItemsCoordinator
+    @MainActor func buildCarbItemsCoordinator(
+        totalCarbGrams: Double,
+        onCompleteSelection: (([CarbItemSelection]) -> Void)?
+    ) throws -> CarbItemsCoordinator
 }

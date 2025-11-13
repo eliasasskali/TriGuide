@@ -30,5 +30,12 @@ public extension Localizables {
         public static let hourSymbol = "h"
         public static let minuteSymbol = "min"
         public static let secondSymbol = "s"
+
+        // MARK: - Weight
+        public static let kgSymbol = "kg"
+        public static let gSymbol = "g"
+
+        // MARK: - Temperature
+        public static let celsiusSymbol = "°C"
     }
 }
