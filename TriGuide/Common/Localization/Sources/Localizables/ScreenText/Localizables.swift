@@ -39,6 +39,18 @@ public enum Localizables {
         public static var removeFromFavorites: String {
             String(localized: "remove_from_favorites", bundle: .module)
         }
+
+        public static var or: String {
+            String(localized: "or", bundle: .module)
+        }
+
+        public static var intensity: String {
+            String(localized: "intensity", bundle: .module)
+        }
+
+        public static var continueLabel: String {
+            String(localized: "continue", bundle: .module)
+        }
     }
 
     // MARK: - App tabs

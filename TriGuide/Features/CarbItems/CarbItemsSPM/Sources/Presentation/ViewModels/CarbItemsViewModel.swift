@@ -16,9 +16,20 @@ public class CarbItemsViewModel: ObservableObject {
     @Published var errorMessage: String? = nil
     @Published var carbItems: [CarbItem] = []
     @Published var userCarbItems: [CarbItem] = []
+    @Published var selectedCarbItems: [CarbItemSelection] = []
+    @Published public var totalCarbGrams: Double?
 
-    var favoriteCarbITems: [CarbItem] {
-        carbItems.filter(\.isFavorite)
+    var selectedItemsCarbsSum: Double {
+        selectedCarbItems.reduce(0.0) {
+            $0 + $1.item.gramsOfCarbs * Double($1.quantity)
+        }
+    }
+
+    var selectedItemsProgress: Double {
+        guard let totalCarbGrams, totalCarbGrams > 0 else {
+            return 0.0
+        }
+        return selectedItemsCarbsSum / totalCarbGrams
     }
 
     let loadCarbItemsUseCase: LoadCarbItemsUseCase
@@ -34,7 +45,8 @@ public class CarbItemsViewModel: ObservableObject {
         addUserCarbItemUseCase: AddUserCarbItemUseCase,
         deleteUserCarbItemUseCase: DeleteUserCarbItemUseCase,
         toggleFavoriteCarbItemUseCase: ToggleFavoriteCarbItemUseCase,
-        searchCarbItemsUseCase: SearchCarbItemsUseCase
+        searchCarbItemsUseCase: SearchCarbItemsUseCase,
+        totalCarbGrams: Double? = nil
     ) {
         self.loadCarbItemsUseCase = loadCarbItemsUseCase
         self.loadUserCarbItemsUseCase = loadUserCarbItemsUseCase
@@ -42,6 +54,7 @@ public class CarbItemsViewModel: ObservableObject {
         self.deleteUserCarbItemUseCase = deleteUserCarbItemUseCase
         self.toggleFavoriteCarbItemUseCase = toggleFavoriteCarbItemUseCase
         self.searchCarbItemsUseCase = searchCarbItemsUseCase
+        self.totalCarbGrams = totalCarbGrams
     }
 }
 
@@ -54,6 +67,7 @@ extension CarbItemsViewModel {
             let useCase = loadCarbItemsUseCase
             let items = try await useCase.execute(forceRefresh: forceRefresh)
             carbItems = sortCarbItemsByFavourites(items)
+            syncSelectedItemsWithUpdatedUserItems()
             state = .loaded
         } catch {
             handle(error)
@@ -81,6 +95,7 @@ extension CarbItemsViewModel {
         do {
             let useCase = loadUserCarbItemsUseCase
             userCarbItems = try await useCase.execute(forceRefresh: forceRefresh)
+            syncSelectedItemsWithUpdatedUserItems()
             state = .loaded
         } catch {
             handle(error)
@@ -108,6 +123,7 @@ extension CarbItemsViewModel {
         do {
             try await deleteUserCarbItemUseCase.execute(item: item)
             await loadUserCarbItems()
+            syncSelectedItemsWithUpdatedUserItems()
             state = .loaded
         } catch {
             handle(error)
@@ -121,10 +137,33 @@ extension CarbItemsViewModel {
             try await deleteUserCarbItemUseCase.execute(item: oldItem)
             try await addUserCarbItemUseCase.execute(item: newItem)
             await loadUserCarbItems(forceRefresh: true)
+            syncSelectedItemsWithUpdatedUserItems()
             state = .loaded
         } catch {
             handle(error)
             state = .unloaded
+        }
+    }
+}
+
+// MARK: - Selection methods
+
+public extension CarbItemsViewModel {
+    func onSelectCarbItem(_ selection: CarbItemSelection) {
+        if let index = selectedCarbItems.firstIndex(where: { $0.item.id == selection.item.id }) {
+            selectedCarbItems[index] = selection
+        } else {
+            selectedCarbItems.append(selection)
+        }
+    }
+
+    func syncSelectedItemsWithUpdatedUserItems() {
+        let allItems = carbItems + userCarbItems
+        selectedCarbItems = selectedCarbItems.compactMap { selection in
+            guard let updatedItem = allItems.first(where: { $0.id == selection.item.id }) else {
+                return nil
+            }
+            return CarbItemSelection(item: updatedItem, quantity: selection.quantity)
         }
     }
 }
@@ -134,7 +173,7 @@ private extension CarbItemsViewModel {
         errorMessage = "TODO: handle error"
     }
 
-    private func sortCarbItemsByFavourites(_ items: [CarbItem]) -> [CarbItem] {
+    func sortCarbItemsByFavourites(_ items: [CarbItem]) -> [CarbItem] {
         items.sorted { lhs, rhs in
             if lhs.isFavorite == rhs.isFavorite {
                 lhs.name.localizedCaseInsensitiveCompare(rhs.name) == .orderedAscending
@@ -144,4 +183,3 @@ private extension CarbItemsViewModel {
         }
     }
 }
-

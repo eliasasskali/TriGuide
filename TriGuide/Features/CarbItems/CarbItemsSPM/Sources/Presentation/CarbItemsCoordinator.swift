@@ -12,10 +12,16 @@ public class CarbItemsCoordinator: BaseCoordinator<CarbItemsCoordinator.Route, N
     }
 
     let factory: CarbItemsViewFactory
+    public let onCompleteSelection: (([CarbItemSelection]) -> Void)?
+
     @Published public var viewModel: CarbItemsViewModel
 
-    public init(factory: CarbItemsViewFactory) {
+    public init(
+        factory: CarbItemsViewFactory,
+        onCompleteSelection: (([CarbItemSelection]) -> Void)? = nil
+    ) {
         self.factory = factory
+        self.onCompleteSelection = onCompleteSelection
         self.viewModel = factory.buildCarbItemsViewModel()
         super.init()
     }
@@ -26,13 +32,17 @@ public class CarbItemsCoordinator: BaseCoordinator<CarbItemsCoordinator.Route, N
             coordinator: self
         )
     }
+}
 
-    func presentCarbItemForm(for existingItem: CarbItem? = nil) {
+// MARK: - Navigation
+
+public extension CarbItemsCoordinator {
+    func pushCarbItemForm(for existingItem: CarbItem? = nil) {
         push(.form(existingItem: existingItem))
     }
 
     @ViewBuilder
-    public func buildFormView(for existingItem: CarbItem? = nil) -> CarbItemFormView {
+    func buildFormView(for existingItem: CarbItem? = nil) -> CarbItemFormView {
         let saveAction: (CarbItem) -> Void = { [weak self] savedItem in
             Task { @MainActor in
                 guard let self = self else { return }

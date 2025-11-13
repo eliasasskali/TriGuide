@@ -19,6 +19,8 @@ public final class CarbItemsViewFactoryDefault {
         let toggleFavoriteCarbItemUseCase: ToggleFavoriteCarbItemUseCase
         let searchCarbItemsUseCase: SearchCarbItemsUseCase
 
+        let totalCarbGrams: Double?
+
         public init(
             remoteCarbItemsDataSource: RemoteCarbItemsDataSource? = nil,
             cachedCarbItemsDataSource: CachedCarbItemsDataSource? = nil,
@@ -30,7 +32,8 @@ public final class CarbItemsViewFactoryDefault {
             addUserCarbItemUseCase: AddUserCarbItemUseCase? = nil,
             deleteUserCarbItemUseCase: DeleteUserCarbItemUseCase? = nil,
             toggleFavoriteCarbItemUseCase: ToggleFavoriteCarbItemUseCase? = nil,
-            searchCarbItemsUseCase: SearchCarbItemsUseCase? = nil
+            searchCarbItemsUseCase: SearchCarbItemsUseCase? = nil,
+            totalCarbGrams: Double? = nil
         ) throws {
             let remoteItemsDataSource = remoteCarbItemsDataSource ?? RemoteCarbItemsDataSourceDefault()
             let cachedItemsDataSource = try cachedCarbItemsDataSource ?? CachedCarbItemsDataSourceDefault()
@@ -54,6 +57,8 @@ public final class CarbItemsViewFactoryDefault {
             self.deleteUserCarbItemUseCase = deleteUserCarbItemUseCase ?? DeleteUserCarbItemUseCaseDefault(repository: repository)
             self.toggleFavoriteCarbItemUseCase = toggleFavoriteCarbItemUseCase ?? ToggleFavoriteCarbItemUseCaseDefault(repository: repository)
             self.searchCarbItemsUseCase = searchCarbItemsUseCase ?? SearchCarbItemsUseCaseDefault()
+
+            self.totalCarbGrams = totalCarbGrams
         }
     }
 
@@ -84,7 +89,8 @@ extension CarbItemsViewFactoryDefault: CarbItemsViewFactory {
             addUserCarbItemUseCase: dependencies.addUserCarbItemUseCase,
             deleteUserCarbItemUseCase: dependencies.deleteUserCarbItemUseCase,
             toggleFavoriteCarbItemUseCase: dependencies.toggleFavoriteCarbItemUseCase,
-            searchCarbItemsUseCase: dependencies.searchCarbItemsUseCase
+            searchCarbItemsUseCase: dependencies.searchCarbItemsUseCase,
+            totalCarbGrams: dependencies.totalCarbGrams
         )
     }
 
