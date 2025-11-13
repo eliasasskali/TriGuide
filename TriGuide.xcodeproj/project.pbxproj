@@ -13,6 +13,7 @@
 		9C78AC5C2EA66CF200FB5BE8 /* DesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = 9C78AC5B2EA66CF200FB5BE8 /* DesignSystem */; };
 		9CB031BD2EBC9B3C0086D6C6 /* NavigationKit in Frameworks */ = {isa = PBXBuildFile; productRef = 9CB031BC2EBC9B3C0086D6C6 /* NavigationKit */; };
 		9CB72A922EBDEF8000014FA1 /* RaceNutritionSPM in Frameworks */ = {isa = PBXBuildFile; productRef = 9CB72A912EBDEF8000014FA1 /* RaceNutritionSPM */; };
+		9CBAB1D32EC66F9400DF800C /* TestPlan.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 9CBAB1D22EC66F9400DF800C /* TestPlan.xctestplan */; };
 		9CF7F49A2EAA7A1200085B77 /* TriGuideDomain in Frameworks */ = {isa = PBXBuildFile; productRef = 9CF7F4992EAA7A1200085B77 /* TriGuideDomain */; };
 		9CF7F49D2EAAA9C500085B77 /* RaceCalculatorSPM in Frameworks */ = {isa = PBXBuildFile; productRef = 9CF7F49C2EAAA9C500085B77 /* RaceCalculatorSPM */; };
 /* End PBXBuildFile section */
@@ -38,6 +39,7 @@
 		9CB979972E141AC9001CBBD8 /* TriGuide.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TriGuide.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9CB979A72E141ACA001CBBD8 /* TriGuideTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TriGuideTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9CB979B12E141ACA001CBBD8 /* TriGuideUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TriGuideUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9CBAB1D22EC66F9400DF800C /* TestPlan.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = TestPlan.xctestplan; path = TriGuideTests/TestPlan.xctestplan; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -113,6 +115,7 @@
 		9CB9798E2E141AC9001CBBD8 = {
 			isa = PBXGroup;
 			children = (
+				9CBAB1D22EC66F9400DF800C /* TestPlan.xctestplan */,
 				9CB979992E141AC9001CBBD8 /* TriGuide */,
 				9CB979AA2E141ACA001CBBD8 /* TriGuideTests */,
 				9CB979B42E141ACA001CBBD8 /* TriGuideUITests */,
@@ -268,6 +271,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9CBAB1D32EC66F9400DF800C /* TestPlan.xctestplan in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
