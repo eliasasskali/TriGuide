@@ -1,0 +1,45 @@
+{
+  "configurations" : [
+    {
+      "id" : "F2B1C52D-9958-4C0A-A343-7EC6EBA9F820",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:TriGuide\/Features\/CarbItems\/CarbItemsSPM",
+        "identifier" : "CarbItemsSPMTests",
+        "name" : "CarbItemsSPMTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:TriGuide\/Common\/FormKit",
+        "identifier" : "FormKitTests",
+        "name" : "FormKitTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:TriGuide\/Features\/RaceCalculator\/RaceCalculatorSPM",
+        "identifier" : "RaceCalculatorSPMTests",
+        "name" : "RaceCalculatorSPMTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:TriGuide\/Common\/StorageKit",
+        "identifier" : "StorageKitTests",
+        "name" : "StorageKitTests"
+      }
+    }
+  ],
+  "version" : 1
+}
