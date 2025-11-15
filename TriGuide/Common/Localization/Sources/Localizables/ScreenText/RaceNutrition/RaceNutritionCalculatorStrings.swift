@@ -106,5 +106,30 @@ public extension Localizables {
             String(localized: "race_nutrition_calculator-ambient-temperature", bundle: .module)
             // Ambient Temperature
         }
+
+        public static var carbsEstimationInformationTitle: String {
+            String(localized: "race_nutrition_calculator-carbs-estimation-information-title", bundle: .module)
+        } // Carbohydrate Intake Estimation
+
+        public static var carbsEstimationInformationDescription: String {
+            String(localized: "race_nutrition_calculator-carbs-estimation-information-description", bundle: .module)
+        } // These recommendations are a guide, especially for athletes without gut training. Everyone’s tolerance is different, so it’s best to experiment and find what works for you.
+
+        public static var fastedStateInformationDescription: String {
+            String(localized: "race_nutrition_calculator-fasted-state-information-description", bundle: .module)
+        } // Training or racing in a fasted state shifts your body toward burning more fat, so your carb needs are lower. Use this if you haven’t eaten recently.
+
+        public static var gutTrainedInformationDescription: String {
+            String(localized: "race_nutrition_calculator-gut-trained-information-description", bundle: .module)
+        } // You can train your gut to tolerate more carbs during long sessions. Start gradually with small amounts and increase over time to avoid discomfort.
+
+        public static var applyAmateurLimitsInformationDescription: String {
+            String(localized: "race_nutrition_calculator-apply-amateur-limits-information-description", bundle: .module)
+        } // The carb recommendation is capped for safety, ideal for athletes without gut training. Advanced users can disable this in settings.
+
+        public static var ambientTemperatureInformationDescription: String {
+            String(localized: "race_nutrition_calculator-ambient-temperatur-information-description", bundle: .module)
+        } // Hotter conditions increase carb usage slightly. Your body relies more on carbs to maintain performance in heat.
+
     }
 }
