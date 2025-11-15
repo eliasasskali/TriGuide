@@ -77,9 +77,19 @@ struct RaceNutritionCalculatorView: View {
                     // MARK: - Carbs Input / Estimate
                     GroupBox {
                         VStack(alignment: .leading, spacing: 12) {
-                            Text(Localizables.RaceNutritionCalculator.secondSectionTitle)
-                                .font(.Custom.Medium.font4)
+                            HStack {
+                                Text(Localizables.RaceNutritionCalculator.secondSectionTitle)
+                                    .font(.Custom.Medium.font4)
 
+                                Spacer()
+
+                                InfoLabel(
+                                    title: Localizables.RaceNutritionCalculator.carbsEstimationInformationTitle,
+                                    content: {
+                                        Text(Localizables.RaceNutritionCalculator.carbsEstimationInformationDescription)
+                                    }
+                                )
+                            }
                             Text(Localizables.RaceNutritionCalculator.secondSectionDescription)
                                 .font(.Custom.Regular.font3)
                                 .foregroundColor(.gray)
@@ -226,35 +236,45 @@ private extension RaceNutritionCalculatorView {
 
                 if shouldShowAdvancedOptions {
                     Toggle(isOn: $viewModel.fasted) {
-                        Label(Localizables.RaceNutritionCalculator.fastedState, systemImage: "info.circle")
-                            .onTapGesture {
-                                // TODO: Show info about fasted state
+                        HStack {
+                            InfoLabel {
+                                Text(Localizables.RaceNutritionCalculator.fastedStateInformationDescription)
                             }
+                            Text(Localizables.RaceNutritionCalculator.fastedState)
+                        }
                     }
 
                     Toggle(isOn: $viewModel.gutTrained) {
-                        Label(Localizables.RaceNutritionCalculator.gutTrained, systemImage: "info.circle")
-                            .onTapGesture {
-                                // TODO: Show info about gut training
+                        HStack {
+                            InfoLabel {
+                                Text(Localizables.RaceNutritionCalculator.gutTrainedInformationDescription)
                             }
+                            Text(Localizables.RaceNutritionCalculator.gutTrained)
+                        }
                     }
 
                     Toggle(isOn: $viewModel.capped) {
-                        Label(Localizables.RaceNutritionCalculator.applyAmateurLimits, systemImage: "info.circle")
-                            .onTapGesture {
-                                // TODO: Show info about amateur caps
+                        HStack {
+                            InfoLabel {
+                                Text(Localizables.RaceNutritionCalculator.applyAmateurLimitsInformationDescription)
                             }
+                            Text(Localizables.RaceNutritionCalculator.applyAmateurLimits)
+                        }
                     }
 
                     VStack(alignment: .leading, spacing: 8) {
                         HStack {
-                            Label(Localizables.RaceNutritionCalculator.ambientTemperatureC, systemImage: "info.circle")
-                                .onTapGesture {
-                                    // TODO: Show info about ambient temperature
+                            HStack {
+                                InfoLabel {
+                                    VStack {
+                                        Text(Localizables.RaceNutritionCalculator.ambientTemperatureInformationDescription)
+                                    }
                                 }
-                            Spacer()
-                            Text("\(Int(viewModel.ambientTempC))\(Localizables.Units.celsiusSymbol)")
-                                .monospacedDigit()
+                                Text(Localizables.RaceNutritionCalculator.ambientTemperatureC)
+                                Spacer()
+                                Text("\(Int(viewModel.ambientTempC))\(Localizables.Units.celsiusSymbol)")
+                                    .monospacedDigit()
+                            }
                         }
                         Slider(
                             value: $viewModel.ambientTempC,

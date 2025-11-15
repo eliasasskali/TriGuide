@@ -1301,6 +1301,28 @@
         }
       }
     },
+    "race_nutrition_calculator-ambient-temperatur-information-description" : {
+      "localizations" : {
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les condicions més calentes augmenten lleugerament l’ús de carbohidrats. El cos depèn més dels carbohidrats per mantenir el rendiment amb calor."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hotter conditions increase carb usage slightly. Your body relies more on carbs to maintain performance in heat."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las condiciones más cálidas aumentan ligeramente el uso de carbohidratos. El cuerpo depende más de los carbohidratos para mantener el rendimiento con calor."
+          }
+        }
+      }
+    },
     "race_nutrition_calculator-ambient-temperature" : {
       "localizations" : {
         "ca" : {
@@ -1367,6 +1389,28 @@
         }
       }
     },
+    "race_nutrition_calculator-apply-amateur-limits-information-description" : {
+      "localizations" : {
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La recomanació de carbohidrats està limitada per seguretat, ideal per a esportistes sense un estómac entrenat. Desactivar-la donarà nombres més alts però pot ser més difícil de tolerar."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The carb recommendation is capped for safety, ideal for athletes without gut training. Disabling it will give higher numbers but may be harder to tolerate."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La recomendación de carbohidratos está limitada por seguridad, ideal para deportistas sin un estómago entrenado. Desactivarla dará valores más altos pero puede ser más difícil de tolerar."
+          }
+        }
+      }
+    },
     "race_nutrition_calculator-calculate-button-title" : {
       "localizations" : {
         "ca" : {
@@ -1385,6 +1429,50 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Calcular"
+          }
+        }
+      }
+    },
+    "race_nutrition_calculator-carbs-estimation-information-description" : {
+      "localizations" : {
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aquestes recomanacions són una guia, especialment per a esportistes sense un estómac entrenat. La tolerància de cada persona és diferent, així que és millor provar i descobrir què funciona per a tu."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "These recommendations are a guide, especially for athletes without gut training. Everyone’s tolerance is different, so it’s best to experiment and find what works for you."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estas recomendaciones son una guía, especialmente para deportistas sin un estómago entrenado. La tolerancia de cada persona es diferente, así que es mejor probar y descubrir qué funciona para ti."
+          }
+        }
+      }
+    },
+    "race_nutrition_calculator-carbs-estimation-information-title" : {
+      "localizations" : {
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estimació d’ingesta de carbohidrats"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carbohydrate Intake Estimation"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estimación de ingesta de carbohidratos"
           }
         }
       }
@@ -1451,6 +1539,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Estado en ayunas"
+          }
+        }
+      }
+    },
+    "race_nutrition_calculator-fasted-state-information-description" : {
+      "localizations" : {
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El teu cos utilitza més greix si no has menjat abans de l’esforç, així que les necessitats de carbohidrats són més baixes. Fes servir-ho si comences la sessió sense menjar."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your body burns more fat when you haven’t eaten before the effort, so your carb needs are lower. Use this if you start the session without a meal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu cuerpo quema más grasa si no has comido antes del esfuerzo, por lo que tus necesidades de carbohidratos son menores. Úsalo si empiezas la sesión sin comer."
           }
         }
       }
@@ -1539,6 +1649,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Estómago entrenado"
+          }
+        }
+      }
+    },
+    "race_nutrition_calculator-gut-trained-information-description" : {
+      "localizations" : {
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pots entrenar el teu estómac per tolerar més carbohidrats durant sessions llargues. Si no l’has entrenat, és millor deixar aquesta opció desactivada."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You can train your gut to tolerate more carbs during long sessions. If you haven’t trained your gut, it’s better to leave this option unchecked."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Puedes entrenar tu estómago para tolerar más carbohidratos durante sesiones largas. Si no lo has entrenado, es mejor dejar esta opción desactivada."
           }
         }
       }
