@@ -4,6 +4,7 @@
 
 import Foundation
 import StorageKit
+import TriGuideDomain
 
 actor UserCarbItemsDataSourceDefault: UserCarbItemsDataSource {
     private let storage: LocalStorage<[CarbItemDto]>

@@ -4,7 +4,7 @@
 
 import Foundation
 
-enum CarbType: String, Codable, CaseIterable {
+public enum CarbType: String, Codable, Sendable, CaseIterable {
     case solid
     case drink
     case gel
@@ -13,7 +13,7 @@ enum CarbType: String, Codable, CaseIterable {
 
 // MARK: - Decodable
 
-extension CarbType {
+public extension CarbType {
     init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
         let rawValue = try container.decode(String.self)

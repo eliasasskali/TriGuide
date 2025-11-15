@@ -5,10 +5,11 @@
 import CarbItemsSPM
 import NavigationKit
 import SwiftUI
+import TriGuideDomain
 
 public class RaceNutritionCoordinator: BaseCoordinator<RaceNutritionCoordinator.Path, RaceNutritionCoordinator.Sheet, RaceNutritionView> {
     public enum Path: Hashable {
-        case raceNutritionResult(result: [CarbItemSelection])
+        case raceNutritionResult(result: FuelingResult)
     }
 
     public enum Sheet: Identifiable, Equatable {
@@ -48,7 +49,7 @@ public extension RaceNutritionCoordinator {
         presentSheet(sheet: .carbItems(totalGrams: totalCarbGrams))
     }
 
-    func pushRaceNutritionResultView(result: [CarbItemSelection]) {
+    func pushRaceNutritionResultView(result: FuelingResult) {
         push(.raceNutritionResult(result: result))
     }
 
@@ -57,8 +58,11 @@ public extension RaceNutritionCoordinator {
             guard let carbItemsCoordinator else {
                 carbItemsCoordinator = try factory.buildCarbItemsCoordinator(
                     totalCarbGrams: totalCarbGrams,
-                    onCompleteSelection: { [weak self] result in
-                        self?.pushRaceNutritionResultView(result: result)
+                    onCompleteSelection: { [weak self] carbItemsSelection in
+                        guard let self,
+                              let result = viewModel.calculateFueling(from: carbItemsSelection)
+                        else { return }
+                        pushRaceNutritionResultView(result: result)
                     }
                 )
                 return carbItemsCoordinator?.start()

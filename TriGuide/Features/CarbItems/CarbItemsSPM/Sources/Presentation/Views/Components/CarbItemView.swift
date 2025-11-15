@@ -5,6 +5,7 @@
 import SwiftUI
 import Localization
 import DesignSystem
+import TriGuideDomain
 
 struct CarbItemView: View {
     let item: CarbItem

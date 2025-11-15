@@ -5,18 +5,18 @@
 import Foundation
 
 public struct CarbItem: Sendable, Decodable {
-    let id: String
-    let name: String
-    let gramsOfCarbs: Double
-    let caffeine: Double?
-    let sodium: Double?
-    let waterVolumeML: Double?
-    let type: CarbType
-    let brand: String?
-    let isCustom: Bool
+    public let id: String
+    public let name: String
+    public let gramsOfCarbs: Double
+    public let caffeine: Double?
+    public let sodium: Double?
+    public let waterVolumeML: Double?
+    public let type: CarbType
+    public let brand: String?
+    public let isCustom: Bool
     public var isFavorite: Bool
 
-    init(
+    public init(
         id: String,
         name: String,
         gramsOfCarbs: Double,

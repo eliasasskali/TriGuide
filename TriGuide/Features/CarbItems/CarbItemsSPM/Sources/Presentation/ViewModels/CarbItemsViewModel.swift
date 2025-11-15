@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import TriGuideDomain
 
 @MainActor
 public class CarbItemsViewModel: ObservableObject {

@@ -301,7 +301,11 @@ private extension RaceNutritionCalculatorView {
 // MARK: - Preview
 #Preview {
     RaceNutritionCalculatorView(
-        viewModel: RaceNutritionViewModel(),
+        viewModel: RaceNutritionViewModel(
+            calculateFuelingResultUseCase: CalculateFuelingResultUseCaseDefault(
+                dataSource: LocalFuelingCalculator()
+            )
+        ),
         coordinator: RaceNutritionCoordinator(
             factory: RaceNutritionViewFactoryDefault(
                 dependencies: .init()
