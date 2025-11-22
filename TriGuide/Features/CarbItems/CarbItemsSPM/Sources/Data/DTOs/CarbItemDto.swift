@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import TriGuideDomain
 
 public struct CarbItemDto: Codable, Sendable {
     let id: String

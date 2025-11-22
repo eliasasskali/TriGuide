@@ -33,7 +33,7 @@ public struct RaceNutritionView: View {
             .navigationDestination(for: RaceNutritionCoordinator.Path.self) { path in
                 switch path {
                 case .raceNutritionResult(let result):
-                    RaceNutritionResultView(items: result)
+                    RaceNutritionResultView(fuelingResult: result)
                 }
             }
         }

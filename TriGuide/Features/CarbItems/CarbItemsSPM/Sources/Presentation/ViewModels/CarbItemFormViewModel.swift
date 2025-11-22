@@ -5,6 +5,7 @@
 import Foundation
 import FormKit
 import Localization
+import TriGuideDomain
 
 @MainActor
 public final class CarbItemFormViewModel: ObservableObject {

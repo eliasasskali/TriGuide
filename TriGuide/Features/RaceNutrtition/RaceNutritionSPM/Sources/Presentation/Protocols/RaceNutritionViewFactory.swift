@@ -4,6 +4,7 @@
 
 import Foundation
 import CarbItemsSPM
+import TriGuideDomain
 
 public protocol RaceNutritionViewFactory {
     @MainActor func buildRaceNutritionView(

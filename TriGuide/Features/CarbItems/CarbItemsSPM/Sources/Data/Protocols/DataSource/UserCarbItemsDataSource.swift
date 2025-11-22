@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import TriGuideDomain
 
 public protocol UserCarbItemsDataSource: Sendable {
     func getCarbItems() async throws -> [CarbItem]

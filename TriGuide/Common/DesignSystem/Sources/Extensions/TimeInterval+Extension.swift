@@ -17,4 +17,11 @@ public extension TimeInterval {
 
         return "\(hours):" + String(format: "%02d:%02d", minutes, seconds)
     }
+
+    func roundToMultiple(
+        of seconds: Double = 300.0,
+        rule: FloatingPointRoundingRule
+    ) -> TimeInterval {
+        (self / seconds).rounded(rule) * seconds
+    }
 }

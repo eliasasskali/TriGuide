@@ -4,12 +4,21 @@
 
 import CarbItemsSPM
 import FormKit
+import TriGuideDomain
 
 public final class RaceNutritionViewFactoryDefault {
     public struct Dependencies {
+        let fuelingCalculatorDataSource: FuelingCalculatorDataSource
+        let calculateFuelingResultUseCase: CalculateFuelingResultUseCase
 
-        public init() {
-
+        public init(
+            fuelingCalculatorDataSource: FuelingCalculatorDataSource? = nil,
+            calculateFuelingResultUseCase: CalculateFuelingResultUseCase? = nil
+        ) {
+            self.fuelingCalculatorDataSource = fuelingCalculatorDataSource ?? LocalFuelingCalculator()
+            self.calculateFuelingResultUseCase = calculateFuelingResultUseCase ?? CalculateFuelingResultUseCaseDefault(
+                dataSource: self.fuelingCalculatorDataSource
+            )
         }
     }
 
@@ -34,7 +43,9 @@ extension RaceNutritionViewFactoryDefault: RaceNutritionViewFactory {
     }
 
     @MainActor public func buildRaceNutritionViewModel() -> RaceNutritionViewModel {
-        RaceNutritionViewModel()
+        RaceNutritionViewModel(
+            calculateFuelingResultUseCase: dependencies.calculateFuelingResultUseCase
+        )
     }
 
     @MainActor public func buildCarbItemsCoordinator(

@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import TriGuideDomain
 
 extension CarbItemDto {
     func toDomain() -> CarbItem {

@@ -4,6 +4,7 @@
 
 import Foundation
 import FormKit
+import TriGuideDomain
 
 public final class CarbItemsViewFactoryDefault {
     public struct Dependencies {

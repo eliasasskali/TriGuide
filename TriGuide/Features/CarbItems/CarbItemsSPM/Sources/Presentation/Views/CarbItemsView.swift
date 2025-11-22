@@ -5,6 +5,7 @@
 import SwiftUI
 import Localization
 import DesignSystem
+import TriGuideDomain
 
 public struct CarbItemsView: View {
     @Environment(\.dismiss) private var dismiss

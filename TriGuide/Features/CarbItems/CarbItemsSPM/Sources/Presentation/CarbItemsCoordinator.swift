@@ -5,6 +5,7 @@
 import Foundation
 import SwiftUI
 import NavigationKit
+import TriGuideDomain
 
 public class CarbItemsCoordinator: BaseCoordinator<CarbItemsCoordinator.Route, Never, CarbItemsView> {
     public enum Route: Hashable {

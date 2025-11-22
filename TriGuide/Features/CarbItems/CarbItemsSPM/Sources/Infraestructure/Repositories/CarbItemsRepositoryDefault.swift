@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import TriGuideDomain
 
 actor CarbItemsRepositoryDefault: CarbItemsRepository {
     enum RepositoryError: Error, Equatable {
