@@ -10,6 +10,7 @@ public struct FuelingResult: Equatable, Sendable, Hashable {
     public let totalCarbsTarget: Double
     public let duration: TimeInterval
     public let selectedItems: [CarbItemSelection]
+    public let hourlyBreakdown: [IntervalFueling]
 
     public var totalSelectedCarbs: Double {
         selectedItems.reduce(0) { $0 + $1.item.gramsOfCarbs * $1.quantity }
@@ -28,12 +29,14 @@ public struct FuelingResult: Equatable, Sendable, Hashable {
         timeLine: [FuelingEvent],
         totalCarbsTarget: Double,
         duration: TimeInterval,
-        selectedItems: [CarbItemSelection]
+        selectedItems: [CarbItemSelection],
+        hourlyBreakdown: [IntervalFueling]
     ) {
         self.name = name
         self.timeLine = timeLine
         self.totalCarbsTarget = totalCarbsTarget
         self.duration = duration
         self.selectedItems = selectedItems
+        self.hourlyBreakdown = hourlyBreakdown
     }
 }

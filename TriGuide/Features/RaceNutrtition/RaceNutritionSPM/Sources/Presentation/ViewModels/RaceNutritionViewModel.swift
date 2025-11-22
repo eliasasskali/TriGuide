@@ -66,11 +66,12 @@ public class RaceNutritionViewModel: ObservableObject {
     // MARK: - Final result calculation
 
     func calculateFueling(from selection: [CarbItemSelection]) -> FuelingResult? {
-        guard let estimatedTotalGrams, let duration else { return nil }
+        guard let estimatedTotalGrams, let duration, let sport else { return nil }
         let fuelingInput = FuelingInput(
             carbItemSelection: selection,
             carbsTarget: estimatedTotalGrams,
-            duration: duration
+            duration: duration,
+            sport: sport
         )
         return calculateFuelingResultUseCase.execute(fuelingInput: fuelingInput)
     }

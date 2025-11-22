@@ -5,11 +5,16 @@
 import Foundation
 
 public struct FuelingEvent: Equatable, Sendable, Hashable {
-    public let time: TimeInterval
+    public enum Consumption: Equatable, Sendable, Hashable {
+        case instant(time: TimeInterval)
+        case interval(start: TimeInterval, end: TimeInterval)
+    }
+
+    public let consumption: Consumption
     public let carbItem: CarbItem
 
-    public init(time: TimeInterval, carbItem: CarbItem) {
-        self.time = time
+    public init(consumption: Consumption, carbItem: CarbItem) {
+        self.consumption = consumption
         self.carbItem = carbItem
     }
 }
