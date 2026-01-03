@@ -10,6 +10,7 @@ import TriGuideDomain
 public class RaceNutritionCoordinator: BaseCoordinator<RaceNutritionCoordinator.Path, RaceNutritionCoordinator.Sheet, RaceNutritionView> {
     public enum Path: Hashable {
         case raceNutritionResult(result: FuelingResult)
+        case fuelingPlanFullView
     }
 
     public enum Sheet: Identifiable, Equatable {
@@ -53,6 +54,10 @@ public extension RaceNutritionCoordinator {
         push(.raceNutritionResult(result: result))
     }
 
+    func pushFuelingPlanFullView() {
+        push(.fuelingPlanFullView)
+    }
+    
     func buildCarbItemsView(totalCarbGrams: Double) -> CarbItemsView? {
         do {
             guard let carbItemsCoordinator else {

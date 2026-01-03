@@ -73,7 +73,8 @@ public class RaceNutritionViewModel: ObservableObject {
             duration: duration,
             sport: sport
         )
-        return calculateFuelingResultUseCase.execute(fuelingInput: fuelingInput)
+        fuelingResult = calculateFuelingResultUseCase.execute(fuelingInput: fuelingInput)
+        return fuelingResult
     }
 }
 

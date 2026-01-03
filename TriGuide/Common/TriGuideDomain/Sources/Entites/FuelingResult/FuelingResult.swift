@@ -24,6 +24,24 @@ public struct FuelingResult: Equatable, Sendable, Hashable {
         totalSelectedCarbs / (duration / 3600)
     }
 
+    public var instantEvents: [FuelingEvent] {
+        timeLine.filter { event in
+            switch event.consumption {
+            case .instant: return true
+            case .interval: return false
+            }
+        }
+    }
+
+    public var intervalEvents: [FuelingEvent] {
+        timeLine.filter { event in
+            switch event.consumption {
+            case .instant: return false
+            case .interval: return true
+            }
+        }
+    }
+
     public init(
         name: String? = nil,
         timeLine: [FuelingEvent],

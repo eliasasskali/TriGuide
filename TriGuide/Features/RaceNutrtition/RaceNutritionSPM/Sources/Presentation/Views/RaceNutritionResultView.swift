@@ -6,10 +6,22 @@ import SwiftUI
 import CarbItemsSPM
 import TriGuideDomain
 
-struct RaceNutritionResultView: View {
-    let fuelingResult: FuelingResult
+public struct RaceNutritionResultView: View {
+    @ObservedObject private var coordinator: RaceNutritionCoordinator
 
     @State private var shouldShowSelectedItems = false
+
+    let fuelingResult: FuelingResult
+
+    public init(
+        coordinator: RaceNutritionCoordinator,
+        shouldShowSelectedItems: Bool = false,
+        fuelingResult: FuelingResult
+    ) {
+        self.coordinator = coordinator
+        self.shouldShowSelectedItems = shouldShowSelectedItems
+        self.fuelingResult = fuelingResult
+    }
 
     var roundedTimeLine: [FuelingEvent] {
         fuelingResult.timeLine.map { event in
@@ -49,7 +61,7 @@ struct RaceNutritionResultView: View {
         }
     }
 
-    var body: some View {
+    public var body: some View {
         ScrollView {
             VStack(spacing: 16) {
                 planSummary
@@ -68,8 +80,23 @@ private extension RaceNutritionResultView {
     @ViewBuilder
     var fuelingPlan: some View {
         VStack(spacing: 16) {
-            Text("Fueling plan:")
-                .font(.Custom.Medium.font5)
+            HStack {
+                Text("Fueling plan:")
+                    .font(.Custom.Medium.font5)
+
+                Spacer()
+
+                HStack(alignment: .center) {
+                    Text("Edit")
+                        .font(.Custom.Regular.font3)
+                    Image(systemName: "pencil")
+                        .fixedSize()
+                        .bold()
+                }
+                .onTapGesture {
+                    coordinator.pushFuelingPlanFullView()
+                }
+            }
 
             Grid {
                 GridRow {
@@ -205,6 +232,9 @@ private extension RaceNutritionResultView {
 
 #Preview {
     RaceNutritionResultView(
+        coordinator: RaceNutritionCoordinator(
+            factory: RaceNutritionViewFactoryDefault(dependencies: .init())
+        ),
         fuelingResult: .init(
             timeLine: [
                 FuelingEvent(consumption: .instant(time: TimeInterval(7200/5)), carbItem: .init(id: "id1", name: "gel 1", gramsOfCarbs: 45, type: .gel)),
