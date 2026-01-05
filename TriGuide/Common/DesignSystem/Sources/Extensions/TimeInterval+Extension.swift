@@ -39,4 +39,9 @@ public extension TimeInterval {
     ) -> TimeInterval {
         (self / seconds).rounded(rule) * seconds
     }
+
+    func roundedToNearest(minutes: Int) -> TimeInterval {
+        guard minutes > 0 else { return self }
+        return roundToMultiple(of: Double(minutes * 60), rule: .toNearestOrAwayFromZero)
+    }
 }

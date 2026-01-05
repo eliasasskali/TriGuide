@@ -11,16 +11,16 @@ public struct RaceNutritionResultView: View {
 
     @State private var shouldShowSelectedItems = false
 
-    let fuelingResult: FuelingResult
+    @Binding var fuelingResult: FuelingResult
 
     public init(
         coordinator: RaceNutritionCoordinator,
         shouldShowSelectedItems: Bool = false,
-        fuelingResult: FuelingResult
+        fuelingResult: Binding<FuelingResult>
     ) {
         self.coordinator = coordinator
         self.shouldShowSelectedItems = shouldShowSelectedItems
-        self.fuelingResult = fuelingResult
+        _fuelingResult = fuelingResult
     }
 
     var roundedTimeLine: [FuelingEvent] {
@@ -65,10 +65,9 @@ public struct RaceNutritionResultView: View {
         ScrollView {
             VStack(spacing: 16) {
                 planSummary
-
                 selectedItems
-
                 fuelingPlan
+                hourlyBreakdown
             }.padding()
         }
     }
@@ -79,89 +78,91 @@ public struct RaceNutritionResultView: View {
 private extension RaceNutritionResultView {
     @ViewBuilder
     var fuelingPlan: some View {
-        VStack(spacing: 16) {
-            HStack {
-                Text("Fueling plan:")
-                    .font(.Custom.Medium.font5)
+        GroupBox {
+            VStack(spacing: 16) {
+                HStack {
+                    Text("Fueling plan:")
+                        .font(.Custom.Medium.font5)
 
-                Spacer()
+                    Spacer()
 
-                HStack(alignment: .center) {
-                    Text("Edit")
-                        .font(.Custom.Regular.font3)
-                    Image(systemName: "pencil")
-                        .fixedSize()
-                        .bold()
+                    HStack(alignment: .center) {
+                        Text("Edit")
+                            .font(.Custom.Regular.font3)
+                        Image(systemName: "pencil")
+                            .fixedSize()
+                            .bold()
+                    }
+                    .onTapGesture {
+                        coordinator.pushFuelingPlanFullView()
+                    }
                 }
-                .onTapGesture {
-                    coordinator.pushFuelingPlanFullView()
-                }
-            }
 
-            Grid {
-                GridRow {
-                    Text("Time")
-                    Text("Item")
-                }
-                .font(.Custom.Medium.font3)
-
-                Divider()
-
-                ForEach(itemTimeLine, id: \.self) { event in
+                Grid {
                     GridRow {
-                        switch event.consumption {
-                        case .instant(let time):
-                            Text("\(time.formattedAsHourMinSec)")
-                                .font(.Custom.Regular.font3)
+                        Text("Time")
+                        Text("Item")
+                    }
+                    .font(.Custom.Medium.font3)
 
-                        case .interval(let startTime, let endTime):
-                            Text("\(startTime.formattedAsHourMinSec) - \(endTime.formattedAsHourMinSec)")
+                    Divider()
+
+                    ForEach(itemTimeLine, id: \.self) { event in
+                        GridRow {
+                            switch event.consumption {
+                            case .instant(let time):
+                                Text("\(time.formattedAsHourMinSec)")
+                                    .font(.Custom.Regular.font3)
+
+                            case .interval(let startTime, let endTime):
+                                Text("\(startTime.formattedAsHourMinSec) - \(endTime.formattedAsHourMinSec)")
+                                    .font(.Custom.Regular.font3)
+                            }
+
+                            Text("\(event.carbItem.name)")
                                 .font(.Custom.Regular.font3)
                         }
+                        .padding(.vertical, 4)
 
-                        Text("\(event.carbItem.name)")
-                            .font(.Custom.Regular.font3)
+                        if event != itemTimeLine.last {
+                            Divider()
+                        }
                     }
-                    .padding(.vertical, 4)
-
-                    if event != itemTimeLine.last {
-                        Divider()
-                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
-            }
 
-            Grid {
-                GridRow {
-                    Text("Interval")
-                    Text("Drink")
-                }
-                .font(.Custom.Medium.font3)
-
-                Divider()
-
-                ForEach(drinkTimeLine, id: \.self) { event in
+                Grid {
                     GridRow {
-                        switch event.consumption {
-                        case .instant(let time):
-                            Text("\(time.formattedAsHourMinSec)")
-                                .font(.Custom.Regular.font3)
+                        Text("Interval")
+                        Text("Drink")
+                    }
+                    .font(.Custom.Medium.font3)
 
-                        case .interval(let startTime, let endTime):
-                            Text("\(startTime.formattedAsHourMinSec) - \(endTime.formattedAsHourMinSec)")
+                    Divider()
+
+                    ForEach(drinkTimeLine, id: \.self) { event in
+                        GridRow {
+                            switch event.consumption {
+                            case .instant(let time):
+                                Text("\(time.formattedAsHourMinSec)")
+                                    .font(.Custom.Regular.font3)
+
+                            case .interval(let startTime, let endTime):
+                                Text("\(startTime.formattedAsHourMinSec) - \(endTime.formattedAsHourMinSec)")
+                                    .font(.Custom.Regular.font3)
+                            }
+
+                            Text("\(event.carbItem.name)")
                                 .font(.Custom.Regular.font3)
                         }
+                        .padding(.vertical, 4)
 
-                        Text("\(event.carbItem.name)")
-                            .font(.Custom.Regular.font3)
+                        if event != drinkTimeLine.last {
+                            Divider()
+                        }
                     }
-                    .padding(.vertical, 4)
-
-                    if event != drinkTimeLine.last {
-                        Divider()
-                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
     }
@@ -228,6 +229,17 @@ private extension RaceNutritionResultView {
             shouldShowSelectedItems.toggle()
         }
     }
+
+    var hourlyBreakdown: some View {
+        GroupBox {
+            VStack(alignment: .leading, spacing: 16) {
+                Text("Hourly breakdown:")
+                    .font(.Custom.Medium.font5)
+
+                TimeBreakdownView(breakdown: fuelingResult.hourlyBreakdown)
+            }
+        }
+    }
 }
 
 #Preview {
@@ -235,26 +247,28 @@ private extension RaceNutritionResultView {
         coordinator: RaceNutritionCoordinator(
             factory: RaceNutritionViewFactoryDefault(dependencies: .init())
         ),
-        fuelingResult: .init(
-            timeLine: [
-                FuelingEvent(consumption: .instant(time: TimeInterval(7200/5)), carbItem: .init(id: "id1", name: "gel 1", gramsOfCarbs: 45, type: .gel)),
-                FuelingEvent(consumption: .instant(time: TimeInterval(7200*2/5)), carbItem: .init(id: "id1", name: "gel 1", gramsOfCarbs: 45, type: .gel)),
-                FuelingEvent(consumption: .instant(time: TimeInterval(7200*3/5)), carbItem: .init(id: "id1", name: "gel 1", gramsOfCarbs: 45, type: .gel)),
-                FuelingEvent(consumption: .instant(time: TimeInterval(7200*4/5)), carbItem: .init(id: "id1", name: "gel 1", gramsOfCarbs: 45, type: .gel))
-            ],
-            totalCarbsTarget: 180,
-            duration: 7200,
-            selectedItems: [
-                CarbItemSelection(item: .init(id: "id1", name: "gel 1", gramsOfCarbs: 45, type: .gel), quantity: 4),
-                CarbItemSelection(item: .init(id: "id2", name: "Long text that should fit in a line", gramsOfCarbs: 45, type: .gel), quantity: 4)
-            ],
-            hourlyBreakdown: [
-                IntervalFueling(duration: 3600, hourIndex: 0, carbGrams: 45, caffeine: 0, waterVolumeML: 0),
-                IntervalFueling(duration: 3600, hourIndex: 1, carbGrams: 45, caffeine: 0, waterVolumeML: 0),
-                IntervalFueling(duration: 3600, hourIndex: 2, carbGrams: 45, caffeine: 0, waterVolumeML: 0),
-                IntervalFueling(duration: 3600, hourIndex: 3, carbGrams: 45, caffeine: 0, waterVolumeML: 0),
-                IntervalFueling(duration: 3600, hourIndex: 4, carbGrams: 45, caffeine: 0, waterVolumeML: 0)
-            ]
+        fuelingResult: .constant(
+            .init(
+                timeLine: [
+                    FuelingEvent(consumption: .instant(time: TimeInterval(7200/5)), carbItem: .init(id: "id1", name: "gel 1", gramsOfCarbs: 45, type: .gel)),
+                    FuelingEvent(consumption: .instant(time: TimeInterval(7200*2/5)), carbItem: .init(id: "id1", name: "gel 1", gramsOfCarbs: 45, type: .gel)),
+                    FuelingEvent(consumption: .instant(time: TimeInterval(7200*3/5)), carbItem: .init(id: "id1", name: "gel 1", gramsOfCarbs: 45, type: .gel)),
+                    FuelingEvent(consumption: .instant(time: TimeInterval(7200*4/5)), carbItem: .init(id: "id1", name: "gel 1", gramsOfCarbs: 45, type: .gel))
+                ],
+                totalCarbsTarget: 180,
+                duration: 7200,
+                selectedItems: [
+                    CarbItemSelection(item: .init(id: "id1", name: "gel 1", gramsOfCarbs: 45, type: .gel), quantity: 4),
+                    CarbItemSelection(item: .init(id: "id2", name: "Long text that should fit in a line", gramsOfCarbs: 45, type: .gel), quantity: 4)
+                ],
+                hourlyBreakdown: [
+                    IntervalFueling(duration: 3600, hourIndex: 0, carbGrams: 45, caffeine: 0, waterVolumeML: 0),
+                    IntervalFueling(duration: 3600, hourIndex: 1, carbGrams: 45, caffeine: 0, waterVolumeML: 0),
+                    IntervalFueling(duration: 3600, hourIndex: 2, carbGrams: 45, caffeine: 0, waterVolumeML: 0),
+                    IntervalFueling(duration: 3600, hourIndex: 3, carbGrams: 45, caffeine: 0, waterVolumeML: 0),
+                    IntervalFueling(duration: 3600, hourIndex: 4, carbGrams: 45, caffeine: 0, waterVolumeML: 0)
+                ]
+            )
         )
     )
 }

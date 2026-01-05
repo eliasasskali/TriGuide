@@ -31,9 +31,11 @@ public extension Localizables {
         public static let minuteSymbol = "min"
         public static let secondSymbol = "s"
 
-        // MARK: - Weight
+        // MARK: - Weight/Volume
         public static let kgSymbol = "kg"
         public static let gSymbol = "g"
+        public static let mgSymbol = "mg"
+        public static let mlSymbol = "ml"
 
         // MARK: - Temperature
         public static let celsiusSymbol = "°C"

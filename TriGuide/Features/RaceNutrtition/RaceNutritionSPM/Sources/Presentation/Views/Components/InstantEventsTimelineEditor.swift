@@ -5,9 +5,6 @@
 import SwiftUI
 import TriGuideDomain
 
-/// Timeline editor for instant fueling events.
-/// Usage:
-/// InstantEventsTimelineEditor(duration: result.duration, events: $editableInstantEvents)
 struct InstantEventsTimelineEditor: View {
     let duration: TimeInterval
     @Binding var events: [FuelingEvent]
@@ -24,7 +21,8 @@ struct InstantEventsTimelineEditor: View {
     }
 }
 
-// MARK: - Private helper
+// MARK: - Private helpers
+
 private extension InstantEventsTimelineEditor {
 
     // MARK: - Views
@@ -41,15 +39,14 @@ private extension InstantEventsTimelineEditor {
             let usableWidth = max(1, fullWidth - handleSize)
 
             ZStack(alignment: .leading) {
-                // Background bar centered vertically
                 RoundedRectangle(cornerRadius: barHeight / 2)
+                    .fill(Color(.lightGray).opacity(0.6))
                     .frame(height: barHeight)
                     .frame(maxWidth: .infinity, alignment: .center)
+                    .allowsHitTesting(false)
 
-                // Handles for each instant event
                 ForEach(Array(events.enumerated()), id: \.element.id) { (index, event) in
                     if case let .instant(time) = event.consumption {
-                        // Circle (draggable) and time label positioned with offsets
                         InstantEventHandle(
                             duration: duration,
                             usableWidth: usableWidth,
@@ -66,6 +63,7 @@ private extension InstantEventsTimelineEditor {
                 }
             }
         }
+        .frame(height: 150)
     }
 
     // MARK: - Gesture helper
@@ -73,21 +71,18 @@ private extension InstantEventsTimelineEditor {
     func dragGesture(for index: Int, initialTime: TimeInterval, usableWidth: CGFloat) -> some Gesture {
         DragGesture(minimumDistance: 0)
             .onChanged { value in
-                // Use translation to compute time delta; store a temporary event time in the events array
-                // Start with the current (or previously temporary) time as base
                 let baseTime = events[index].consumptionTimeOrZero // helper below
                 let deltaFraction = Double(value.translation.width / usableWidth)
                 let deltaTime = deltaFraction * duration
                 let newTime = clampTime(TimeInterval(baseTime + deltaTime).roundedToMinute)
-                // update a temporary visual time by replacing the event with a temp event
+
                 var copy = events
                 copy[index] = FuelingEvent(consumption: .instant(time: newTime), carbItem: events[index].carbItem)
                 events = copy
             }
             .onEnded { value in
-                // On end we already updated the events during onChanged; ensure final commit is clamped
                 let baseTime = events[index].consumptionTimeOrZero
-                // We can also compute from translation again to be safe:
+
                 let deltaFraction = Double(value.translation.width / usableWidth)
                 let deltaTime = deltaFraction * duration
                 let committed = clampTime((baseTime + deltaTime).roundedToMinute)
@@ -104,14 +99,14 @@ private extension InstantEventsTimelineEditor {
         let clamped = clampTime(time)
         let fraction = CGFloat(clamped / duration)
         return (handleSize / 2) + fraction * usableWidth - (handleSize / 2)
-        // simplified to fraction * usableWidth (usableWidth already accounts for handle padding)
-        // but added anchor adjustments so handle edges don't overflow
     }
 
     func clampTime(_ t: TimeInterval) -> TimeInterval {
         min(max(0, t), duration)
     }
 }
+
+// MARK: - InstantEventHandle
 
 private struct InstantEventHandle: View {
     let duration: TimeInterval
@@ -158,10 +153,14 @@ private struct InstantEventHandle: View {
 
                     let deltaTime = (value.translation.width / usableWidth) * duration
 
-                    tempTime = clamp((dragStartTime! + deltaTime).roundedToMinute)
+                    tempTime = clamp(
+                        (dragStartTime! + deltaTime).roundedToNearest(minutes: 5)
+                    )
                 }
                 .onEnded { _ in
-                    let committed = clamp((tempTime ?? initialTime).roundedToMinute)
+                    let committed = clamp(
+                        (tempTime ?? initialTime).roundedToNearest(minutes: 5)
+                    )
                     onCommit(committed)
 
                     dragStartTime = nil
@@ -183,8 +182,11 @@ private struct InstantEventHandle: View {
     }
 }
 
+// MARK: - Preview
+
 #Preview {
     PreviewWrapper()
+        .padding()
 }
 
 private struct PreviewWrapper: View {

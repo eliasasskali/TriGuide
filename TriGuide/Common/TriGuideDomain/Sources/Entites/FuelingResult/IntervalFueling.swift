@@ -6,7 +6,7 @@ import Foundation
 
 public struct IntervalFueling: Sendable, Hashable, Equatable {
     public let duration: TimeInterval
-    public let hourIndex: Int
+    public let index: Int
     public let carbGrams: Double
     public let caffeine: Double
     public let waterVolumeML: Double
@@ -19,9 +19,18 @@ public struct IntervalFueling: Sendable, Hashable, Equatable {
         waterVolumeML: Double
     ) {
         self.duration = duration
-        self.hourIndex = hourIndex
+        self.index = hourIndex
         self.carbGrams = carbGrams
         self.caffeine = caffeine
         self.waterVolumeML = waterVolumeML
+    }
+
+    public var formatted: String {
+        let startTime = duration * Double(index)
+        let endTime = duration * Double(index + 1)
+        let formattedStart = TimeInterval(startTime).formattedAsHourMin
+        let formattedEnd = TimeInterval(endTime).formattedAsHourMin
+
+        return "\(formattedStart) - \(formattedEnd)"
     }
 }
