@@ -32,14 +32,28 @@ public struct RaceNutritionView: View {
             }
             .navigationDestination(for: RaceNutritionCoordinator.Path.self) { path in
                 switch path {
-                case .raceNutritionResult(let result):
-                    RaceNutritionResultView(fuelingResult: result)
+                case .raceNutritionResult:
+                    if let binding = Binding(
+                        get: { viewModel.fuelingResult },
+                        set: { viewModel.fuelingResult = $0 }
+                    ).unwrap() {
+                        RaceNutritionResultView(
+                            coordinator: coordinator,
+                            fuelingResult: binding
+                        )
+                    } else {
+                        EmptyView()
+                    }
+
+                case .fuelingPlanFullView:
+                    if let binding = Binding(
+                        get: { viewModel.fuelingResult },
+                        set: { viewModel.fuelingResult = $0 }
+                    ).unwrap() {
+                        FuelingPlanEditView(result: binding)
+                    }
                 }
             }
         }
     }
-}
-
-#Preview {
-
 }

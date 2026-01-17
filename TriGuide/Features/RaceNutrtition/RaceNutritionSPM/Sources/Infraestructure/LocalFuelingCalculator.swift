@@ -143,7 +143,8 @@ public final class LocalFuelingCalculator: FuelingCalculatorDataSource {
 
             // Record event
             let time = max(batchCenterTime(chosenBatch), startBuffer) // never before startBuffer
-            events.append(TriGuideDomain.FuelingEvent(consumption: .instant(time: time), carbItem: item))
+            let timeRounded = time.roundedToNearest(minutes: 5)
+            events.append(TriGuideDomain.FuelingEvent(consumption: .instant(time: timeRounded), carbItem: item))
             lastPlacementById[item.id] = chosenBatch
             caffeinatedPlacementIndices.append(chosenBatch)
         }
@@ -180,7 +181,8 @@ public final class LocalFuelingCalculator: FuelingCalculatorDataSource {
             )
 
             let time = max(batchCenterTime(chosenBatch), startBuffer)
-            events.append(TriGuideDomain.FuelingEvent(consumption: .instant(time: time), carbItem: item))
+            let timeRounded = time.roundedToNearest(minutes: 5)
+            events.append(TriGuideDomain.FuelingEvent(consumption: .instant(time: timeRounded), carbItem: item))
             lastPlacementById[item.id] = chosenBatch
         }
 
@@ -209,8 +211,7 @@ public final class LocalFuelingCalculator: FuelingCalculatorDataSource {
         }
 
         // Build interval breakdown
-        let intervalBreakdown = computeBreakDown(
-            minutes: 30,
+        let intervalBreakdown = Self.computeBreakDown(
             totalDuration: totalDuration,
             events: events
         )
@@ -232,7 +233,7 @@ public final class LocalFuelingCalculator: FuelingCalculatorDataSource {
 
     // MARK: - Compute breakdown per interval
 
-    public func computeBreakDown(
+    public static func computeBreakDown(
         minutes: Double = 60,
         totalDuration: TimeInterval,
         events: [FuelingEvent]
@@ -325,16 +326,19 @@ private extension LocalFuelingCalculator {
             let segLen = totalDuration * (weights[i] / totalWeight)
             let start = cursor
             let end = min(totalDuration, cursor + segLen)
-            let event = TriGuideDomain.FuelingEvent(consumption: .interval(start: start, end: end), carbItem: item)
+            let event = TriGuideDomain.FuelingEvent(consumption: .interval(start: start.roundedToNearest(minutes: 5), end: end.roundedToNearest(minutes: 5)), carbItem: item)
             results.append(event)
             cursor = end
         }
         // ensure last covers to end
         if let last = results.last,
            let (_, end) = intervalBounds(last),
-           end < totalDuration
+           end < totalDuration,
+           let start = intervalBounds(last)?.start
         {
-            results[results.count - 1] = last
+            let newEnd = totalDuration.roundedToNearest(minutes: 5)
+            let startClamped = min(start, newEnd)
+            results[results.count - 1] = TriGuideDomain.FuelingEvent(consumption: .interval(start: startClamped, end: newEnd), carbItem: last.carbItem)
         }
         return results
     }
@@ -604,7 +608,7 @@ private extension LocalFuelingCalculator {
         // Append instants based on final `insts` placements
         for rec in insts {
             let time = Double(rec.batch) * batchSeconds + batchSeconds / 2.0
-            events.append(TriGuideDomain.FuelingEvent(consumption: .instant(time: time), carbItem: rec.item))
+            events.append(TriGuideDomain.FuelingEvent(consumption: .instant(time: time.roundedToNearest(minutes: 5)), carbItem: rec.item))
         }
     }
 
