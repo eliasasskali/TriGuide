@@ -6,56 +6,56 @@ import SwiftUI
 import TriGuideDomain
 import Localization
 
-public struct TimeBreakdownView: View {
-
+public struct IntervalBreakdownView: View {
+    
     private var breakdown: [IntervalFueling]
-
+    
     public init(breakdown: [IntervalFueling]) {
         self.breakdown = breakdown
     }
-
+    
     public var body: some View {
         VStack(alignment: .leading, spacing: 24) {
             ForEach(breakdown, id: \.index) { interval in
                 VStack(alignment: .leading, spacing: 16) {
-                    Text("Interval: \(interval.formatted)")
+                    Text(Localizables.RaceNutritionResults.interval(interval.formatted))
                         .font(.Custom.Medium.font4)
-
+                    
                     Grid {
                         GridRow {
-                            Text("Carbohydrates:")
+                            Text(Localizables.RaceNutritionResults.intervalCarbsLabel)
                                 .font(.Custom.Medium.font3)
-
+                            
                             Text("\(interval.carbGrams, specifier: "%.0f") \(Localizables.Units.gSymbol)")
                                 .font(.Custom.Regular.font3)
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.vertical, 4)
-
+                        
                         Divider()
-
+                        
                         GridRow {
-                            Text("Caffeine:")
+                            Text(Localizables.RaceNutritionResults.intervalCaffeineLabel)
                                 .font(.Custom.Medium.font3)
-
+                            
                             Text("\(interval.caffeine, specifier: "%.0f") \(Localizables.Units.mgSymbol)")
                                 .font(.Custom.Regular.font3)
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.vertical, 4)
-
+                        
                         Divider()
-
+                        
                         GridRow {
-                            Text("Liquid:")
+                            Text(Localizables.RaceNutritionResults.intervalLiquidLabel)
                                 .font(.Custom.Medium.font3)
-
+                            
                             Text("\(interval.waterVolumeML, specifier: "%.0f") \(Localizables.Units.mlSymbol)")
                                 .font(.Custom.Regular.font3)
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.vertical, 4)
-
+                        
                         Divider()
                     }
                 }
@@ -98,9 +98,9 @@ private struct PreviewWrapper: View {
             waterVolumeML: 300
         )
     ]
-
+    
     var body: some View {
-        TimeBreakdownView(breakdown: breakDown)
+        IntervalBreakdownView(breakdown: breakDown)
     }
 }
 

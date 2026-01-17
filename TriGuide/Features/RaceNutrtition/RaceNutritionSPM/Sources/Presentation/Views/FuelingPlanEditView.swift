@@ -5,8 +5,9 @@
 import SwiftUI
 import DesignSystem
 import TriGuideDomain
+import Localization
 
-struct FuelingPlanFullView: View {
+struct FuelingPlanEditView: View {
     @Environment(\.dismiss) private var dismiss
 
     @Binding var result: FuelingResult
@@ -40,10 +41,10 @@ struct FuelingPlanFullView: View {
 
                     GroupBox {
                         VStack(alignment: .leading, spacing: 16) {
-                            Text("Hourly breakdown:")
+                            Text(Localizables.RaceNutritionResults.editViewHourlyBreakdownTitle)
                                 .font(.Custom.Medium.font5)
 
-                            TimeBreakdownView(breakdown: liveHourlyBreakdown)
+                            IntervalBreakdownView(breakdown: liveHourlyBreakdown)
                         }
                     }
 
@@ -51,9 +52,9 @@ struct FuelingPlanFullView: View {
                 }
             }
             HStack(spacing: 12) {
-                ActionButton.init("Reset", action: resetToOriginal)
+                ActionButton.init(Localizables.RaceNutritionResults.editViewResetButtonLabel, action: resetToOriginal)
 
-                ActionButton.init("Apply changes", action: applyChanges)
+                ActionButton.init(Localizables.RaceNutritionResults.editViewApplyButtonLabel, action: applyChanges)
             }
         }
         .onChange(of: editableInstantEvents) {
@@ -75,7 +76,7 @@ struct FuelingPlanFullView: View {
 
 // MARK: - Private methods
 
-private extension FuelingPlanFullView {
+private extension FuelingPlanEditView {
     func resetToOriginal() {
         editableInstantEvents = result.instantEvents
         editableIntervalEvents = result.intervalEvents

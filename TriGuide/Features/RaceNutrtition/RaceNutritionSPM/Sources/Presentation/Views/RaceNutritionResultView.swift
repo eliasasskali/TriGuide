@@ -5,6 +5,7 @@
 import SwiftUI
 import CarbItemsSPM
 import TriGuideDomain
+import Localization
 
 public struct RaceNutritionResultView: View {
     @ObservedObject private var coordinator: RaceNutritionCoordinator
@@ -81,13 +82,13 @@ private extension RaceNutritionResultView {
         GroupBox {
             VStack(spacing: 16) {
                 HStack {
-                    Text("Fueling plan:")
+                    Text(Localizables.RaceNutritionResults.fuelingPlanTitle)
                         .font(.Custom.Medium.font5)
 
                     Spacer()
 
                     HStack(alignment: .center) {
-                        Text("Edit")
+                        Text(Localizables.RaceNutritionResults.fuelingPlanEditButtonLabel)
                             .font(.Custom.Regular.font3)
                         Image(systemName: "pencil")
                             .fixedSize()
@@ -100,8 +101,8 @@ private extension RaceNutritionResultView {
 
                 Grid {
                     GridRow {
-                        Text("Time")
-                        Text("Item")
+                        Text(Localizables.RaceNutritionResults.fuelingPlanTimeColumnTitle)
+                        Text(Localizables.RaceNutritionResults.fuelingPlanItemColumnTitle)
                     }
                     .font(.Custom.Medium.font3)
 
@@ -133,8 +134,8 @@ private extension RaceNutritionResultView {
 
                 Grid {
                     GridRow {
-                        Text("Interval")
-                        Text("Drink")
+                        Text(Localizables.RaceNutritionResults.fuelingPlanIntervalColumnTitle)
+                        Text(Localizables.RaceNutritionResults.fuelingPlanDrinkColumnTitle)
                     }
                     .font(.Custom.Medium.font3)
 
@@ -172,7 +173,7 @@ private extension RaceNutritionResultView {
         GroupBox {
             VStack(alignment: .leading, spacing: 12) {
                 HStack {
-                    Text("Selected Carbs/Target:")
+                    Text(Localizables.RaceNutritionResults.fuelingPlanSelectedCarbsTargetLabel)
                         .font(.Custom.Medium.font3)
                     Spacer()
                     Text("\(Int(fuelingResult.totalSelectedCarbs))/\(Int(fuelingResult.totalCarbsTarget)) g")
@@ -180,7 +181,7 @@ private extension RaceNutritionResultView {
                 }
 
                 HStack {
-                    Text("Selected carbs per hour/Target:")
+                    Text(Localizables.RaceNutritionResults.fuelingPlanSelectedCarbsHourTargetLabel)
                         .font(.Custom.Medium.font3)
                     Spacer()
                     Text("\(Int(fuelingResult.actualCarbsPerHour))/\(Int(fuelingResult.carbTargetPerHour)) g")
@@ -215,7 +216,7 @@ private extension RaceNutritionResultView {
 
     var selectedItemsHeader: some View {
         HStack {
-            Text("Selected Nutrition Items")
+            Text(Localizables.RaceNutritionResults.fuelingPlanSelectedNutritionItemsTitle)
                 .font(shouldShowSelectedItems ? .Custom.Medium.font4 : .Custom.Medium.font3)
 
             Spacer()
@@ -233,10 +234,10 @@ private extension RaceNutritionResultView {
     var hourlyBreakdown: some View {
         GroupBox {
             VStack(alignment: .leading, spacing: 16) {
-                Text("Hourly breakdown:")
+                Text(Localizables.RaceNutritionResults.fuelingPlanHourlyBreakdownTitle)
                     .font(.Custom.Medium.font5)
 
-                TimeBreakdownView(breakdown: fuelingResult.hourlyBreakdown)
+                IntervalBreakdownView(breakdown: fuelingResult.hourlyBreakdown)
             }
         }
     }
