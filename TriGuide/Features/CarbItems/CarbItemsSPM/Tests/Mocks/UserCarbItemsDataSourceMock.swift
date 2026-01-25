@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import TriGuideDomain
 @testable import CarbItemsSPM
 
 final actor UserCarbItemsDataSourceMock: UserCarbItemsDataSource {
