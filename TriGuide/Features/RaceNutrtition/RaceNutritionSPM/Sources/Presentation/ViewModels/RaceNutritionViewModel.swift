@@ -8,6 +8,13 @@ import TriGuideDomain
 
 @MainActor
 public class RaceNutritionViewModel: ObservableObject {
+
+    // MARK: - Dependencies
+
+    private let calculateFuelingResultUseCase: CalculateFuelingResultUseCase
+
+    // MARK: - Properties
+
     @Published var sport: SupportedSport?
     @Published var duration: TimeInterval?
     @Published var weight: Double?
@@ -24,11 +31,13 @@ public class RaceNutritionViewModel: ObservableObject {
 
     @Published var fuelingResult: FuelingResult?
 
-    let calculateFuelingResultUseCase: CalculateFuelingResultUseCase
+    // MARK: - Computed properties
 
     var isButtonDisabled: Bool {
         duration == nil || duration == 0 || gramsPerHour == nil || sport == nil
     }
+
+    // MARK: - Initializer
 
     public init(calculateFuelingResultUseCase: CalculateFuelingResultUseCase) {
         self.calculateFuelingResultUseCase = calculateFuelingResultUseCase
@@ -53,7 +62,9 @@ public class RaceNutritionViewModel: ObservableObject {
             .assign(to: &$gramsPerHour)
     }
 
+    // MARK: - Calculation methods
 
+    /// Calculates the total grams of carbohydrates needed based on duration and grams per hour.
     func calculateTotalGrams() {
         isLoading = true
         defer { isLoading = false }
@@ -63,8 +74,7 @@ public class RaceNutritionViewModel: ObservableObject {
         didFinishCalculation = true
     }
 
-    // MARK: - Final result calculation
-
+    /// Calculates the fueling result based on the selected carb items.
     func calculateFueling(from selection: [CarbItemSelection]) -> FuelingResult? {
         guard let estimatedTotalGrams, let duration, let sport else { return nil }
         let fuelingInput = FuelingInput(

@@ -7,54 +7,76 @@ import SwiftUI
 import Localization
 
 struct IntervalEventsTimelineEditor: View {
+
+    // MARK: - Constants
+
+    enum Constants {
+        static let barHeight: CGFloat = 9
+        static let minInterval: TimeInterval = 300 // 5 minutes
+        static let editorHeight: CGFloat = 80
+        static let verticalPadding: CGFloat = 16
+    }
+
+    // MARK: - Dependencies
+
     let duration: TimeInterval
     @Binding var events: [FuelingEvent]
-    
-    private let barHeight: CGFloat = 8
-    private let handleSize: CGFloat = 20
-    private let minInterval: TimeInterval = 300 // 5 minutes
-    
+
+    // MARK: - Body
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(Localizables.RaceNutritionResults.intervalEventsTitle)
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-            
-            GeometryReader { geo in
-                let usableWidth = max(1, geo.size.width)
-                
-                ZStack(alignment: .leading) {
-                    RoundedRectangle(cornerRadius: barHeight / 2)
-                        .fill(Color(.lightGray).opacity(0.3))
-                        .frame(height: barHeight)
-                        .frame(maxWidth: .infinity, alignment: .top)
-                        .allowsHitTesting(false)
-                        .zIndex(0)
-                        .offset(y: -17)
-                    
-                    ForEach(Array(events.enumerated()), id: \.element.id) { index, event in
-                        if case let .interval(start, end) = event.consumption {
-                            IntervalEventView(
-                                duration: duration,
-                                usableWidth: usableWidth,
-                                start: start,
-                                end: end,
-                                minInterval: minInterval,
-                                label: event.carbItem.name
-                            ) { newStart, newEnd in
-                                events[index] = FuelingEvent(
-                                    consumption: .interval(start: newStart, end: newEnd),
-                                    carbItem: event.carbItem
-                                )
-                            }
-                            .zIndex(1)
+            header
+            intervalEditor
+        }
+    }
+}
+
+// MARK: - Private methods
+
+private extension IntervalEventsTimelineEditor {
+    var header: some View {
+        Text(Localizables.RaceNutritionResults.intervalEventsTitle)
+            .font(.subheadline)
+            .foregroundColor(.secondary)
+    }
+
+    var intervalEditor: some View {
+        GeometryReader { geo in
+            let usableWidth = max(1, geo.size.width)
+
+            ZStack(alignment: .leading) {
+                RoundedRectangle(cornerRadius: Constants.barHeight / 2)
+                    .fill(Color(.lightGray).opacity(0.8))
+                    .frame(height: Constants.barHeight)
+                    .frame(maxWidth: .infinity, alignment: .top)
+                    .allowsHitTesting(false)
+                    .zIndex(0)
+                    .offset(y: -Constants.verticalPadding + 1)
+
+                ForEach(events.indices, id: \.self) { index in
+                    let event = events[index]
+                    if case let .interval(start, end) = event.consumption {
+                        IntervalEventView(
+                            duration: duration,
+                            usableWidth: usableWidth,
+                            start: start,
+                            end: end,
+                            minInterval: Constants.minInterval,
+                            label: event.carbItem.name
+                        ) { newStart, newEnd in
+                            events[index] = FuelingEvent(
+                                consumption: .interval(start: newStart, end: newEnd),
+                                carbItem: event.carbItem
+                            )
                         }
+                        .zIndex(1)
                     }
                 }
-                .padding(.vertical)
             }
-            .frame(height: 80)
+            .padding(.vertical, Constants.verticalPadding)
         }
+        .frame(height: Constants.editorHeight)
     }
 }
 
@@ -78,7 +100,7 @@ private struct PreviewWrapper: View {
             )
         ]
     }
-    
+
     var body: some View {
         IntervalEventsTimelineEditor(
             duration: 3600,

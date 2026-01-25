@@ -3,6 +3,7 @@
 //
 
 import SwiftUI
+import Localization
 
 public struct ActionButton: View {
     public enum Style {
@@ -11,25 +12,53 @@ public struct ActionButton: View {
         case destructive
     }
 
+    // MARK: - Dependencies
+
     let title: String
     let style: Style
     let isLoading: Bool
     let isDisabled: Bool
+    let accessibilityLabel: String?
+    let accessibilityHint: String?
     let action: () -> Void
+
+    // MARK: - Initializer
 
     public init(
         _ title: String,
         style: Style = .primary,
         isLoading: Bool = false,
         isDisabled: Bool = false,
+        accessibilityLabel: String? = nil,
+        accessibilityHint: String? = nil,
         action: @escaping () -> Void
     ) {
         self.title = title
         self.style = style
         self.isLoading = isLoading
         self.isDisabled = isDisabled
+        self.accessibilityLabel = accessibilityLabel
+        self.accessibilityHint = accessibilityHint
         self.action = action
     }
+
+    // MARK: - Computed properties
+
+    private var accessibilityHintText: String {
+        return if isLoading {
+            Localizables.AccessibilityHints.loading
+        } else if isDisabled {
+            Localizables.AccessibilityHints.disabled
+        } else {
+            accessibilityHint ?? ""
+        }
+    }
+
+    private var accessibilityLabelText: String {
+        accessibilityLabel ?? title
+    }
+
+    // MARK: - Body
 
     public var body: some View {
         Button(action: {
@@ -41,6 +70,7 @@ public struct ActionButton: View {
                     ProgressView()
                         .progressViewStyle(.circular)
                         .controlSize(.small)
+                        .accessibilityHidden(true)
                 }
                 Text(title)
                     .font(.headline)
@@ -50,6 +80,11 @@ public struct ActionButton: View {
         .disabled(isDisabled || isLoading)
         .controlSize(.large)
         .applyNativeStyle(style: style)
+        .accessibilityLabel(accessibilityLabelText)
+        .if(!accessibilityHintText.isEmpty) {
+            $0.accessibilityHint(accessibilityHintText)
+        }
+        .accessibilityAddTraits(.isButton)
     }
 }
 

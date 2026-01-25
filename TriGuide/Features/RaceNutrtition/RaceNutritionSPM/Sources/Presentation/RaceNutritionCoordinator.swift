@@ -8,6 +8,9 @@ import SwiftUI
 import TriGuideDomain
 
 public class RaceNutritionCoordinator: BaseCoordinator<RaceNutritionCoordinator.Path, RaceNutritionCoordinator.Sheet, RaceNutritionView> {
+
+    // MARK: - Nested Types
+
     public enum Path: Hashable {
         case raceNutritionResult
         case fuelingPlanFullView
@@ -24,16 +27,21 @@ public class RaceNutritionCoordinator: BaseCoordinator<RaceNutritionCoordinator.
         }
     }
 
-    let factory: RaceNutritionViewFactory
-    @Published public var viewModel: RaceNutritionViewModel
+    // MARK: - Dependencies
 
+    @Published public var viewModel: RaceNutritionViewModel
+    private let factory: RaceNutritionViewFactory
     private var carbItemsCoordinator: CarbItemsCoordinator?
+
+    // MARK: - Initializer
 
     public init(factory: RaceNutritionViewFactory) {
         self.factory = factory
         self.viewModel = factory.buildRaceNutritionViewModel()
         super.init()
     }
+
+    // MARK: - Overrides
 
     public override func start() -> RaceNutritionView {
         factory.buildRaceNutritionView(

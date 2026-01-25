@@ -22,7 +22,11 @@ public final class RaceNutritionViewFactoryDefault {
         }
     }
 
+    // MARK: - Dependencies
+
     private let dependencies: Dependencies
+
+    // MARK: - Initializer
 
     public init(dependencies: Dependencies) {
         self.dependencies = dependencies

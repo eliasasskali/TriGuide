@@ -10,11 +10,14 @@ import Localization
 struct FuelingPlanEditView: View {
     @Environment(\.dismiss) private var dismiss
 
-    @Binding var result: FuelingResult
+    // MARK: - Dependencies
 
+    @Binding var result: FuelingResult
     @State private var editableInstantEvents: [FuelingEvent]
     @State private var editableIntervalEvents: [FuelingEvent]
     @State private var liveHourlyBreakdown: [IntervalFueling]
+
+    // MARK: - Initializer
 
     init(result: Binding<TriGuideDomain.FuelingResult>) {
         _result = result
@@ -24,38 +27,30 @@ struct FuelingPlanEditView: View {
         _liveHourlyBreakdown = State(initialValue: result.wrappedValue.hourlyBreakdown)
     }
 
-    var body: some View {
+    // MARK: - Body
 
-        VStack {
-            ScrollView {
-                VStack {
+    var body: some View {
+        ScrollView {
+            LazyVStack(spacing: 16) {
+                if !editableInstantEvents.isEmpty {
                     InstantEventsTimelineEditor(
                         duration: result.duration,
                         events: $editableInstantEvents
                     )
+                }
 
+                if !editableIntervalEvents.isEmpty {
                     IntervalEventsTimelineEditor(
                         duration: result.duration,
                         events: $editableIntervalEvents
                     )
-
-                    GroupBox {
-                        VStack(alignment: .leading, spacing: 16) {
-                            Text(Localizables.RaceNutritionResults.editViewHourlyBreakdownTitle)
-                                .font(.Custom.Medium.font5)
-
-                            IntervalBreakdownView(breakdown: liveHourlyBreakdown)
-                        }
-                    }
-
-                    Spacer()
                 }
-            }
-            HStack(spacing: 12) {
-                ActionButton.init(Localizables.RaceNutritionResults.editViewResetButtonLabel, action: resetToOriginal)
 
-                ActionButton.init(Localizables.RaceNutritionResults.editViewApplyButtonLabel, action: applyChanges)
+                breakdownView
             }
+        }
+        .safeAreaInset(edge: .bottom) {
+            actionButtons
         }
         .onChange(of: editableInstantEvents) {
             recomputeLiveBreakdown()
@@ -77,6 +72,45 @@ struct FuelingPlanEditView: View {
 // MARK: - Private methods
 
 private extension FuelingPlanEditView {
+    var breakdownView: some View {
+        GroupBox {
+            VStack(alignment: .leading, spacing: 16) {
+                Text(Localizables.RaceNutritionResults.editViewHourlyBreakdownTitle)
+                    .font(.Custom.Medium.font5)
+
+                IntervalBreakdownView(breakdown: liveHourlyBreakdown)
+            }
+        }
+    }
+
+    var actionButtons: some View {
+        VStack(spacing: 10) {
+            HStack(spacing: 12) {
+                ActionButton(
+                    Localizables.RaceNutritionResults.editViewResetButtonLabel,
+                    accessibilityHint: Localizables.AccessibilityHints.tapTo(
+                        Localizables.RaceNutritionResults.editViewResetButtonLabel
+                    ),
+                    action: resetToOriginal
+                )
+                .frame(maxWidth: .infinity)
+
+                ActionButton(
+                    Localizables.RaceNutritionResults.editViewApplyButtonLabel,
+                    accessibilityHint: Localizables.AccessibilityHints.tapTo(
+                        Localizables.RaceNutritionResults.editViewApplyButtonLabel
+                    ),
+                    action: applyChanges
+                )
+                .frame(maxWidth: .infinity)
+            }
+            .padding(8)
+        }
+        .background(.ultraThinMaterial)
+    }
+
+    // MARK: - Action methods
+
     func resetToOriginal() {
         editableInstantEvents = result.instantEvents
         editableIntervalEvents = result.intervalEvents
@@ -84,16 +118,13 @@ private extension FuelingPlanEditView {
     }
 
     func recomputeLiveBreakdown() {
-        let sortedInstantEvents = editableInstantEvents.sorted { $0.consumptionTimeOrZero < $1.consumptionTimeOrZero }
-        let sortedIntervalEvents = editableIntervalEvents.sorted { $0.consumptionTimeOrZero < $1.consumptionTimeOrZero }
-        let newTimeLine = sortedInstantEvents + sortedIntervalEvents
+        let timeline = (editableInstantEvents + editableIntervalEvents)
+            .sorted { $0.consumptionTimeOrZero < $1.consumptionTimeOrZero }
 
-        let breakdown = LocalFuelingCalculator.computeBreakDown(
+        liveHourlyBreakdown = LocalFuelingCalculator.computeBreakDown(
             totalDuration: result.duration,
-            events: newTimeLine
+            events: timeline
         )
-
-        liveHourlyBreakdown = breakdown
     }
 
     func applyChanges() {

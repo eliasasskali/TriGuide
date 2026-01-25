@@ -7,63 +7,89 @@ import TriGuideDomain
 import Localization
 
 public struct IntervalBreakdownView: View {
-    
-    private var breakdown: [IntervalFueling]
-    
+
+    // MARK: - Dependencies
+
+    private let breakdown: [IntervalFueling]
+
+    // MARK: - Initializer
+
     public init(breakdown: [IntervalFueling]) {
         self.breakdown = breakdown
     }
-    
+
+    // MARK: - Body
+
     public var body: some View {
         VStack(alignment: .leading, spacing: 24) {
             ForEach(breakdown, id: \.index) { interval in
-                VStack(alignment: .leading, spacing: 16) {
-                    Text(Localizables.RaceNutritionResults.interval(interval.formatted))
-                        .font(.Custom.Medium.font4)
-                    
-                    Grid {
-                        GridRow {
-                            Text(Localizables.RaceNutritionResults.intervalCarbsLabel)
-                                .font(.Custom.Medium.font3)
-                            
-                            Text("\(interval.carbGrams, specifier: "%.0f") \(Localizables.Units.gSymbol)")
-                                .font(.Custom.Regular.font3)
-                        }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.vertical, 4)
-                        
-                        Divider()
-                        
-                        GridRow {
-                            Text(Localizables.RaceNutritionResults.intervalCaffeineLabel)
-                                .font(.Custom.Medium.font3)
-                            
-                            Text("\(interval.caffeine, specifier: "%.0f") \(Localizables.Units.mgSymbol)")
-                                .font(.Custom.Regular.font3)
-                        }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.vertical, 4)
-                        
-                        Divider()
-                        
-                        GridRow {
-                            Text(Localizables.RaceNutritionResults.intervalLiquidLabel)
-                                .font(.Custom.Medium.font3)
-                            
-                            Text("\(interval.waterVolumeML, specifier: "%.0f") \(Localizables.Units.mlSymbol)")
-                                .font(.Custom.Regular.font3)
-                        }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.vertical, 4)
-                        
-                        Divider()
-                    }
-                }
+                intervalInfo(interval: interval)
             }
         }
     }
 }
 
+// MARK: - Private methods
+
+private extension IntervalBreakdownView {
+    func intervalHeader(title: String) -> some View {
+        Text(Localizables.RaceNutritionResults.interval(title))
+            .font(.Custom.Medium.font4)
+    }
+
+    func intervalInfo(interval: IntervalFueling) -> some View {
+        VStack(alignment: .leading, spacing: 16) {
+            intervalHeader(title: interval.formatted)
+            Grid {
+                infoRow(
+                    label: Localizables.RaceNutritionResults.intervalCarbsLabel,
+                    value: interval.carbGrams,
+                    unit: Localizables.Units.gSymbol
+                )
+
+                Divider()
+
+                infoRow(
+                    label: Localizables.RaceNutritionResults.intervalCaffeineLabel,
+                    value: interval.caffeine,
+                    unit: Localizables.Units.mgSymbol
+                )
+
+                Divider()
+
+                infoRow(
+                    label: Localizables.RaceNutritionResults.intervalLiquidLabel,
+                    value: interval.waterVolumeML,
+                    unit: Localizables.Units.mlSymbol
+                )
+
+                Divider()
+            }
+        }
+    }
+
+    func infoRow(
+        label: String,
+        value: Double,
+        unit: String
+    ) -> some View {
+        GridRow {
+            Text(label)
+                .font(.Custom.Medium.font3)
+
+            Text(
+                String(
+                    format: "%.0f %@",
+                    value,
+                    unit
+                )
+            )
+            .font(.Custom.Regular.font3)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.vertical, 4)
+    }
+}
 
 // MARK: - Preview
 
