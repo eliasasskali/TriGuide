@@ -4,6 +4,7 @@
 
 import Foundation
 import Testing
+import TriGuideDomain
 @testable import CarbItemsSPM
 
 @Suite
