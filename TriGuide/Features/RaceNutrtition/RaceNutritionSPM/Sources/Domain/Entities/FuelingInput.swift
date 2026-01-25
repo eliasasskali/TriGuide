@@ -6,16 +6,20 @@ import Foundation
 import TriGuideDomain
 
 public struct FuelingInput {
+
+    // MARK: - Dependencies
+
     public let carbItemSelection: [CarbItemSelection]
     public let carbsTarget: Double
     public let duration: TimeInterval
     public let sport: SupportedSport
-
     public let startBuffer: TimeInterval
     public let endBuffer: TimeInterval
     public let minCarbSpacing: TimeInterval
     public let minCaffeineSpacing: TimeInterval
     public let maxCaffeinePerDose: Double?
+
+    // MARK: - Initializer
 
     public init(
         carbItemSelection: [CarbItemSelection],

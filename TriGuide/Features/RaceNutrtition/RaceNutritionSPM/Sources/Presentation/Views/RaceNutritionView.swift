@@ -5,8 +5,13 @@
 import SwiftUI
 
 public struct RaceNutritionView: View {
+
+    // MARK: - Dependencies
+
     @ObservedObject private var viewModel: RaceNutritionViewModel
     @ObservedObject private var coordinator: RaceNutritionCoordinator
+
+    // MARK: - Initializer
 
     public init(
         viewModel: RaceNutritionViewModel,
@@ -15,6 +20,8 @@ public struct RaceNutritionView: View {
         self.viewModel = viewModel
         self.coordinator = coordinator
     }
+
+    // MARK: - Body
 
     public var body: some View {
         NavigationStack(path: coordinator.pathBinding) {

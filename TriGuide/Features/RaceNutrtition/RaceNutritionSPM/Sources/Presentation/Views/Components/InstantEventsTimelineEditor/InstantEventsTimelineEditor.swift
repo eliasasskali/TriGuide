@@ -7,22 +7,42 @@ import TriGuideDomain
 import Localization
 
 struct InstantEventsTimelineEditor: View {
+
+    // MARK: - Constants
+
+    enum Constants {
+        static let handleSize: CGFloat = 28
+        static let barHeight: CGFloat = 8
+        static let barVerticalOffset: CGFloat = 2
+        static let handleVerticalOffset: CGFloat = 6
+    }
+
+    // MARK: - Dependencies
+
     let duration: TimeInterval
     @Binding var events: [FuelingEvent]
 
-    private let barHeight: CGFloat = 8
-    private let handleSize: CGFloat = 28
-    private let bottomLabelSpacing: CGFloat = 6
+    // MARK: - Computed properties
+
+    private var belowTextHandleY: CGFloat {
+        InstantEventHandle.totalHeight + Constants.barHeight / 2 - Constants.handleSize / 2 - Constants.handleVerticalOffset
+    }
+
+    private var aboveTextHandleY: CGFloat {
+        Constants.handleVerticalOffset + Constants.handleSize / 2
+    }
+
+    // MARK: - Body
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             title
-            itemsBar
+            instantsEditor
         }
     }
 }
 
-// MARK: - Private helpers
+// MARK: - Private methods
 
 private extension InstantEventsTimelineEditor {
 
@@ -34,76 +54,62 @@ private extension InstantEventsTimelineEditor {
             .foregroundColor(.secondary)
     }
 
-    var itemsBar: some View {
+    var instantsEditor: some View {
         GeometryReader { geo in
-            let fullWidth = max(1, geo.size.width)
-            let usableWidth = max(1, fullWidth - handleSize)
+            let usableWidth = max(1, max(1, geo.size.width) - Constants.handleSize)
+            let barY = InstantEventHandle.totalHeight - Constants.barHeight / 2 - Constants.barVerticalOffset
 
-            ZStack(alignment: .leading) {
-                RoundedRectangle(cornerRadius: barHeight / 2)
+            ZStack(alignment: .topLeading) {
+                RoundedRectangle(cornerRadius: Constants.barHeight / 2)
                     .fill(Color(.lightGray).opacity(0.6))
-                    .frame(height: barHeight)
+                    .frame(height: Constants.barHeight)
                     .frame(maxWidth: .infinity, alignment: .center)
+                    .offset(y: barY)
                     .allowsHitTesting(false)
 
-                ForEach(Array(events.enumerated()), id: \.element.id) { (index, event) in
-                    if case let .instant(time) = event.consumption {
-                        InstantEventHandle(
-                            duration: duration,
-                            usableWidth: usableWidth,
-                            initialTime: time,
-                            label: event.carbItem.name
-                        ) { newTime in
-                            events[index] = FuelingEvent(
-                                consumption: .instant(time: newTime),
-                                carbItem: event.carbItem
-                            )
-                        }
-                        .offset(y: handleSize + barHeight/2)
-                    }
-                }
+                eventHandles(usableWidth: usableWidth)
             }
         }
-        .frame(height: 150)
+        .frame(height: 2 * InstantEventHandle.totalHeight)
+        .padding(.trailing, Constants.handleSize / 2)
     }
+}
 
-    // MARK: - Gesture helper
+// MARK: - Private methods
 
-    func dragGesture(for index: Int, initialTime: TimeInterval, usableWidth: CGFloat) -> some Gesture {
-        DragGesture(minimumDistance: 0)
-            .onChanged { value in
-                let baseTime = events[index].consumptionTimeOrZero // helper below
-                let deltaFraction = Double(value.translation.width / usableWidth)
-                let deltaTime = deltaFraction * duration
-                let newTime = clampTime(TimeInterval(baseTime + deltaTime).roundedToMinute)
+private extension InstantEventsTimelineEditor {
+    func eventHandles(usableWidth: CGFloat) -> some View {
+        // how many seconds the handle occupies on the timeline + 8 buffer
+        let handleTime = TimeInterval((Constants.handleSize + 8) / usableWidth) * duration
 
-                var copy = events
-                copy[index] = FuelingEvent(consumption: .instant(time: newTime), carbItem: events[index].carbItem)
-                events = copy
+        let instantEvents = events.enumerated().compactMap { index, event -> (Int, FuelingEvent)? in
+            if case .instant = event.consumption { return (index, event) }
+            return nil
+        }
+
+        return ForEach(instantEvents, id: \.0) { index, event in
+            let time = event.consumptionTimeOrZero
+            let textGoesAbove = events.indices.contains { otherIndex in
+                guard otherIndex < index,  // only check handles to the left
+                      case let .instant(otherTime) = events[otherIndex].consumption
+                else { return false }
+                return abs(otherTime - time) <= handleTime
             }
-            .onEnded { value in
-                let baseTime = events[index].consumptionTimeOrZero
 
-                let deltaFraction = Double(value.translation.width / usableWidth)
-                let deltaTime = deltaFraction * duration
-                let committed = clampTime((baseTime + deltaTime).roundedToMinute)
-                var copy = events
-                copy[index] = FuelingEvent(consumption: .instant(time: committed), carbItem: events[index].carbItem)
-                events = copy
+            InstantEventHandle(
+                duration: duration,
+                usableWidth: usableWidth,
+                initialTime: time,
+                label: event.carbItem.name,
+                textGoesAbove: textGoesAbove
+            ) { newTime in
+                events[index] = FuelingEvent(
+                    consumption: .instant(time: newTime),
+                    carbItem: event.carbItem
+                )
             }
-    }
-
-    // MARK: - Helpers
-
-    func timeToX(time: TimeInterval, usableWidth: CGFloat) -> CGFloat {
-        guard duration > 0 else { return 0 }
-        let clamped = clampTime(time)
-        let fraction = CGFloat(clamped / duration)
-        return (handleSize / 2) + fraction * usableWidth - (handleSize / 2)
-    }
-
-    func clampTime(_ t: TimeInterval) -> TimeInterval {
-        min(max(0, t), duration)
+            .offset(y: textGoesAbove ? aboveTextHandleY : belowTextHandleY)
+        }
     }
 }
 
@@ -144,7 +150,7 @@ private struct PreviewWrapper: View {
 
         _fuelingEvents = State(initialValue: [
             .init(consumption: .instant(time: 600), carbItem: item),
-            .init(consumption: .instant(time: 1800), carbItem: item2),
+            .init(consumption: .instant(time: 600), carbItem: item2),
             .init(consumption: .instant(time: 3000), carbItem: item)
         ])
     }

@@ -14,8 +14,13 @@ public protocol CalculateFuelingResultUseCase: UseCase {
 // MARK: - CalculateFuelingResultUseCaseDefault
 
 public struct CalculateFuelingResultUseCaseDefault {
+
+    // MARK: - Dependencies
+
     let dataSource: FuelingCalculatorDataSource
 }
+
+// MARK: - CalculateFuelingResultUseCase
 
 extension CalculateFuelingResultUseCaseDefault: CalculateFuelingResultUseCase {
     public func execute(fuelingInput: FuelingInput) -> FuelingResult {

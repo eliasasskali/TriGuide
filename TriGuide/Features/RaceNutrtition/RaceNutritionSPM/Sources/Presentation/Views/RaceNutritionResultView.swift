@@ -8,21 +8,17 @@ import TriGuideDomain
 import Localization
 
 public struct RaceNutritionResultView: View {
+
+    // MARK: - Dependencies
+
     @ObservedObject private var coordinator: RaceNutritionCoordinator
+    @Binding var fuelingResult: FuelingResult
+
+    // MARK: - Properties
 
     @State private var shouldShowSelectedItems = false
 
-    @Binding var fuelingResult: FuelingResult
-
-    public init(
-        coordinator: RaceNutritionCoordinator,
-        shouldShowSelectedItems: Bool = false,
-        fuelingResult: Binding<FuelingResult>
-    ) {
-        self.coordinator = coordinator
-        self.shouldShowSelectedItems = shouldShowSelectedItems
-        _fuelingResult = fuelingResult
-    }
+    // MARK: - Computed properties
 
     var roundedTimeLine: [FuelingEvent] {
         fuelingResult.timeLine.map { event in
@@ -62,6 +58,20 @@ public struct RaceNutritionResultView: View {
         }
     }
 
+    // MARK: - Initializer
+
+    public init(
+        coordinator: RaceNutritionCoordinator,
+        shouldShowSelectedItems: Bool = false,
+        fuelingResult: Binding<FuelingResult>
+    ) {
+        self.coordinator = coordinator
+        self.shouldShowSelectedItems = shouldShowSelectedItems
+        _fuelingResult = fuelingResult
+    }
+
+    // MARK: - Body
+
     public var body: some View {
         ScrollView {
             VStack(spacing: 16) {
@@ -69,12 +79,13 @@ public struct RaceNutritionResultView: View {
                 selectedItems
                 fuelingPlan
                 hourlyBreakdown
-            }.padding()
+            }
+            .padding()
         }
     }
 }
 
-// MARK: - Components
+// MARK: - Private methods
 
 private extension RaceNutritionResultView {
     @ViewBuilder
