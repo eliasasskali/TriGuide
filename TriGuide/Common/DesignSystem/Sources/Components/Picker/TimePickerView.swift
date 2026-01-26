@@ -69,19 +69,10 @@ public struct TimePickerView: View {
     }
 }
 
-private extension NumberPickerView {
-    var decimalSeparator: String {
-        NumberFormatter().decimalSeparator ?? ","
-    }
-}
-
 #Preview {
     NumberPickerView(
         whole: .constant(0),
         decimal: nil,
         maxWhole: 100
-    ) {
-
-    }
+    ) {}
 }
-

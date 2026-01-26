@@ -16,7 +16,6 @@ public struct NumberPickerView<Label: View>: View {
     let label: () -> Label
     let onDoneClick: (() -> Void)?
 
-
     public init(
         whole: Binding<Int>,
         decimal: Binding<Int>? = nil,
@@ -51,7 +50,7 @@ public struct NumberPickerView<Label: View>: View {
                     NumberWheelPicker(
                         selection: decimal,
                         minValue: 0,
-                        maxValue: 9,
+                        maxValue: maxDecimal,
                         step: decimalStep
                     )
                 }

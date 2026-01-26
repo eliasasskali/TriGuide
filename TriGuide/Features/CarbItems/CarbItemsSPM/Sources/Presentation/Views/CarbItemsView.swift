@@ -146,12 +146,15 @@ private extension CarbItemsView {
                     viewModel.onSelectCarbItem(selection)
                 }
                 .listRowSeparator(.hidden)
-                .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                    if isUserItem {
-                        userItemSwipeActions(for: carbItem)
-                    } else {
-                        defaultItemSwipeActions(for: carbItem)
-                    }
+                .if(allowSwipeActions) { view in
+                    view
+                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                            if isUserItem {
+                                userItemSwipeActions(for: carbItem)
+                            } else {
+                                defaultItemSwipeActions(for: carbItem)
+                            }
+                        }
                 }
             }
         }

@@ -170,8 +170,8 @@ public extension CarbItemsViewModel {
 }
 
 private extension CarbItemsViewModel {
-    func handle(_ error: Error) {
-        errorMessage = "TODO: handle error"
+    func handle(_ error: Error) { // TODO: Complete
+        errorMessage = "TODO: handle error \(error.localizedDescription)"
     }
 
     func sortCarbItemsByFavourites(_ items: [CarbItem]) -> [CarbItem] {

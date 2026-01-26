@@ -49,6 +49,7 @@ struct FuelingPlanEditView: View {
                 breakdownView
             }
         }
+        .scrollIndicators(.hidden)
         .safeAreaInset(edge: .bottom) {
             actionButtons
         }

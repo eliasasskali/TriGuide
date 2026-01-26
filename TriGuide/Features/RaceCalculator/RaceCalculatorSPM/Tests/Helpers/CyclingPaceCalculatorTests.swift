@@ -18,7 +18,6 @@ final class CyclingPaceCalculatorTests: XCTestCase {
         super.tearDown()
     }
 
-    private let metersInMile: Double = 1609.344
     private let accuracy: Double = 0.01
 }
 

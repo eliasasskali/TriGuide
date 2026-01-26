@@ -217,10 +217,6 @@ private extension CarbItemView {
             EmptyView()
         }
     }
-
-    func formattedValue(_ value: Double) -> String {
-        value.formattedAsDecimal(minFractionDigits: 0, maxFractionDigits: 2)
-    }
 }
 
 #Preview {

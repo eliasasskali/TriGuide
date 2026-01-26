@@ -85,12 +85,3 @@ private extension InfoLabel {
         }
     )
 }
-
-extension View {
-    func infoTextStyle() -> some View {
-        self
-            .font(.footnote)
-            .lineLimit(nil)
-            .fixedSize(horizontal: false, vertical: true)
-    }
-}

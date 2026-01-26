@@ -37,7 +37,6 @@ private extension DuathlonTimeView {
             DurationPickerView(
                 title: Localizables.PaceCalculator.transitionTime(transitionNumber: 1),
                 mode: .compact,
-                labelsBackgroundColor: Color.Primary.white,
                 showHours: false,
                 duration: $viewModel.t1Time
             )
@@ -48,7 +47,6 @@ private extension DuathlonTimeView {
             DurationPickerView(
                 title: Localizables.PaceCalculator.transitionTime(transitionNumber: 2),
                 mode: .compact,
-                labelsBackgroundColor: Color.Primary.white,
                 showHours: false,
                 duration: $viewModel.t2Time
             )

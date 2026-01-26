@@ -226,10 +226,6 @@ private extension IntervalEventView {
         return CGFloat(max(0.0, min(1.0, time / duration))) * usableWidth
     }
 
-    func timeFrom(x: CGFloat) -> TimeInterval {
-        clamp(TimeInterval(x / usableWidth) * duration)
-    }
-
     func timeDelta(from dx: CGFloat) -> TimeInterval {
         TimeInterval(dx / usableWidth) * duration
     }

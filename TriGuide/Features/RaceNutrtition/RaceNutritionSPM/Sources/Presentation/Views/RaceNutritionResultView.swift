@@ -3,7 +3,6 @@
 //
 
 import SwiftUI
-import CarbItemsSPM
 import TriGuideDomain
 import Localization
 
@@ -82,6 +81,7 @@ public struct RaceNutritionResultView: View {
             }
             .padding()
         }
+        .scrollIndicators(.hidden)
     }
 }
 
