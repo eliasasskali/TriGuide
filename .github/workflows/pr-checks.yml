@@ -54,14 +54,19 @@ jobs:
           # Create filtered output
           > filtered_periphery_output.txt
           
+          # Extract just the warning lines (ignore other output)
+          grep "warning:" periphery_output.txt > warnings_only.txt || true
+          
           while IFS= read -r line; do
             for file in $CHANGED_FILES; do
-              if echo "$line" | grep -q "$file"; then
+              # Match on just the filename, since paths might differ
+              filename=$(basename "$file")
+              if echo "$line" | grep -q "$filename"; then
                 echo "$line" >> filtered_periphery_output.txt
                 break
               fi
             done
-          done < periphery_output.txt
+          done < warnings_only.txt
           
           # Check if any dead code was found
           if [ -s filtered_periphery_output.txt ]; then
