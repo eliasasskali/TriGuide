@@ -46,7 +46,13 @@ jobs:
         continue-on-error: true
         run: |
           # Run periphery and save output
-          periphery scan --config periphery.yml > periphery_output.txt 2>&1 || true
+          periphery scan \
+            --project TriGuide.xcodeproj \
+            --schemes TriGuide \
+            --targets TriGuide \
+            --format xcode \
+            --clean-build \
+            > periphery_output.txt 2>&1 || true
           
           # Debug: show full periphery output
           echo "=== Full Periphery Output ==="
