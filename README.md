@@ -8,8 +8,9 @@ TriGuide is built with SwiftUI and modularized using Swift Package Manager (SPM)
 
 ## Feature Modules
 
-\* `RaceCalculatorSPM` \- Pace, speed, distance and time calculations for running (and potentially other sports).  
-\* `CarbItemsSPM` \- Displays and manages carbohydrate intake items (including user items, search and filtering).
+* `RaceCalculatorSPM` - Pace, speed, distance and time calculations for running (and potentially other sports).  
+* `CarbItemsSPM` - Displays and manages carbohydrate intake items (including user items, search and filtering).  
+* `RaceNutritionSPM` - Calculates nutrition needs for races.
 
 ## Common (Shared) Modules
 
@@ -22,10 +23,27 @@ TriGuide is built with SwiftUI and modularized using Swift Package Manager (SPM)
 
 ## Tech Stack
 
-\* SwiftUI for UI layer.  
-\* Swift Package Manager for modular boundaries.  
-\* Async/await where applicable for data loading.  
-\* Dependency inversion via use cases and repositories.
+* SwiftUI for UI layer.  
+* Swift Package Manager for modular boundaries.  
+* Async/await where applicable for data loading.  
+* Dependency inversion via use cases and repositories.
+
+## Development Setup
+
+### Prerequisites
+
+* Xcode (latest stable version recommended)
+* SwiftFormat: `brew install swiftformat`
+
+### Initial Setup
+
+After cloning the repository, run the following command to install Git hooks:
+
+```bash
+./Scripts/setup-hooks.sh
+```
+
+This will install a pre-commit hook that automatically formats Swift files using SwiftFormat before each commit.
 
 ## Directory Snapshot (Simplified)
 
