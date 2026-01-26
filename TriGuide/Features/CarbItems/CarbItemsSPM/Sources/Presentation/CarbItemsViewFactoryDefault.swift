@@ -8,11 +8,6 @@ import TriGuideDomain
 
 public final class CarbItemsViewFactoryDefault {
     public struct Dependencies {
-        let remoteCarbItemsDataSource: RemoteCarbItemsDataSource
-        let localCarbItemsDataSource: CachedCarbItemsDataSource
-        let favoriteCarbItemsDataSource: FavoriteCarbItemsDataSource
-        let userCarbItemsDataSource: UserCarbItemsDataSource
-        let carbItemsRepository: CarbItemsRepository
         let loadCarbItemsUseCase: LoadCarbItemsUseCase
         let loadUserCarbItemsUseCase: LoadUserCarbItemsUseCase
         let addUserCarbItemUseCase: AddUserCarbItemUseCase
@@ -47,11 +42,6 @@ public final class CarbItemsViewFactoryDefault {
                 userCarbItemsDataSource: userItemsDataSource
             )
 
-            self.remoteCarbItemsDataSource = remoteItemsDataSource
-            self.localCarbItemsDataSource = cachedItemsDataSource
-            self.favoriteCarbItemsDataSource = favoriteCarbItemsDataSource
-            self.userCarbItemsDataSource = userItemsDataSource
-            self.carbItemsRepository = repository
             self.loadCarbItemsUseCase = loadCarbItemsUseCase ?? LoadCarbItemsUseCaseDefault(repository: repository)
             self.loadUserCarbItemsUseCase = loadUserCarbItemsUseCase ?? LoadUserCarbItemsUseCaseDefault(repository: repository)
             self.addUserCarbItemUseCase = addUserCarbItemUseCase ?? AddUserCarbItemUseCaseDefault(repository: repository)

@@ -21,20 +21,17 @@ public struct DurationPickerView: View {
 
     let title: String
     let mode: Mode
-    let labelsBackgroundColor: Color
     let showHours: Bool
     @Binding var duration: TimeInterval?
 
     public init(
         title: String,
         mode: Mode = .regular,
-        labelsBackgroundColor: Color = Color(UIColor.lightGray).opacity(0.2),
         showHours: Bool = true,
         duration: Binding<TimeInterval?>
     ) {
         self.title = title
         self.mode = mode
-        self.labelsBackgroundColor = labelsBackgroundColor
         self.showHours = showHours
         self._duration = duration
     }

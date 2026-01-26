@@ -7,7 +7,6 @@ import Foundation
 
 final actor FavoriteCarbItemsDataSourceMock: FavoriteCarbItemsDataSource {
     var favoriteIds: Set<String> = []
-    var isFavorite: Bool = false
 
     func getFavoriteIds() async -> [String] {
         Array(favoriteIds)

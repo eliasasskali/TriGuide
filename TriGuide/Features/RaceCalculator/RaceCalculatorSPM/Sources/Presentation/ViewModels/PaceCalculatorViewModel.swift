@@ -82,20 +82,6 @@ public class PaceCalculatorViewModel: ObservableObject {
 // MARK: - Private methods
 
 private extension PaceCalculatorViewModel {
-    func recalculateAll() {
-        guard let duration, let distance, let paceUnit else { return }
-        isUpdating = true
-        defer { isUpdating = false }
-
-        let paceOrSpeed = paceCalculator.calculatePace(duration: duration, distance: distance, paceUnit: paceUnit)
-        if [.kmPerHour, .milesPerHour].contains(paceUnit) {
-            speed = paceOrSpeed
-            pace = nil
-        } else {
-            pace = paceOrSpeed
-            speed = nil
-        }
-    }
 
     func updatePaceOrSpeedFromDuration() {
         guard let duration, let paceUnit else { return }
@@ -117,7 +103,7 @@ private extension PaceCalculatorViewModel {
     }
 
     func updateDurationFromPaceOrSpeed() {
-        guard let paceOrSpeed = pace ?? speed,
+        guard let paceOrSpeed,
               let paceUnit
         else { return }
 
@@ -133,7 +119,7 @@ private extension PaceCalculatorViewModel {
     func updateDistance() {
         guard distance == nil,
             let duration,
-            let paceOrSpeed = pace ?? speed,
+            let paceOrSpeed,
                 let paceUnit
         else { return }
         isUpdating = true

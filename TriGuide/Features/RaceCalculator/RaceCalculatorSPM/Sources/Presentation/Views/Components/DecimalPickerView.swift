@@ -3,7 +3,6 @@
 //
 
 import SwiftUI
-import Localization
 import DesignSystem
 
 struct DecimalPickerView: View {
@@ -86,10 +85,6 @@ private extension DecimalPickerView {
 // MARK: - Helpers
 
 private extension DecimalPickerView {
-    var decimalSeparator: String {
-        NumberFormatter().decimalSeparator ?? ","
-    }
-
     var formattedValue: String {
         guard let localizedValue = value?.formattedAsDecimal(minFractionDigits: 1) else {
             return 0.formattedAsDecimal(minFractionDigits: 1)

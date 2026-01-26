@@ -123,8 +123,6 @@ private extension InstantEventsTimelineEditor {
 private struct PreviewWrapper: View {
     @State private var fuelingEvents: [FuelingEvent]
 
-    private let duration: TimeInterval = 3600
-
     init() {
         let item = CarbItem(
             id: "maurten-gel-100-caf-100",
