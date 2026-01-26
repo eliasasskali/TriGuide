@@ -21,7 +21,9 @@ jobs:
         run: sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
       
       - name: Install Periphery
-        run: brew install peripheryapp/periphery/periphery
+        run: |
+          brew tap peripheryapp/periphery
+          brew install periphery
       
       - name: Get changed Swift files
         id: changed-files
@@ -52,6 +54,7 @@ jobs:
             --targets TriGuide \
             --format xcode \
             --clean-build \
+            --retain-public \
             > periphery_output.txt 2>&1 || true
           
           # Debug: show full periphery output
@@ -164,7 +167,7 @@ jobs:
             -project TriGuide.xcodeproj \
             -scheme TriGuide \
             -testPlan TestPlan \
-            -destination 'platform=iOS Simulator,name=iPhone 17,OS=latest' \
+            -destination 'platform=iOS Simulator,name=iPhone 16,OS=latest' \
             -enableCodeCoverage YES \
             CODE_SIGNING_ALLOWED=NO \
             | xcpretty && exit ${PIPESTATUS[0]}
