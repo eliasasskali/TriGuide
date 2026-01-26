@@ -48,6 +48,12 @@ jobs:
           # Run periphery and save output
           periphery scan --config periphery.yml > periphery_output.txt 2>&1 || true
           
+          # Debug: show full periphery output
+          echo "=== Full Periphery Output ==="
+          cat periphery_output.txt
+          echo "=== End Periphery Output ==="
+          echo ""
+          
           # Extract just the warning lines (ignore other output)
           grep "warning:" periphery_output.txt > warnings_only.txt || true
           
