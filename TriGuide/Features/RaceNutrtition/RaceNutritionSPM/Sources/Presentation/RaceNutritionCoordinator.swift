@@ -7,7 +7,6 @@ import NavigationKit
 import SwiftUI
 
 public class RaceNutritionCoordinator: BaseCoordinator<RaceNutritionCoordinator.Path, RaceNutritionCoordinator.Sheet, RaceNutritionView> {
-
     // MARK: - Nested Types
 
     public enum Path: Hashable {
@@ -20,8 +19,7 @@ public class RaceNutritionCoordinator: BaseCoordinator<RaceNutritionCoordinator.
 
         public var id: String {
             switch self {
-            case .carbItems(let totalGrams):
-                return "carbItems_\(totalGrams)"
+            case let .carbItems(totalGrams): return "carbItems_\(totalGrams)"
             }
         }
     }
@@ -36,13 +34,13 @@ public class RaceNutritionCoordinator: BaseCoordinator<RaceNutritionCoordinator.
 
     public init(factory: RaceNutritionViewFactory) {
         self.factory = factory
-        self.viewModel = factory.buildRaceNutritionViewModel()
+        viewModel = factory.buildRaceNutritionViewModel()
         super.init()
     }
 
     // MARK: - Overrides
 
-    public override func start() -> RaceNutritionView {
+    override public func start() -> RaceNutritionView {
         factory.buildRaceNutritionView(
             viewModel: viewModel,
             coordinator: self
@@ -64,7 +62,7 @@ public extension RaceNutritionCoordinator {
     func pushFuelingPlanFullView() {
         push(.fuelingPlanFullView)
     }
-    
+
     func buildCarbItemsView(totalCarbGrams: Double) -> CarbItemsView? {
         do {
             guard let carbItemsCoordinator else {
