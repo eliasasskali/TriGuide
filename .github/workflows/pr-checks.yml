@@ -48,14 +48,22 @@ jobs:
           # Run periphery and save output
           periphery scan --config periphery.yml > periphery_output.txt 2>&1 || true
           
+          # Extract just the warning lines (ignore other output)
+          grep "warning:" periphery_output.txt > warnings_only.txt || true
+          
+          # Debug: show what we're working with
+          echo "Changed files:"
+          echo "${{ steps.changed-files.outputs.changed_files }}"
+          echo ""
+          echo "All warnings found:"
+          cat warnings_only.txt
+          echo ""
+          
           # Filter results to only show issues in changed files
           CHANGED_FILES="${{ steps.changed-files.outputs.changed_files }}"
           
           # Create filtered output
           > filtered_periphery_output.txt
-          
-          # Extract just the warning lines (ignore other output)
-          grep "warning:" periphery_output.txt > warnings_only.txt || true
           
           while IFS= read -r line; do
             for file in $CHANGED_FILES; do
