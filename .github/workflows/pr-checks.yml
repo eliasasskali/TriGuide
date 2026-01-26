@@ -22,8 +22,13 @@ jobs:
       
       - name: Install Periphery
         run: |
-          brew tap peripheryapp/periphery
-          brew install periphery
+          # Install latest periphery version
+          PERIPHERY_VERSION="3.4.0"
+          curl -L "https://github.com/peripheryapp/periphery/releases/download/${PERIPHERY_VERSION}/periphery-${PERIPHERY_VERSION}.zip" -o periphery.zip
+          unzip periphery.zip
+          sudo cp periphery /usr/local/bin/
+          chmod +x /usr/local/bin/periphery
+          periphery version
       
       - name: Get changed Swift files
         id: changed-files
