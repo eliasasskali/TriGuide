@@ -29,7 +29,6 @@ public class RaceNutritionCoordinator: BaseCoordinator<RaceNutritionCoordinator.
     @Published public var viewModel: RaceNutritionViewModel
     private let factory: RaceNutritionViewFactory
     private var carbItemsCoordinator: CarbItemsCoordinator?
-    var unusedProp: Bool = false
 
     // MARK: - Initializer
 
