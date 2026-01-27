@@ -2,10 +2,10 @@
 //  TriGuide 2025
 //
 
-import SwiftUI
 import Localization
 import RaceCalculatorSPM
 import RaceNutritionSPM
+import SwiftUI
 
 struct ContentView: View {
     @StateObject private var raceCalculatorCoordinator: RaceCalculatorCoordinator

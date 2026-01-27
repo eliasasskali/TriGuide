@@ -17,7 +17,7 @@ public protocol SearchCarbItemsUseCase: UseCase {
 // MARK: - SearchCarbItemsUseCaseDefault
 
 struct SearchCarbItemsUseCaseDefault: SearchCarbItemsUseCase {
-    public func execute(
+    func execute(
         carbItems: [CarbItem],
         searchText: String
     ) -> [CarbItem] {
@@ -25,8 +25,8 @@ struct SearchCarbItemsUseCaseDefault: SearchCarbItemsUseCase {
 
         return carbItems.filter { carbItem in
             carbItem.name.lowercased().contains(query) ||
-            carbItem.type.rawValue.lowercased().contains(query) ||
-            carbItem.brand?.lowercased().contains(query) ?? false
+                carbItem.type.rawValue.lowercased().contains(query) ||
+                carbItem.brand?.lowercased().contains(query) ?? false
         }
     }
 }

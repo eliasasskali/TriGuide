@@ -2,8 +2,8 @@
 // TriGuide 2025
 //
 
-import Foundation
 import Combine
+import Foundation
 
 // MARK: - Wrapper for form result values
 
@@ -34,8 +34,8 @@ public final class FormViewModel: ObservableObject {
                 initialValues[field.id] = ""
             }
         }
-        self.values = initialValues
-        self.errors = [:]
+        values = initialValues
+        errors = [:]
     }
 
     public func updateValue(_ id: String, value: String) {
@@ -62,7 +62,7 @@ public final class FormViewModel: ObservableObject {
             }
         }
 
-        self.errors = nextErrors
+        errors = nextErrors
 
         return !foundError
     }

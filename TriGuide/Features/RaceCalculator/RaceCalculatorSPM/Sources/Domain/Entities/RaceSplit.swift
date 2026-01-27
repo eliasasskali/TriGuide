@@ -9,7 +9,7 @@ struct RaceSplit: Equatable {
     let distance: Double
     let splitTime: TimeInterval
     let cumulativeTime: TimeInterval
-    
+
     func formattedDistance(with unit: DistanceUnit) -> String {
         let factor = switch unit {
         case .kilometers:
@@ -21,7 +21,7 @@ struct RaceSplit: Equatable {
         case .yards:
             UnitTransformationConstants.metersInYard
         }
-        
+
         let distanceInUnit = distance / factor
         return distanceInUnit.formattedAsDecimal()
     }

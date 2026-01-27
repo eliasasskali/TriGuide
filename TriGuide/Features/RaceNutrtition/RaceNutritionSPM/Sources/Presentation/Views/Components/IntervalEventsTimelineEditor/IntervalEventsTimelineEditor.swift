@@ -2,12 +2,11 @@
 // TriGuide 2026
 //
 
-import TriGuideDomain
-import SwiftUI
 import Localization
+import SwiftUI
+import TriGuideDomain
 
 struct IntervalEventsTimelineEditor: View {
-
     // MARK: - Constants
 
     enum Constants {
@@ -97,7 +96,7 @@ private struct PreviewWrapper: View {
             .init(
                 consumption: .interval(start: 1800, end: 3600),
                 carbItem: .init(id: "2", name: "Drink2", gramsOfCarbs: 30, type: .drink)
-            )
+            ),
         ]
     }
 

@@ -2,8 +2,8 @@
 // TriGuide 2025
 //
 
-import Foundation
 @testable import CarbItemsSPM
+import Foundation
 
 final actor FavoriteCarbItemsDataSourceMock: FavoriteCarbItemsDataSource {
     var favoriteIds: Set<String> = []

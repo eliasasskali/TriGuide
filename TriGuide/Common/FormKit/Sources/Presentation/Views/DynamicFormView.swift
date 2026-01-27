@@ -2,9 +2,9 @@
 // TriGuide 2025
 //
 
-import SwiftUI
 import DesignSystem
 import Localization
+import SwiftUI
 
 public struct DynamicFormView: View {
     @StateObject private var viewModel: FormViewModel
@@ -68,7 +68,7 @@ private extension DynamicFormView {
     func handleSave() {
         let result = viewModel.submit()
         switch result {
-        case .success(let formResult):
+        case let .success(formResult):
             onSubmit(formResult)
         case .failure:
             break
@@ -83,7 +83,6 @@ private extension DynamicFormView {
 }
 
 private struct PreviewWrapper: View {
-
     var sections: [FormSection] {
         [
             FormSection(
@@ -93,7 +92,7 @@ private struct PreviewWrapper: View {
             FormSection(
                 title: "Section 2",
                 fields: fieldsSection2
-            )
+            ),
         ]
     }
 
@@ -119,7 +118,7 @@ private struct PreviewWrapper: View {
                 type: .decimal,
                 required: true,
                 min: 0
-            )
+            ),
         ]
     }
 
@@ -153,9 +152,9 @@ private struct PreviewWrapper: View {
                 required: true,
                 options: [
                     .init(id: "One", label: "One"),
-                    .init(id: "Two", label: "Two")
+                    .init(id: "Two", label: "Two"),
                 ]
-            )
+            ),
         ]
     }
 

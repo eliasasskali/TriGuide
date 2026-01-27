@@ -3,8 +3,8 @@
 //
 
 import Foundation
-import SwiftUI
 import NavigationKit
+import SwiftUI
 import TriGuideDomain
 
 public class CarbItemsCoordinator: BaseCoordinator<CarbItemsCoordinator.Route, Never, CarbItemsView> {
@@ -23,11 +23,11 @@ public class CarbItemsCoordinator: BaseCoordinator<CarbItemsCoordinator.Route, N
     ) {
         self.factory = factory
         self.onCompleteSelection = onCompleteSelection
-        self.viewModel = factory.buildCarbItemsViewModel()
+        viewModel = factory.buildCarbItemsViewModel()
         super.init()
     }
 
-    public override func start() -> CarbItemsView {
+    override public func start() -> CarbItemsView {
         factory.buildCarbItemsView(
             viewModel: viewModel,
             coordinator: self

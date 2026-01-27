@@ -30,7 +30,7 @@ public enum DuathlonDistance: CaseIterable {
         case .sprint: .a20k
         case .standard: .a40k
         case .middle: .custom(60000)
-        case .long: .custom(150000)
+        case .long: .custom(150_000)
         }
     }
 

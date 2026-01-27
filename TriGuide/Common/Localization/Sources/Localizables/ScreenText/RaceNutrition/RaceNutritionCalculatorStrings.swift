@@ -5,7 +5,7 @@
 import Foundation
 
 public extension Localizables {
-    public enum RaceNutritionCalculator {
+    enum RaceNutritionCalculator {
         public static var title: String {
             String(localized: "race_nutrition_calculator-title", bundle: .module)
             // Race Fueling Calculator
@@ -30,7 +30,6 @@ public extension Localizables {
             String(localized: "race_nutrition_calculator-second-section-description", bundle: .module)
             // Enter your target carb intake (g/h), or estimate it from your weight and effort level.
         }
-
 
         public static var duration: String {
             String(localized: "race_nutrition_calculator-duration", bundle: .module)
@@ -130,6 +129,5 @@ public extension Localizables {
         public static var ambientTemperatureInformationDescription: String {
             String(localized: "race_nutrition_calculator-ambient-temperatur-information-description", bundle: .module)
         } // Hotter conditions increase carb usage slightly. Your body relies more on carbs to maintain performance in heat.
-
     }
 }

@@ -2,9 +2,9 @@
 // TriGuide 2025
 //
 
-import SwiftUI
-import Localization
 import DesignSystem
+import Localization
+import SwiftUI
 import TriGuideDomain
 
 struct CarbItemView: View {
@@ -22,7 +22,7 @@ struct CarbItemView: View {
         onQuantityChange: ((Double) -> Void)? = nil,
     ) {
         self.item = item
-        self._quantity = quantity
+        _quantity = quantity
         self.selectable = selectable
         self.onQuantityChange = onQuantityChange
     }
@@ -61,7 +61,7 @@ private extension CarbItemView {
                     Image(systemName: "star.fill")
                         .foregroundColor(.yellow)
                 }
-                
+
                 Divider()
 
                 VStack(spacing: 0) {

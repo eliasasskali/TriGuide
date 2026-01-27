@@ -2,8 +2,8 @@
 // TriGuide 2025
 //
 
-import Foundation
 @testable import FormKit
+import Foundation
 import Localization
 import Testing
 
@@ -11,7 +11,7 @@ enum TestFailure: Error, CustomStringConvertible {
     case failed(String)
     var description: String {
         switch self {
-        case .failed(let message): return message
+        case let .failed(message): return message
         }
     }
 }
@@ -121,7 +121,7 @@ struct FormViewModelTests {
         let result = await sut.buildResult()
 
         // Assert
-        if case .string(let s) = result["name"] {
+        if case let .string(s) = result["name"] {
             if s != "Gel A" {
                 throw TestFailure.failed("Expected name 'Gel A', got '\(s)'")
             }
@@ -129,7 +129,7 @@ struct FormViewModelTests {
             throw TestFailure.failed("Expected name to be FormValue.string")
         }
 
-        if case .int(let i) = result["caffeine"] {
+        if case let .int(i) = result["caffeine"] {
             if i != 80 {
                 throw TestFailure.failed("Expected caffeine 80, got \(i)")
             }
@@ -137,7 +137,7 @@ struct FormViewModelTests {
             throw TestFailure.failed("Expected caffeine to be FormValue.int")
         }
 
-        if case .double(let d) = result["vol"] {
+        if case let .double(d) = result["vol"] {
             if d != 200.5 {
                 throw TestFailure.failed("Expected vol 200.5, got \(d)")
             }

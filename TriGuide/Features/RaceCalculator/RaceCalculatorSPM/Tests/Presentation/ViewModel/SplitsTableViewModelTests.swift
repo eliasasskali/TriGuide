@@ -2,9 +2,9 @@
 // TriGuide 2025
 //
 
-import XCTest
 @testable import RaceCalculatorSPM
 import TriGuideDomain
+import XCTest
 
 @MainActor
 final class SplitsTableViewModelTests: XCTestCase {
@@ -15,7 +15,6 @@ final class SplitsTableViewModelTests: XCTestCase {
 }
 
 extension SplitsTableViewModelTests {
-
     func testSplitsTableViewModel_whenUpdateSplitsIsCalledWithParamsToZero_thenEmptySplitsAreUpdated() async throws {
         // Arrange
         let sut = givenSut()
@@ -34,9 +33,9 @@ extension SplitsTableViewModelTests {
         // Arrange
         let sut = givenSut()
         let expected = [
-            RaceSplit(distance: 4.0, splitTime: 180*4, cumulativeTime: 180*4),
-            RaceSplit(distance: 8.0, splitTime: 180*4, cumulativeTime: 180*8),
-            RaceSplit(distance: 10.0, splitTime: 180*2, cumulativeTime: 180*10)
+            RaceSplit(distance: 4.0, splitTime: 180 * 4, cumulativeTime: 180 * 4),
+            RaceSplit(distance: 8.0, splitTime: 180 * 4, cumulativeTime: 180 * 8),
+            RaceSplit(distance: 10.0, splitTime: 180 * 2, cumulativeTime: 180 * 10),
         ]
 
         // Act
@@ -50,11 +49,11 @@ extension SplitsTableViewModelTests {
         // Arrange: pace is 20km/h -> 180s per km
         let sut = givenSut()
         let expected = [
-            RaceSplit(distance: 5.0, splitTime: 180*5, cumulativeTime: 180*5),
-            RaceSplit(distance: 10.0, splitTime: 180*5, cumulativeTime: 180*10),
-            RaceSplit(distance: 15.0, splitTime: 180*5, cumulativeTime: 180*15),
-            RaceSplit(distance: 20.0, splitTime: 180*5, cumulativeTime: 180*20),
-            RaceSplit(distance: 21.1, splitTime: 180*1.1, cumulativeTime: 180*21.1),
+            RaceSplit(distance: 5.0, splitTime: 180 * 5, cumulativeTime: 180 * 5),
+            RaceSplit(distance: 10.0, splitTime: 180 * 5, cumulativeTime: 180 * 10),
+            RaceSplit(distance: 15.0, splitTime: 180 * 5, cumulativeTime: 180 * 15),
+            RaceSplit(distance: 20.0, splitTime: 180 * 5, cumulativeTime: 180 * 20),
+            RaceSplit(distance: 21.1, splitTime: 180 * 1.1, cumulativeTime: 180 * 21.1),
         ]
 
         // Act:
@@ -69,8 +68,8 @@ extension SplitsTableViewModelTests {
         let sut = givenSut()
         let expected = [
             RaceSplit(distance: 100.0, splitTime: 72, cumulativeTime: 72),
-            RaceSplit(distance: 200.0, splitTime: 72, cumulativeTime: 72*2),
-            RaceSplit(distance: 250.0, splitTime: 72/2, cumulativeTime: 72*2.5)
+            RaceSplit(distance: 200.0, splitTime: 72, cumulativeTime: 72 * 2),
+            RaceSplit(distance: 250.0, splitTime: 72 / 2, cumulativeTime: 72 * 2.5),
         ]
 
         // Act:
@@ -85,8 +84,8 @@ extension SplitsTableViewModelTests {
         let sut = givenSut()
         let splits = [
             RaceSplit(distance: 100.0, splitTime: 72, cumulativeTime: 72),
-            RaceSplit(distance: 200.0, splitTime: 72, cumulativeTime: 72*2),
-            RaceSplit(distance: 250.0, splitTime: 72/2, cumulativeTime: 72*2.5)
+            RaceSplit(distance: 200.0, splitTime: 72, cumulativeTime: 72 * 2),
+            RaceSplit(distance: 250.0, splitTime: 72 / 2, cumulativeTime: 72 * 2.5),
         ]
         sut.splits = splits
 

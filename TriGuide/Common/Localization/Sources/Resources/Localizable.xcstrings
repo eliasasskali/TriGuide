@@ -2599,28 +2599,6 @@
         }
       }
     },
-    "select" : {
-      "localizations" : {
-        "ca" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Selecciona"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Select"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seleccionar"
-          }
-        }
-      }
-    },
     "splits_table-by-distance" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2904,28 +2882,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Inicio"
-          }
-        }
-      }
-    },
-    "tabs_material_list" : {
-      "localizations" : {
-        "ca" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Llista de Material"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Material List"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lista de Material"
           }
         }
       }

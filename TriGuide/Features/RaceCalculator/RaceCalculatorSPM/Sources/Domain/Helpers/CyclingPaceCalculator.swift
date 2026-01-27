@@ -6,7 +6,6 @@ import Foundation
 import TriGuideDomain
 
 public struct CyclingPaceCalculator: PaceCalculator {
-    
     public init() {}
 
     public func calculatePace(duration: TimeInterval, distance: Double, paceUnit: SpeedUnit) -> Double? {

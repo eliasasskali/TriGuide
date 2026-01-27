@@ -2,8 +2,8 @@
 // TriGuide 2025
 //
 
-import SwiftUI
 import Localization
+import SwiftUI
 
 public struct ActionButton: View {
     public enum Style {
@@ -62,7 +62,7 @@ public struct ActionButton: View {
 
     public var body: some View {
         Button(action: {
-            guard !isLoading && !isDisabled else { return }
+            guard !isLoading, !isDisabled else { return }
             action()
         }) {
             HStack {
@@ -95,16 +95,13 @@ private extension View {
     func applyNativeStyle(style: ActionButton.Style) -> some View {
         switch style {
         case .primary:
-            self
-                .buttonStyle(.borderedProminent)
+            buttonStyle(.borderedProminent)
                 .tint(Color.accentColor)
         case .secondary:
-            self
-                .buttonStyle(.bordered)
+            buttonStyle(.bordered)
                 .tint(Color(UIColor.systemGray))
         case .destructive:
-            self
-                .buttonStyle(.borderedProminent)
+            buttonStyle(.borderedProminent)
                 .tint(Color(UIColor.systemRed))
         }
     }
@@ -115,33 +112,33 @@ private extension View {
         ActionButton(
             "Primary Button",
             style: .primary,
-            action: { }
+            action: {}
         )
 
         ActionButton(
             "Disabled Primary Button",
             style: .primary,
             isDisabled: true,
-            action: { }
+            action: {}
         )
 
         ActionButton(
             "Loading Primary Button",
             style: .primary,
             isLoading: true,
-            action: { }
+            action: {}
         )
 
         ActionButton(
             "Secondary Button",
             style: .secondary,
-            action: { }
+            action: {}
         )
 
         ActionButton(
             "Destructive Button",
             style: .destructive,
-            action: { }
+            action: {}
         )
     }
     .padding()

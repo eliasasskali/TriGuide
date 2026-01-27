@@ -6,7 +6,6 @@ import Foundation
 
 public extension Localizables {
     enum AccessibilityHints {
-
         // MARK: - Common
 
         public static var loading: String {

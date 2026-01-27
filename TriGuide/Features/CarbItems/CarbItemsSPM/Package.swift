@@ -10,7 +10,8 @@ let package = Package(
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
             name: "CarbItemsSPM",
-            targets: ["CarbItemsSPM"]),
+            targets: ["CarbItemsSPM"]
+        ),
     ],
     dependencies: [
         .package(path: "../../../Common/DesignSystem"),
@@ -31,7 +32,7 @@ let package = Package(
                 "Localization",
                 "StorageKit",
                 "FormKit",
-                "NavigationKit"
+                "NavigationKit",
             ],
             path: "Sources"
         ),

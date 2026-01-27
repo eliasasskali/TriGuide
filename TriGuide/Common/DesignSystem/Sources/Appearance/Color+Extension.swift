@@ -17,5 +17,4 @@ public extension Color {
         // #DCDCDC
         public static let gray = Color("Gray", bundle: .module)
     }
-
 }

@@ -10,7 +10,7 @@ public struct ProgressBarView: View {
     public init(progress: Double) {
         self.progress = progress
     }
-    
+
     public var body: some View {
         GeometryReader { geometry in
             ZStack(alignment: .leading) {

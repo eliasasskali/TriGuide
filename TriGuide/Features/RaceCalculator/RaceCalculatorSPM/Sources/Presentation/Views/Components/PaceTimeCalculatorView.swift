@@ -2,17 +2,17 @@
 //  TriGuide 2025
 //
 
-import SwiftUI
-import Localization
-import TriGuideDomain
 import DesignSystem
+import Localization
+import SwiftUI
+import TriGuideDomain
 
 public struct PaceTimeCalculatorView<Distance: RaceDistance & CaseIterable>: View where Distance.AllCases: RandomAccessCollection {
     let sport: SupportedSport
     @StateObject var viewModel: PaceCalculatorViewModel
 
-    var selectedRaceDistance: Binding<Distance?>? = nil
-    var duration: Binding<TimeInterval?>? = nil
+    var selectedRaceDistance: Binding<Distance?>?
+    var duration: Binding<TimeInterval?>?
 
     public init(
         sport: SupportedSport,
@@ -21,7 +21,7 @@ public struct PaceTimeCalculatorView<Distance: RaceDistance & CaseIterable>: Vie
         duration: Binding<TimeInterval?>? = nil
     ) {
         self.sport = sport
-        self._viewModel = StateObject(wrappedValue: viewModel)
+        _viewModel = StateObject(wrappedValue: viewModel)
         self.selectedRaceDistance = selectedRaceDistance
         self.duration = duration
     }

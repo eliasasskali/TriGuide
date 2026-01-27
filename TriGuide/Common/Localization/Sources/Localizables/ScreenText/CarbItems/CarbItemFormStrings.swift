@@ -6,7 +6,6 @@ import Foundation
 
 public extension Localizables {
     enum CarbItemForm {
-
         // MARK: - Titles
 
         public static var newCarbItem: String {

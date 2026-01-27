@@ -21,7 +21,7 @@ public extension ValidationError {
             return Localizables.FormErrors.requiredField
         case .invalidNumber:
             return Localizables.FormErrors.invalidNumber
-        case .outOfRange(let min, let max):
+        case let .outOfRange(min, max):
             if let min, let max {
                 return Localizables.FormErrors.betweenMinAndMax(min: min, max: max)
             }
@@ -40,11 +40,11 @@ public extension ValidationError {
 
 // MARK: - Validator
 
-public struct Validator {
+public enum Validator {
     public static func validate(descriptor: FieldDescriptor, value: String) -> ValidationError? {
         let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
 
-        if descriptor.required && trimmed.isEmpty {
+        if descriptor.required, trimmed.isEmpty {
             return .required
         }
 
@@ -82,7 +82,7 @@ public struct Validator {
             }
             return nil
         case .picker:
-            if descriptor.required && trimmed.isEmpty {
+            if descriptor.required, trimmed.isEmpty {
                 return .required
             }
             return nil

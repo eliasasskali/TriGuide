@@ -76,62 +76,19 @@ public enum SupportedSport: CaseIterable {
 // MARK: - Sport Energy Expenditure and Fuel Utilization
 
 public extension SupportedSport {
-
     func energyExpenditurePerKgHour(for intensity: Intensity) -> (Int, Int) {
         switch (self, intensity) {
         case (.run, .low): return (7, 8)
         case (.run, .moderate): return (9, 10)
         case (.run, .high): return (11, 12)
-
         case (.bike, .low): return (5, 6)
         case (.bike, .moderate): return (7, 8)
         case (.bike, .high): return (9, 10)
-
         case (.swim, .low): return (6, 7)
         case (.swim, .moderate): return (8, 9)
         case (.swim, .high): return (10, 11)
-
         default: return (0, 0)
         }
-    }
-
-    func ratioOfCarbsUsed(
-        for intensity: Intensity,
-        fasted: Bool = false,
-        duration: TimeInterval = 3600 // seconds
-    ) -> Double {
-        // Base ratios (fed, amateur)
-        var ratio: Double = switch (self, intensity) {
-        case (.run, .low): 0.55
-        case (.run, .moderate): 0.65
-        case (.run, .high): 0.75
-        case (.bike, .low): 0.50
-        case (.bike, .moderate): 0.60
-        case (.bike, .high): 0.70
-        case (.swim, .low): 0.50
-        case (.swim, .moderate): 0.60
-        case (.swim, .high): 0.75
-        default: 0
-        }
-
-        // Adjust for fasted state
-        if fasted {
-            let reduction = switch intensity {
-            case .low: 0.15
-            case .moderate: 0.10
-            case .high: 0.05
-            }
-            ratio -= reduction
-        }
-
-        // Duration modifier (under 1h → scale down)
-        let hours = duration / 3600
-        if hours < 1 {
-            // 0h = 0% ratio, 1h = 100% ratio
-            ratio *= hours
-        }
-
-        return max(ratio, 0.05)
     }
 
     /// - Parameters:
@@ -248,15 +205,12 @@ private extension SupportedSport {
         case (.run, .low): return 0.55
         case (.run, .moderate): return 0.65
         case (.run, .high): return 0.75
-
         case (.bike, .low): return 0.50
         case (.bike, .moderate): return 0.60
         case (.bike, .high): return 0.70
-
         case (.swim, .low): return 0.50
         case (.swim, .moderate): return 0.60
         case (.swim, .high): return 0.75
-
         default: return 0.0
         }
     }

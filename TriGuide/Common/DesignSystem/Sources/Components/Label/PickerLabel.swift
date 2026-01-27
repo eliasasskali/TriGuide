@@ -57,6 +57,7 @@ private extension PickerLabel {
             innerVerticalPadding: 8
         )
     }
+
     var verticalPickerLabel: some View {
         HStack(alignment: .center) {
             VStack(alignment: .leading) {

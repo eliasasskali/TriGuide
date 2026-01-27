@@ -26,7 +26,8 @@ struct RemoteCarbItemsDataSourceDefault: RemoteCarbItemsDataSource {
         let (data, response) = try await session.data(from: url)
 
         guard let httpResponse = response as? HTTPURLResponse,
-              (200...299).contains(httpResponse.statusCode) else {
+              (200 ... 299).contains(httpResponse.statusCode)
+        else {
             throw URLError(.badServerResponse)
         }
         return try JSONDecoder().decode([CarbItemDto].self, from: data)

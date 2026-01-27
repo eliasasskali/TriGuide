@@ -13,7 +13,7 @@ public class RaceCalculatorCoordinator: BaseCoordinator<Never, Never, RaceCalcul
         super.init()
     }
 
-    public override func start() -> RaceCalculatorView {
+    override public func start() -> RaceCalculatorView {
         factory.buildRaceCalculatorView()
     }
 }

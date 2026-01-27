@@ -25,16 +25,16 @@ public enum FormValue: Codable, Equatable, Sendable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         switch self {
-        case .string(let s):
+        case let .string(s):
             try container.encode(ValueType.string, forKey: .type)
             try container.encode(s, forKey: .value)
-        case .int(let i):
+        case let .int(i):
             try container.encode(ValueType.int, forKey: .type)
             try container.encode(i, forKey: .value)
-        case .double(let d):
+        case let .double(d):
             try container.encode(ValueType.double, forKey: .type)
             try container.encode(d, forKey: .value)
-        case .bool(let b):
+        case let .bool(b):
             try container.encode(ValueType.bool, forKey: .type)
             try container.encode(b, forKey: .value)
         case .none:
@@ -65,15 +65,15 @@ public enum FormValue: Codable, Equatable, Sendable {
 
     public var stringValue: String {
         switch self {
-        case .string(let s):
+        case let .string(s):
             return s
-        case .int(let i):
+        case let .int(i):
             return String(i)
-        case .double(let d):
+        case let .double(d):
             return String(d)
-        case .bool(let b): 
+        case let .bool(b):
             return b ? "true" : "false"
-        case .none: 
+        case .none:
             return ""
         }
     }

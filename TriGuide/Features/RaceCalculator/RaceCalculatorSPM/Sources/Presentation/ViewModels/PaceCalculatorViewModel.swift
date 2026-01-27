@@ -2,18 +2,18 @@
 //  TriGuide 2025
 //
 
-import Foundation
 import Combine
+import Foundation
 import TriGuideDomain
 
 @MainActor
 public class PaceCalculatorViewModel: ObservableObject {
     let paceCalculator: PaceCalculator
-    
+
     @Published var distance: Double? {
         didSet {
             guard !isUpdating else { return }
-            if duration != nil && pace == nil && speed == nil {
+            if duration != nil, pace == nil, speed == nil {
                 updatePaceOrSpeedFromDuration()
             } else {
                 updateDurationFromPaceOrSpeed()
@@ -75,14 +75,13 @@ public class PaceCalculatorViewModel: ObservableObject {
         self.pace = pace
         self.speed = speed
         self.paceUnit = paceUnit
-        self.distanceUnit = paceUnit?.distanceUnit ?? .kilometers
+        distanceUnit = paceUnit?.distanceUnit ?? .kilometers
     }
 }
 
 // MARK: - Private methods
 
 private extension PaceCalculatorViewModel {
-
     func updatePaceOrSpeedFromDuration() {
         guard let duration, let paceUnit else { return }
         guard let distance else {
@@ -118,9 +117,9 @@ private extension PaceCalculatorViewModel {
 
     func updateDistance() {
         guard distance == nil,
-            let duration,
-            let paceOrSpeed,
-                let paceUnit
+              let duration,
+              let paceOrSpeed,
+              let paceUnit
         else { return }
         isUpdating = true
         defer { isUpdating = false }

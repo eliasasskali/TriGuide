@@ -5,7 +5,6 @@
 import SwiftUI
 
 struct InstantEventHandle: View {
-
     // MARK: - Constants
 
     enum Constants {
@@ -81,7 +80,6 @@ struct InstantEventHandle: View {
 // MARK: - Private methods
 
 private extension InstantEventHandle {
-
     @ViewBuilder
     var textLabel: some View {
         if let label {

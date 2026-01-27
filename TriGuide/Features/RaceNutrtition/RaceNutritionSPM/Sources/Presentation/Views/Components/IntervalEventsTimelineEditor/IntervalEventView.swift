@@ -5,7 +5,6 @@
 import SwiftUI
 
 struct IntervalEventView: View {
-
     // MARK: - Constants
 
     enum Constants {
@@ -67,7 +66,6 @@ struct IntervalEventView: View {
 // MARK: - Private methods
 
 private extension IntervalEventView {
-
     var intervalBar: some View {
         ZStack(alignment: .leading) {
             RoundedRectangle(cornerRadius: Constants.barHeight / 2)

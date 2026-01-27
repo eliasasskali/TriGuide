@@ -2,8 +2,8 @@
 // TriGuide 2025
 //
 
-import SwiftUI
 import Localization
+import SwiftUI
 
 public struct TimePickerView: View {
     let hours: Binding<Int>?

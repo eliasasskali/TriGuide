@@ -2,12 +2,11 @@
 // TriGuide 2025
 //
 
+import Localization
 import SwiftUI
 import TriGuideDomain
-import Localization
 
 public struct IntervalBreakdownView: View {
-
     // MARK: - Dependencies
 
     private let breakdown: [IntervalFueling]
@@ -122,9 +121,9 @@ private struct PreviewWrapper: View {
             carbGrams: 73,
             caffeine: 60,
             waterVolumeML: 300
-        )
+        ),
     ]
-    
+
     var body: some View {
         IntervalBreakdownView(breakdown: breakDown)
     }

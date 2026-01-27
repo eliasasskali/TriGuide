@@ -5,7 +5,6 @@
 import SwiftUI
 
 public extension View {
-
     // Applies card background to the view
     func cardBackground(
         backgroundColor: Color = .Primary.white,

@@ -10,7 +10,8 @@ let package = Package(
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
             name: "TriGuideDomain",
-            targets: ["TriGuideDomain"]),
+            targets: ["TriGuideDomain"]
+        ),
     ],
     dependencies: [
         .package(path: "../../Common/DesignSystem"),
@@ -23,7 +24,7 @@ let package = Package(
             name: "TriGuideDomain",
             dependencies: [
                 "DesignSystem",
-                "Localization"
+                "Localization",
             ],
             path: "Sources"
         ),

@@ -24,11 +24,11 @@ extension LocalStorageError: Equatable {
     public static func == (lhs: LocalStorageError, rhs: LocalStorageError) -> Bool {
         switch (lhs, rhs) {
         case (.unableToLocateDirectory, .unableToLocateDirectory),
-            (.fileNotFound, .fileNotFound),
-            (.saveFailed, .saveFailed),
-            (.loadFailed, .loadFailed),
-            (.decodeFailed, .decodeFailed),
-            (.deleteFailed, .deleteFailed):
+             (.fileNotFound, .fileNotFound),
+             (.saveFailed, .saveFailed),
+             (.loadFailed, .loadFailed),
+             (.decodeFailed, .decodeFailed),
+             (.deleteFailed, .deleteFailed):
             return true
         default:
             return false
