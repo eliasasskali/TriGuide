@@ -16,11 +16,11 @@ public struct SportCalculationBundle {
         paceUnit: SpeedUnit
     ) {
         self.paceCalculator = paceCalculator
-        self.paceCalculatorViewModel = PaceCalculatorViewModel(
+        paceCalculatorViewModel = PaceCalculatorViewModel(
             paceCalculator: paceCalculator,
             paceUnit: paceUnit
         )
-        self.splitsViewModel = SplitsTableViewModel(
+        splitsViewModel = SplitsTableViewModel(
             paceCalculator: paceCalculator
         )
     }

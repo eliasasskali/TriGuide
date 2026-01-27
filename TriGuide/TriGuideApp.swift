@@ -2,8 +2,8 @@
 //  TriGuide 2025
 //
 
-import SwiftUI
 import DesignSystem
+import SwiftUI
 
 @main
 struct TriGuideApp: App {

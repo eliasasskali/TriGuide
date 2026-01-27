@@ -2,14 +2,13 @@
 // TriGuide 2025
 //
 
-import SwiftUI
-import TriGuideDomain
-import RaceCalculatorSPM
 import DesignSystem
 import Localization
+import RaceCalculatorSPM
+import SwiftUI
+import TriGuideDomain
 
 struct RaceNutritionCalculatorView: View {
-    
     // MARK: - Dependencies
 
     @StateObject var viewModel: RaceNutritionViewModel
@@ -25,8 +24,8 @@ struct RaceNutritionCalculatorView: View {
 
     var shouldShowSelectSportErrorOnGramsPerHour: Bool {
         viewModel.sport == nil &&
-        viewModel.intensity != nil &&
-        viewModel.weight != nil
+            viewModel.intensity != nil &&
+            viewModel.weight != nil
     }
 
     // MARK: - Body
@@ -298,7 +297,7 @@ private extension RaceNutritionCalculatorView {
                         }
                         Slider(
                             value: $viewModel.ambientTempC,
-                            in: -10...50,
+                            in: -10 ... 50,
                             step: 1
                         ) { Text(Localizables.RaceNutritionCalculator.ambientTemperature) }
                     }

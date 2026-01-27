@@ -14,27 +14,27 @@ public enum SpeedUnit {
     case milesPerHour
     case minPer100m
     case minPer100yds
-    
+
     public var distanceUnit: DistanceUnit {
         return switch self {
         case .minPerKm, .kmPerHour:
-                .kilometers
+            .kilometers
         case .minPerMile, .milesPerHour:
-                .miles
+            .miles
         case .minPer100m:
-                .meters
+            .meters
         case .minPer100yds:
-                .yards
+            .yards
         }
     }
-    
+
     public var defaultSplitsDistance: Double {
         return switch self {
         case .minPerKm, .kmPerHour, .minPerMile, .milesPerHour: 1000
         case .minPer100m, .minPer100yds: 100
         }
     }
-    
+
     public var localized: String {
         return switch self {
         case .minPerKm:

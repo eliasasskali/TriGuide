@@ -2,9 +2,9 @@
 // TriGuide 2025
 //
 
+@testable import CarbItemsSPM
 import Foundation
 import TriGuideDomain
-@testable import CarbItemsSPM
 
 final actor UserCarbItemsDataSourceMock: UserCarbItemsDataSource {
     var items: [CarbItem] = []

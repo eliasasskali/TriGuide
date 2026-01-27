@@ -2,9 +2,9 @@
 // TriGuide 2025
 //
 
-import SwiftUI
 import FormKit
 import Localization
+import SwiftUI
 
 public struct CarbItemFormView: View {
     @Environment(\.dismiss) private var dismiss
@@ -38,9 +38,9 @@ public struct CarbItemFormView: View {
                     .init(
                         title: "Section",
                         fields: [
-                            .init(id: "field1", label: "field2", type: .text, required: true)
+                            .init(id: "field1", label: "field2", type: .text, required: true),
                         ]
-                    )
+                    ),
                 ],
                 saveAction: { _ in }
             )

@@ -2,9 +2,9 @@
 // TriGuide 2025
 //
 
-import Testing
 import Foundation
 @testable import StorageKit
+import Testing
 
 struct LocalStorageTests {
     private struct MockItem: Codable, Equatable {
@@ -19,7 +19,7 @@ struct LocalStorageTests {
         let sut = try LocalStorage<[MockItem]>(fileName: "test_items", directory: tempDir)
         let items = [
             MockItem(id: 1, name: "Gel"),
-            MockItem(id: 2, name: "Drink")
+            MockItem(id: 2, name: "Drink"),
         ]
 
         // Act
@@ -99,4 +99,3 @@ private extension LocalStorageError {
         }
     }
 }
-

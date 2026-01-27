@@ -46,14 +46,14 @@ public struct CarbItem: Sendable, Decodable {
 extension CarbItem: Hashable {
     public static func == (lhs: CarbItem, rhs: CarbItem) -> Bool {
         lhs.id == rhs.id &&
-        lhs.name == rhs.name &&
-        lhs.gramsOfCarbs == rhs.gramsOfCarbs &&
-        lhs.caffeine == rhs.caffeine &&
-        lhs.sodium == rhs.sodium &&
-        lhs.waterVolumeML == rhs.waterVolumeML &&
-        lhs.type == rhs.type &&
-        lhs.brand == rhs.brand &&
-        lhs.isFavorite == rhs.isFavorite
+            lhs.name == rhs.name &&
+            lhs.gramsOfCarbs == rhs.gramsOfCarbs &&
+            lhs.caffeine == rhs.caffeine &&
+            lhs.sodium == rhs.sodium &&
+            lhs.waterVolumeML == rhs.waterVolumeML &&
+            lhs.type == rhs.type &&
+            lhs.brand == rhs.brand &&
+            lhs.isFavorite == rhs.isFavorite
     }
 
     public func hash(into hasher: inout Hasher) {

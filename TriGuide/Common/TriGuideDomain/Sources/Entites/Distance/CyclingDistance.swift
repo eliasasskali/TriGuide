@@ -26,12 +26,12 @@ public enum CyclingDistance: RaceDistance, CaseIterable {
         case .a20k: return 20000
         case .a40k: return 40000
         case .a90k: return 90000
-        case .a180k: return 180000
-        case .custom(let meters): return meters
+        case .a180k: return 180_000
+        case let .custom(meters): return meters
         }
     }
 
     public var displayName: String {
-        return "\((self.meters / 1000).formattedAsDecimal()) \(Localizables.Units.kmSymbol)"
+        return "\((meters / 1000).formattedAsDecimal()) \(Localizables.Units.kmSymbol)"
     }
 }

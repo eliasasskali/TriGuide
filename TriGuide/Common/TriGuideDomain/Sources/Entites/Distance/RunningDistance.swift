@@ -2,9 +2,9 @@
 // TriGuide 2025
 //
 
+import DesignSystem
 import Foundation
 import Localization
-import DesignSystem
 
 // MARK: - Running Distances
 
@@ -31,7 +31,7 @@ public enum RunningDistance: RaceDistance, Hashable, CaseIterable {
         case .a10k: return 10000
         case .halfMarathon: return 21097
         case .marathon: return 42195
-        case .custom(let meters): return meters
+        case let .custom(meters): return meters
         }
     }
 
@@ -44,7 +44,7 @@ public enum RunningDistance: RaceDistance, Hashable, CaseIterable {
         case .a10k: return "10K"
         case .halfMarathon: return Localizables.RaceDistance.halfMarathon
         case .marathon: return Localizables.RaceDistance.marathon
-        case .custom(let meters): return "\((meters / 1000).formattedAsDecimal()) \(Localizables.Units.kmSymbol)"
+        case let .custom(meters): return "\((meters / 1000).formattedAsDecimal()) \(Localizables.Units.kmSymbol)"
         }
     }
 }

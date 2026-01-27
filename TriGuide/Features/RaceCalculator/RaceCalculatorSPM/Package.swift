@@ -10,7 +10,8 @@ let package = Package(
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
             name: "RaceCalculatorSPM",
-            targets: ["RaceCalculatorSPM"]),
+            targets: ["RaceCalculatorSPM"]
+        ),
     ],
     dependencies: [
         .package(path: "../../../Common/DesignSystem"),
@@ -27,7 +28,7 @@ let package = Package(
                 "DesignSystem",
                 "TriGuideDomain",
                 "Localization",
-                "NavigationKit"
+                "NavigationKit",
             ],
             path: "Sources"
         ),
@@ -35,7 +36,7 @@ let package = Package(
             name: "RaceCalculatorSPMTests",
             dependencies: [
                 "RaceCalculatorSPM",
-                "TriGuideDomain"
+                "TriGuideDomain",
             ],
             path: "Tests"
         ),

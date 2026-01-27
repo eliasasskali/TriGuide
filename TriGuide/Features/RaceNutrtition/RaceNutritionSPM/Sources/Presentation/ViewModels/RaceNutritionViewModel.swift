@@ -8,7 +8,6 @@ import TriGuideDomain
 
 @MainActor
 public class RaceNutritionViewModel: ObservableObject {
-
     // MARK: - Dependencies
 
     private let calculateFuelingResultUseCase: CalculateFuelingResultUseCase

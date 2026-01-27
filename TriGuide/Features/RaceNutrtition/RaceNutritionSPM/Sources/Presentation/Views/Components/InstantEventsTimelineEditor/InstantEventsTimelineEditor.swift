@@ -2,12 +2,11 @@
 // TriGuide 2025
 //
 
+import Localization
 import SwiftUI
 import TriGuideDomain
-import Localization
 
 struct InstantEventsTimelineEditor: View {
-
     // MARK: - Constants
 
     enum Constants {
@@ -45,7 +44,6 @@ struct InstantEventsTimelineEditor: View {
 // MARK: - Private methods
 
 private extension InstantEventsTimelineEditor {
-
     // MARK: - Views
 
     var title: some View {
@@ -90,7 +88,7 @@ private extension InstantEventsTimelineEditor {
         return ForEach(instantEvents, id: \.0) { index, event in
             let time = event.consumptionTimeOrZero
             let textGoesAbove = events.indices.contains { otherIndex in
-                guard otherIndex < index,  // only check handles to the left
+                guard otherIndex < index, // only check handles to the left
                       case let .instant(otherTime) = events[otherIndex].consumption
                 else { return false }
                 return abs(otherTime - time) <= handleTime
@@ -149,7 +147,7 @@ private struct PreviewWrapper: View {
         _fuelingEvents = State(initialValue: [
             .init(consumption: .instant(time: 600), carbItem: item),
             .init(consumption: .instant(time: 600), carbItem: item2),
-            .init(consumption: .instant(time: 3000), carbItem: item)
+            .init(consumption: .instant(time: 3000), carbItem: item),
         ])
     }
 
@@ -160,4 +158,3 @@ private struct PreviewWrapper: View {
         )
     }
 }
-

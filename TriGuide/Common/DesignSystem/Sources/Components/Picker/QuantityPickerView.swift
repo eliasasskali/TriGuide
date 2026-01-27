@@ -22,7 +22,7 @@ public struct QuantityPickerView: View {
         onDecrementQuantity: ((Int) -> Void)?,
         orientation: Orientation
     ) {
-        self._quantity = quantity
+        _quantity = quantity
         self.onIncrementQuantity = onIncrementQuantity
         self.onDecrementQuantity = onDecrementQuantity
         self.orientation = orientation

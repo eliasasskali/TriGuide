@@ -19,7 +19,7 @@ public struct IntervalFueling: Sendable, Hashable, Equatable {
         waterVolumeML: Double
     ) {
         self.duration = duration
-        self.index = hourIndex
+        index = hourIndex
         self.carbGrams = carbGrams
         self.caffeine = caffeine
         self.waterVolumeML = waterVolumeML

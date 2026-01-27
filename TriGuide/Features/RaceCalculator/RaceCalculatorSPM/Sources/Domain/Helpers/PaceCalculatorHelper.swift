@@ -5,7 +5,7 @@
 import Foundation
 import TriGuideDomain
 
-public struct PaceCalculatorHelper {
+public enum PaceCalculatorHelper {
     static func formatPace(paceSeconds: Double, with unit: SpeedUnit) -> String {
         guard paceSeconds > 0 else { return "--" }
 

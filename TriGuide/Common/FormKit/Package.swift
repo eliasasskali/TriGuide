@@ -10,7 +10,8 @@ let package = Package(
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
             name: "FormKit",
-            targets: ["FormKit"]),
+            targets: ["FormKit"]
+        ),
     ],
     dependencies: [
         .package(path: "../../Common/DesignSystem"),
@@ -23,7 +24,7 @@ let package = Package(
             name: "FormKit",
             dependencies: [
                 "DesignSystem",
-                "Localization"
+                "Localization",
             ],
             path: "Sources"
         ),
@@ -31,7 +32,7 @@ let package = Package(
             name: "FormKitTests",
             dependencies: [
                 "FormKit",
-                "Localization"
+                "Localization",
             ],
             path: "Tests"
         ),

@@ -55,7 +55,7 @@ extension RaceNutritionViewFactoryDefault: RaceNutritionViewFactory {
         totalCarbGrams: Double,
         onCompleteSelection: (([CarbItemSelection]) -> Void)?
     ) throws -> CarbItemsCoordinator {
-        let carbItemsFactory = CarbItemsViewFactoryDefault(dependencies: try .init(totalCarbGrams: totalCarbGrams))
+        let carbItemsFactory = try CarbItemsViewFactoryDefault(dependencies: .init(totalCarbGrams: totalCarbGrams))
         return CarbItemsCoordinator(
             factory: carbItemsFactory,
             onCompleteSelection: onCompleteSelection

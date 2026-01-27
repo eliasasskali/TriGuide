@@ -8,14 +8,14 @@ import TriGuideDomain
 extension CarbItemDto {
     func toDomain() -> CarbItem {
         CarbItem(
-            id: self.id,
-            name: self.name,
-            gramsOfCarbs: self.gramsOfCarbs,
-            caffeine: self.caffeine,
-            sodium: self.sodium,
-            waterVolumeML: self.waterVolumeML,
-            type: self.type,
-            brand: self.brand
+            id: id,
+            name: name,
+            gramsOfCarbs: gramsOfCarbs,
+            caffeine: caffeine,
+            sodium: sodium,
+            waterVolumeML: waterVolumeML,
+            type: type,
+            brand: brand
         )
     }
 }

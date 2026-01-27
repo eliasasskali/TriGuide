@@ -8,13 +8,13 @@ import TriGuideDomain
 @MainActor
 public final class SplitsTableViewModel: ObservableObject {
     let paceCalculator: PaceCalculator
-    
+
     @Published var splits: [RaceSplit] = []
 
     public init(paceCalculator: PaceCalculator) {
         self.paceCalculator = paceCalculator
     }
-    
+
     func updateSplits(
         splitsDistance: Double,
         totalDistance: Double,
@@ -25,10 +25,10 @@ public final class SplitsTableViewModel: ObservableObject {
             splits = []
             return
         }
-        
+
         var newSplits: [RaceSplit] = []
         var cumulativeTime = 0.0
-        
+
         guard let splitTime = paceCalculator.calculateTime(
             pace: pace,
             distance: splitsDistance,
@@ -44,7 +44,7 @@ public final class SplitsTableViewModel: ObservableObject {
                 )
             )
         }
-        
+
         let remainingDistance = totalDistance.truncatingRemainder(dividingBy: splitsDistance)
         if remainingDistance > 0 {
             if let remainderSplitTime = paceCalculator.calculateTime(
@@ -62,7 +62,7 @@ public final class SplitsTableViewModel: ObservableObject {
                 )
             }
         }
-        
+
         splits = newSplits
     }
 }

@@ -20,12 +20,12 @@ public struct FuelingEvent: Equatable, Sendable, Hashable, Identifiable {
 
     public var consumptionTimeOrZero: TimeInterval {
         switch consumption {
-        case .instant(let time): return time
-        case .interval(let start, _): return start
+        case let .instant(time): return time
+        case let .interval(start, _): return start
         }
     }
 
     public var id: Int {
-        self.hashValue
+        hashValue
     }
 }

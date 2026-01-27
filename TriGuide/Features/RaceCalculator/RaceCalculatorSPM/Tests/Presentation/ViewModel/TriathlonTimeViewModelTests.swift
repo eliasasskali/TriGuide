@@ -2,11 +2,10 @@
 // TriGuide 2025
 //
 
-import XCTest
 @testable import RaceCalculatorSPM
+import XCTest
 
 final class TriathlonTimeViewModelTests: XCTestCase {
-
     func testTriathlonTimeViewModel_whenUpdateSwimTime_thenTotalTimeIsUpdated() {
         // Arrange
         let sut = TriathlonTimeViewModel()

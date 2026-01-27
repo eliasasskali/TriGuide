@@ -2,8 +2,8 @@
 // TriGuide 2025
 //
 
-import Foundation
 import CarbItemsSPM
+import Foundation
 import TriGuideDomain
 
 public protocol RaceNutritionViewFactory {

@@ -6,7 +6,6 @@ import Foundation
 import TriGuideDomain
 
 public struct SwimmingPaceCalculator: PaceCalculator {
-
     public init() {}
 
     public func calculatePace(duration: TimeInterval, distance: Double, paceUnit: SpeedUnit) -> Double? {
@@ -42,9 +41,9 @@ public struct SwimmingPaceCalculator: PaceCalculator {
     public func calculateDistance(pace: Double, duration: TimeInterval, paceUnit: SpeedUnit) -> Double? {
         switch paceUnit {
         case .minPer100m:
-            return (duration / pace ) * 100
+            return (duration / pace) * 100
         case .minPer100yds:
-            return (duration / pace ) * UnitTransformationConstants.metersInYard
+            return (duration / pace) * UnitTransformationConstants.metersInYard
         default:
             return nil
         }

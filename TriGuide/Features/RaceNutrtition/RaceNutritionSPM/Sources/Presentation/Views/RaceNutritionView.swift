@@ -5,7 +5,6 @@
 import SwiftUI
 
 public struct RaceNutritionView: View {
-
     // MARK: - Dependencies
 
     @ObservedObject private var viewModel: RaceNutritionViewModel
@@ -33,7 +32,7 @@ public struct RaceNutritionView: View {
             }
             .sheet(item: coordinator.sheetBinding) { sheet in
                 switch sheet {
-                case .carbItems(let totalGrams):
+                case let .carbItems(totalGrams):
                     coordinator.buildCarbItemsView(totalCarbGrams: totalGrams)
                 }
             }

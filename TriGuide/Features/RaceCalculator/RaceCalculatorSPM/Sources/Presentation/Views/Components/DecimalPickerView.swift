@@ -2,8 +2,8 @@
 //  TriGuide 2025
 //
 
-import SwiftUI
 import DesignSystem
+import SwiftUI
 
 struct DecimalPickerView: View {
     enum Mode {
@@ -99,6 +99,6 @@ private extension DecimalPickerView {
     }
 
     func updateValueFromState() {
-        value = Double(whole) + Double(decimal)/10.0
+        value = Double(whole) + Double(decimal) / 10.0
     }
 }

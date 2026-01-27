@@ -2,8 +2,8 @@
 // TriGuide 2025
 //
 
-import XCTest
 @testable import RaceCalculatorSPM
+import XCTest
 
 final class SwimmingPaceCalculatorTests: XCTestCase {
     var sut: SwimmingPaceCalculator!
@@ -23,13 +23,12 @@ final class SwimmingPaceCalculatorTests: XCTestCase {
 }
 
 extension SwimmingPaceCalculatorTests {
-
     // MARK: - calculatePace
 
     func testSwimmingPaceCalculator_whenCalculatingPace_for1500m_minPer100m_thenReturnsExpectedPace() throws {
         // Arrange: 1500 m in 18:30 (1110 s) -> pace per 100m = 1110 / 15 = 74 s/100m
         let duration = TimeInterval(1110)
-        let distance = 1_500.0
+        let distance = 1500.0
         let expectedPace = 74.0
 
         // Act
@@ -90,13 +89,12 @@ extension SwimmingPaceCalculatorTests {
 }
 
 extension SwimmingPaceCalculatorTests {
-
     // MARK: - calculateTime
 
     func testSwimmingPaceCalculator_whenCalculatingTime_for1500m_minPer100m_thenReturnsExpectedTime() throws {
         // Arrange: pace = 74 s/100m, distance = 1500 m -> time = 1110 s
         let pace = 74.0
-        let distance = 1_500.0
+        let distance = 1500.0
         let expectedTime = 1110.0
 
         // Act
@@ -138,7 +136,7 @@ extension SwimmingPaceCalculatorTests {
     func testSwimmingPaceCalculator_whenCalculatingTime_preservesFractionalSeconds() throws {
         // Arrange: pace = 75 s/100m, distance = 1234 m -> time = 925.5 s (fractional)
         let pace = 75.0
-        let distance = 1_234.0
+        let distance = 1234.0
 
         // Act
         let time = sut.calculateTime(pace: pace, distance: distance, paceUnit: .minPer100m)
@@ -164,7 +162,6 @@ extension SwimmingPaceCalculatorTests {
 }
 
 extension SwimmingPaceCalculatorTests {
-
     // MARK: - formatPace
 
     func testSwimmingPaceCalculator_whenFormattingPace_minPer100m_thenReturnsExpectedString() {

@@ -2,10 +2,10 @@
 // TriGuide 2025
 //
 
-import XCTest
 import Combine
 @testable import RaceCalculatorSPM
 import TriGuideDomain
+import XCTest
 
 @MainActor
 final class PaceCalculatorViewModelTests: XCTestCase {
@@ -39,7 +39,6 @@ final class PaceCalculatorViewModelTests: XCTestCase {
 }
 
 extension PaceCalculatorViewModelTests {
-
     // MARK: - Updating without required fields
 
     func testPaceCalculatorViewModel_whenUpdatePace_withoutDurationNorDistance_thenDoesntUpdateDurationNorDistance() async throws {
@@ -54,14 +53,14 @@ extension PaceCalculatorViewModelTests {
 
         sut.$duration
             .dropFirst()
-            .sink { value in
+            .sink { _ in
                 updateDurationExpectation.fulfill()
             }
             .store(in: &cancellables)
 
         sut.$distance
             .dropFirst()
-            .sink { value in
+            .sink { _ in
                 updateDistanceExpectation.fulfill()
             }
             .store(in: &cancellables)
@@ -85,14 +84,14 @@ extension PaceCalculatorViewModelTests {
 
         sut.$duration
             .dropFirst()
-            .sink { value in
+            .sink { _ in
                 updateDurationExpectation.fulfill()
             }
             .store(in: &cancellables)
 
         sut.$distance
             .dropFirst()
-            .sink { value in
+            .sink { _ in
                 updateDistanceExpectation.fulfill()
             }
             .store(in: &cancellables)
@@ -116,14 +115,14 @@ extension PaceCalculatorViewModelTests {
 
         sut.$pace
             .dropFirst()
-            .sink { value in
+            .sink { _ in
                 updatePaceExpectation.fulfill()
             }
             .store(in: &cancellables)
 
         sut.$distance
             .dropFirst()
-            .sink { value in
+            .sink { _ in
                 updateDistanceExpectation.fulfill()
             }
             .store(in: &cancellables)
@@ -134,7 +133,6 @@ extension PaceCalculatorViewModelTests {
         // Assert
         await fulfillment(of: [updatePaceExpectation, updateDistanceExpectation], timeout: 1)
     }
-
 
     func testPaceCalculatorViewModel_whenUpdateDistance_withoutPaceNorDuration_thenDoesntUpdatePaceOrDuration() async throws {
         // Arrange
@@ -148,14 +146,14 @@ extension PaceCalculatorViewModelTests {
 
         sut.$pace
             .dropFirst()
-            .sink { value in
+            .sink { _ in
                 updatePaceExpectation.fulfill()
             }
             .store(in: &cancellables)
 
         sut.$duration
             .dropFirst()
-            .sink { value in
+            .sink { _ in
                 updateDurationExpectation.fulfill()
             }
             .store(in: &cancellables)
@@ -181,21 +179,21 @@ extension PaceCalculatorViewModelTests {
 
         sut.$pace
             .dropFirst()
-            .sink { value in
+            .sink { _ in
                 updatePaceExpectation.fulfill()
             }
             .store(in: &cancellables)
 
         sut.$duration
             .dropFirst()
-            .sink { value in
+            .sink { _ in
                 updateDurationExpectation.fulfill()
             }
             .store(in: &cancellables)
 
         sut.$distance
             .dropFirst()
-            .sink { value in
+            .sink { _ in
                 updateDistanceExpectation.fulfill()
             }
             .store(in: &cancellables)
@@ -209,7 +207,6 @@ extension PaceCalculatorViewModelTests {
 }
 
 extension PaceCalculatorViewModelTests {
-
     // MARK: - Updating pace with required fields
 
     func testPaceCalculatorViewModel_whenUpdatePace_withDuration_thenDoesUpdateDistance() async throws {
@@ -221,7 +218,7 @@ extension PaceCalculatorViewModelTests {
 
         sut.$distance
             .dropFirst()
-            .sink { value in
+            .sink { _ in
                 updateDistanceExpectation.fulfill()
             }
             .store(in: &cancellables)
@@ -243,7 +240,7 @@ extension PaceCalculatorViewModelTests {
 
         sut.$duration
             .dropFirst()
-            .sink { value in
+            .sink { _ in
                 updateDurationExpectation.fulfill()
             }
             .store(in: &cancellables)
@@ -267,7 +264,7 @@ extension PaceCalculatorViewModelTests {
 
         sut.$distance
             .dropFirst()
-            .sink { value in
+            .sink { _ in
                 updateDistanceExpectation.fulfill()
             }
             .store(in: &cancellables)
@@ -289,7 +286,7 @@ extension PaceCalculatorViewModelTests {
 
         sut.$duration
             .dropFirst()
-            .sink { value in
+            .sink { _ in
                 updateDurationExpectation.fulfill()
             }
             .store(in: &cancellables)
@@ -313,7 +310,7 @@ extension PaceCalculatorViewModelTests {
 
         sut.$distance
             .dropFirst()
-            .sink { value in
+            .sink { _ in
                 updateDistanceExpectation.fulfill()
             }
             .store(in: &cancellables)
@@ -335,7 +332,7 @@ extension PaceCalculatorViewModelTests {
 
         sut.$distance
             .dropFirst()
-            .sink { value in
+            .sink { _ in
                 updateDistanceExpectation.fulfill()
             }
             .store(in: &cancellables)
@@ -357,7 +354,7 @@ extension PaceCalculatorViewModelTests {
 
         sut.$pace
             .dropFirst()
-            .sink { value in
+            .sink { _ in
                 updatePaceExpectation.fulfill()
             }
             .store(in: &cancellables)
@@ -381,7 +378,7 @@ extension PaceCalculatorViewModelTests {
 
         sut.$duration
             .dropFirst()
-            .sink { value in
+            .sink { _ in
                 updateDurationExpectation.fulfill()
             }
             .store(in: &cancellables)
@@ -403,7 +400,7 @@ extension PaceCalculatorViewModelTests {
 
         sut.$duration
             .dropFirst()
-            .sink { value in
+            .sink { _ in
                 updateDurationExpectation.fulfill()
             }
             .store(in: &cancellables)
@@ -425,7 +422,7 @@ extension PaceCalculatorViewModelTests {
 
         sut.$pace
             .dropFirst()
-            .sink { value in
+            .sink { _ in
                 updatePaceExpectation.fulfill()
             }
             .store(in: &cancellables)
@@ -449,7 +446,7 @@ extension PaceCalculatorViewModelTests {
 
         sut.$pace
             .dropFirst()
-            .sink { value in
+            .sink { _ in
                 updatePaceExpectation.fulfill()
             }
             .store(in: &cancellables)
@@ -475,14 +472,14 @@ extension PaceCalculatorViewModelTests {
 
         sut.$duration
             .dropFirst()
-            .sink { value in
+            .sink { _ in
                 updateDurationExpectation.fulfill()
             }
             .store(in: &cancellables)
 
         sut.$pace
             .dropFirst()
-            .sink { value in
+            .sink { _ in
                 updatePaceExpectation.fulfill()
             }
             .store(in: &cancellables)

@@ -2,8 +2,8 @@
 // TriGuide 2025
 //
 
-import SwiftUI
 import Localization
+import SwiftUI
 
 public struct NumberPickerView<Label: View>: View {
     @Binding var whole: Int
@@ -26,7 +26,7 @@ public struct NumberPickerView<Label: View>: View {
         @ViewBuilder label: @escaping () -> Label = { EmptyView() },
         onDoneClick: (() -> Void)? = nil
     ) {
-        self._whole = whole
+        _whole = whole
         self.decimal = decimal
         self.maxWhole = maxWhole
         self.maxDecimal = maxDecimal
@@ -84,7 +84,5 @@ private extension NumberPickerView {
         whole: .constant(0),
         decimal: nil,
         maxWhole: 100
-    ) {
-
-    }
+    ) {}
 }

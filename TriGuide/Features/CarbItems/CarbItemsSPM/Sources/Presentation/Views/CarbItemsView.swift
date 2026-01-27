@@ -2,9 +2,9 @@
 // TriGuide 2025
 //
 
-import SwiftUI
-import Localization
 import DesignSystem
+import Localization
+import SwiftUI
 import TriGuideDomain
 
 public struct CarbItemsView: View {
@@ -40,14 +40,14 @@ public struct CarbItemsView: View {
 
     private var filteredItems: [CarbItem] {
         searchText.isEmpty
-        ? viewModel.carbItems
-        : viewModel.filterCarbItems(by: searchText)
+            ? viewModel.carbItems
+            : viewModel.filterCarbItems(by: searchText)
     }
 
     private var filteredUserItems: [CarbItem] {
         searchText.isEmpty
-        ? viewModel.userCarbItems
-        : viewModel.filterUserCarbItems(by: searchText)
+            ? viewModel.userCarbItems
+            : viewModel.filterUserCarbItems(by: searchText)
     }
 
     // MARK: - Body
@@ -79,7 +79,7 @@ public struct CarbItemsView: View {
             .task { await refreshAll() }
             .navigationDestination(for: CarbItemsCoordinator.Route.self) { route in
                 switch route {
-                case .form(let existing):
+                case let .form(existing):
                     coordinator.buildFormView(for: existing)
                 }
             }
@@ -88,7 +88,6 @@ public struct CarbItemsView: View {
 }
 
 private extension CarbItemsView {
-
     // MARK: - List and Sections
 
     var listContent: some View {
@@ -186,8 +185,8 @@ private extension CarbItemsView {
         } label: {
             Label(
                 carbItem.isFavorite
-                ? Localizables.Common.removeFromFavorites
-                : Localizables.Common.addToFavorites,
+                    ? Localizables.Common.removeFromFavorites
+                    : Localizables.Common.addToFavorites,
                 systemImage: carbItem.isFavorite ? "star.fill" : "star"
             )
         }
@@ -207,7 +206,7 @@ private extension CarbItemsView {
         }
     }
 
-    // MARK:  - Selected Items Progress
+    // MARK: - Selected Items Progress
 
     var selectedItemsProgressView: some View {
         ProgressBarWithLabelView(
@@ -255,7 +254,7 @@ private struct PreviewWrapper: View {
         )
         let coordinator = CarbItemsCoordinator(factory: CarbItemsViewFactoryDefault(dependencies: try! .init()))
 
-        self.view = CarbItemsView(
+        view = CarbItemsView(
             viewModel: viewModel,
             coordinator: coordinator
         )

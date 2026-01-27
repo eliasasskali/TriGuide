@@ -98,7 +98,7 @@ private extension FieldView {
 
 // MARK: - Small helpers for sanitization
 
-fileprivate extension String {
+private extension String {
     static var decimalSeparator: Character {
         Character(Locale.current.decimalSeparator ?? ".")
     }

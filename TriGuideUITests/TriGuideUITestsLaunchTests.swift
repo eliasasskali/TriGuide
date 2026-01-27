@@ -5,7 +5,6 @@
 import XCTest
 
 final class TriGuideUITestsLaunchTests: XCTestCase {
-
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true
     }

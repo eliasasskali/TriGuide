@@ -19,8 +19,8 @@ public enum Roboto: String, CaseIterable {
 
 public enum RobotoFont {
     public static func registerFonts() {
-        Roboto.allCases.forEach {
-            if let url = Bundle.module.url(forResource: $0.rawValue, withExtension: "ttf") {
+        for item in Roboto.allCases {
+            if let url = Bundle.module.url(forResource: item.rawValue, withExtension: "ttf") {
                 CTFontManagerRegisterFontsForURL(url as CFURL, .process, nil)
             }
         }

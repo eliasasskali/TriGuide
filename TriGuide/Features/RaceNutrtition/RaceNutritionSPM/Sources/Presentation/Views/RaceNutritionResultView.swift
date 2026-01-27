@@ -2,12 +2,11 @@
 // TriGuide 2025
 //
 
+import Localization
 import SwiftUI
 import TriGuideDomain
-import Localization
 
 public struct RaceNutritionResultView: View {
-
     // MARK: - Dependencies
 
     @ObservedObject private var coordinator: RaceNutritionCoordinator
@@ -22,9 +21,9 @@ public struct RaceNutritionResultView: View {
     var roundedTimeLine: [FuelingEvent] {
         fuelingResult.timeLine.map { event in
             let consumption = switch event.consumption {
-            case .instant(let time):
+            case let .instant(time):
                 FuelingEvent.Consumption.instant(time: time.roundToMultiple(rule: .down))
-            case .interval(let startTime, let endTime):
+            case let .interval(startTime, endTime):
                 FuelingEvent.Consumption.interval(
                     start: startTime.roundToMultiple(rule: .down),
                     end: endTime.roundToMultiple(rule: .up)
@@ -122,11 +121,11 @@ private extension RaceNutritionResultView {
                     ForEach(itemTimeLine, id: \.self) { event in
                         GridRow {
                             switch event.consumption {
-                            case .instant(let time):
+                            case let .instant(time):
                                 Text("\(time.formattedAsHourMinSec)")
                                     .font(.Custom.Regular.font3)
 
-                            case .interval(let startTime, let endTime):
+                            case let .interval(startTime, endTime):
                                 Text("\(startTime.formattedAsHourMinSec) - \(endTime.formattedAsHourMinSec)")
                                     .font(.Custom.Regular.font3)
                             }
@@ -155,11 +154,11 @@ private extension RaceNutritionResultView {
                     ForEach(drinkTimeLine, id: \.self) { event in
                         GridRow {
                             switch event.consumption {
-                            case .instant(let time):
+                            case let .instant(time):
                                 Text("\(time.formattedAsHourMinSec)")
                                     .font(.Custom.Regular.font3)
 
-                            case .interval(let startTime, let endTime):
+                            case let .interval(startTime, endTime):
                                 Text("\(startTime.formattedAsHourMinSec) - \(endTime.formattedAsHourMinSec)")
                                     .font(.Custom.Regular.font3)
                             }
@@ -262,26 +261,25 @@ private extension RaceNutritionResultView {
         fuelingResult: .constant(
             .init(
                 timeLine: [
-                    FuelingEvent(consumption: .instant(time: TimeInterval(7200/5)), carbItem: .init(id: "id1", name: "gel 1", gramsOfCarbs: 45, type: .gel)),
-                    FuelingEvent(consumption: .instant(time: TimeInterval(7200*2/5)), carbItem: .init(id: "id1", name: "gel 1", gramsOfCarbs: 45, type: .gel)),
-                    FuelingEvent(consumption: .instant(time: TimeInterval(7200*3/5)), carbItem: .init(id: "id1", name: "gel 1", gramsOfCarbs: 45, type: .gel)),
-                    FuelingEvent(consumption: .instant(time: TimeInterval(7200*4/5)), carbItem: .init(id: "id1", name: "gel 1", gramsOfCarbs: 45, type: .gel))
+                    FuelingEvent(consumption: .instant(time: TimeInterval(7200 / 5)), carbItem: .init(id: "id1", name: "gel 1", gramsOfCarbs: 45, type: .gel)),
+                    FuelingEvent(consumption: .instant(time: TimeInterval(7200 * 2 / 5)), carbItem: .init(id: "id1", name: "gel 1", gramsOfCarbs: 45, type: .gel)),
+                    FuelingEvent(consumption: .instant(time: TimeInterval(7200 * 3 / 5)), carbItem: .init(id: "id1", name: "gel 1", gramsOfCarbs: 45, type: .gel)),
+                    FuelingEvent(consumption: .instant(time: TimeInterval(7200 * 4 / 5)), carbItem: .init(id: "id1", name: "gel 1", gramsOfCarbs: 45, type: .gel)),
                 ],
                 totalCarbsTarget: 180,
                 duration: 7200,
                 selectedItems: [
                     CarbItemSelection(item: .init(id: "id1", name: "gel 1", gramsOfCarbs: 45, type: .gel), quantity: 4),
-                    CarbItemSelection(item: .init(id: "id2", name: "Long text that should fit in a line", gramsOfCarbs: 45, type: .gel), quantity: 4)
+                    CarbItemSelection(item: .init(id: "id2", name: "Long text that should fit in a line", gramsOfCarbs: 45, type: .gel), quantity: 4),
                 ],
                 hourlyBreakdown: [
                     IntervalFueling(duration: 3600, hourIndex: 0, carbGrams: 45, caffeine: 0, waterVolumeML: 0),
                     IntervalFueling(duration: 3600, hourIndex: 1, carbGrams: 45, caffeine: 0, waterVolumeML: 0),
                     IntervalFueling(duration: 3600, hourIndex: 2, carbGrams: 45, caffeine: 0, waterVolumeML: 0),
                     IntervalFueling(duration: 3600, hourIndex: 3, carbGrams: 45, caffeine: 0, waterVolumeML: 0),
-                    IntervalFueling(duration: 3600, hourIndex: 4, carbGrams: 45, caffeine: 0, waterVolumeML: 0)
+                    IntervalFueling(duration: 3600, hourIndex: 4, carbGrams: 45, caffeine: 0, waterVolumeML: 0),
                 ]
             )
         )
     )
 }
-

@@ -6,7 +6,6 @@ import Foundation
 import TriGuideDomain
 
 public struct FuelingInput {
-
     // MARK: - Dependencies
 
     public let carbItemSelection: [CarbItemSelection]

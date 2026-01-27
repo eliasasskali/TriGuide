@@ -6,7 +6,6 @@ import Foundation
 import TriGuideDomain
 
 public struct RunningPaceCalculator: PaceCalculator {
-
     public init() {}
 
     public func calculatePace(

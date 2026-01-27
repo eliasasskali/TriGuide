@@ -3,8 +3,8 @@
 //
 
 import Foundation
-import TriGuideDomain
 import RaceCalculatorSPM
+import TriGuideDomain
 
 final class PaceCalculatorMock: PaceCalculator {
     let pace: Double?
@@ -28,9 +28,9 @@ final class PaceCalculatorMock: PaceCalculator {
     }
 
     func calculatePace(
-        duration: TimeInterval,
-        distance: Double,
-        paceUnit: SpeedUnit
+        duration _: TimeInterval,
+        distance _: Double,
+        paceUnit _: SpeedUnit
     ) -> Double? {
         return pace
     }
@@ -52,16 +52,16 @@ final class PaceCalculatorMock: PaceCalculator {
     }
 
     func calculateDistance(
-        pace: Double,
-        duration: TimeInterval,
-        paceUnit: SpeedUnit
+        pace _: Double,
+        duration _: TimeInterval,
+        paceUnit _: SpeedUnit
     ) -> Double? {
         distance
     }
 
     func formatPace(
-        _ pace: Double,
-        with paceUnit: SpeedUnit
+        _: Double,
+        with _: SpeedUnit
     ) -> String {
         formattedPace
     }

@@ -2,8 +2,8 @@
 // TriGuide 2025
 //
 
-import Foundation
 import FormKit
+import Foundation
 import Localization
 import TriGuideDomain
 
@@ -19,15 +19,15 @@ public final class CarbItemFormViewModel: ObservableObject {
             fields: [
                 FieldDescriptor(
                     id: "name",
-                    label:  Localizables.CarbItemForm.labelProductName,
-                    placeholder:  Localizables.CarbItemForm.placeholderProductName,
+                    label: Localizables.CarbItemForm.labelProductName,
+                    placeholder: Localizables.CarbItemForm.placeholderProductName,
                     type: .text,
                     required: true
                 ),
                 FieldDescriptor(
                     id: "brand",
-                    label:  Localizables.CarbItemForm.labelBrand,
-                    placeholder:  Localizables.CarbItemForm.placeholderBrand,
+                    label: Localizables.CarbItemForm.labelBrand,
+                    placeholder: Localizables.CarbItemForm.placeholderBrand,
                     type: .text
                 ),
                 FieldDescriptor(
@@ -41,7 +41,7 @@ public final class CarbItemFormViewModel: ObservableObject {
                             label: $0.rawValue.capitalized
                         )
                     }
-                )
+                ),
             ]
         ),
         FormSection(
@@ -49,8 +49,8 @@ public final class CarbItemFormViewModel: ObservableObject {
             fields: [
                 FieldDescriptor(
                     id: "gramsOfCarbs",
-                    label:  Localizables.CarbItemForm.labelCarbohydrates,
-                    placeholder:  Localizables.CarbItemForm.placeholderCarbohydrates,
+                    label: Localizables.CarbItemForm.labelCarbohydrates,
+                    placeholder: Localizables.CarbItemForm.placeholderCarbohydrates,
                     type: .decimal,
                     required: true,
                     min: 0,
@@ -58,16 +58,16 @@ public final class CarbItemFormViewModel: ObservableObject {
                 ),
                 FieldDescriptor(
                     id: "caffeine",
-                    label:  Localizables.CarbItemForm.labelCaffeine,
-                    placeholder:  Localizables.CarbItemForm.placeholderCaffeine,
+                    label: Localizables.CarbItemForm.labelCaffeine,
+                    placeholder: Localizables.CarbItemForm.placeholderCaffeine,
                     type: .decimal,
                     min: 0,
                     max: 10000
                 ),
                 FieldDescriptor(
                     id: "sodium",
-                    label:  Localizables.CarbItemForm.labelSodium,
-                    placeholder:  Localizables.CarbItemForm.placeholderSodium,
+                    label: Localizables.CarbItemForm.labelSodium,
+                    placeholder: Localizables.CarbItemForm.placeholderSodium,
                     type: .decimal,
                     min: 0,
                     max: 10000
@@ -75,13 +75,13 @@ public final class CarbItemFormViewModel: ObservableObject {
                 FieldDescriptor(
                     id: "waterVolumeML",
                     label: Localizables.CarbItemForm.labelWaterVolume,
-                    placeholder:  Localizables.CarbItemForm.placeholderWaterVolume,
+                    placeholder: Localizables.CarbItemForm.placeholderWaterVolume,
                     type: .decimal,
                     min: 1,
                     max: 10000
-                )
+                ),
             ]
-        )
+        ),
     ]
 
     public init(
@@ -104,7 +104,7 @@ public final class CarbItemFormViewModel: ObservableObject {
             "caffeine": item.caffeine.map { .string(String($0)) } ?? .none,
             "sodium": item.sodium.map { .string(String($0)) } ?? .none,
             "waterVolumeML": item.waterVolumeML.map { .string(String($0)) } ?? .none,
-            "type": .string(item.type.rawValue)
+            "type": .string(item.type.rawValue),
         ]
     }
 

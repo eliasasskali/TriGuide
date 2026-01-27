@@ -40,10 +40,10 @@ actor CarbItemsRepositoryDefault: CarbItemsRepository {
         userCarbItemsDataSource: UserCarbItemsDataSource,
         timeToRefresh: TimeInterval = 600
     ) {
-        self.remoteItemsDataSource = remoteCarbItemsDataSource
-        self.cachedItemsDataSource = cachedCarbItemsDataSource
+        remoteItemsDataSource = remoteCarbItemsDataSource
+        cachedItemsDataSource = cachedCarbItemsDataSource
         self.favoriteCarbItemsDataSource = favoriteCarbItemsDataSource
-        self.userItemsDataSource = userCarbItemsDataSource
+        userItemsDataSource = userCarbItemsDataSource
         self.timeToRefresh = timeToRefresh
     }
 }
@@ -57,7 +57,7 @@ extension CarbItemsRepositoryDefault {
     }
 
     private func getCarbItemsWithoutFavourites(forceRefresh: Bool = false) async throws -> [CarbItem] {
-        if hasLoadedOnce && !forceRefresh {
+        if hasLoadedOnce, !forceRefresh {
             if let lastLoadedAt, Date().timeIntervalSince(lastLoadedAt) < timeToRefresh {
                 return items
             }
@@ -130,7 +130,7 @@ extension CarbItemsRepositoryDefault {
 
 extension CarbItemsRepositoryDefault {
     func getUserCarbItems(forceRefresh: Bool = false) async throws -> [CarbItem] {
-        if !userItems.isEmpty && !forceRefresh {
+        if !userItems.isEmpty, !forceRefresh {
             return userItems
         }
         userItems = try await userItemsDataSource.getCarbItems()

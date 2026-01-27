@@ -2,9 +2,9 @@
 //  TriGuide 2025
 //
 
-import SwiftUI
-import Localization
 import DesignSystem
+import Localization
+import SwiftUI
 
 public struct DurationPickerView: View {
     public enum Mode {
@@ -33,7 +33,7 @@ public struct DurationPickerView: View {
         self.title = title
         self.mode = mode
         self.showHours = showHours
-        self._duration = duration
+        _duration = duration
     }
 
     @State private var hours = 0
@@ -54,6 +54,7 @@ public struct DurationPickerView: View {
         .onChange(of: duration) { updateStateFromDuration() }
     }
 }
+
 // MARK: - Views
 
 private extension DurationPickerView {

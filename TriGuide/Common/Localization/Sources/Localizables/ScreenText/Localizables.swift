@@ -12,10 +12,6 @@ public enum Localizables {
             String(localized: "done", bundle: .module)
         }
 
-        public static var select: String {
-            String(localized: "select", bundle: .module)
-        }
-        
         public static var sport: String {
             String(localized: "sport", bundle: .module)
         }
@@ -62,10 +58,6 @@ public enum Localizables {
 
         public static var calculator: String {
             String(localized: "tabs_calculator", bundle: .module)
-        }
-
-        public static var materialList: String {
-            String(localized: "tabs_material_list", bundle: .module)
         }
 
         public static var sportNutrition: String {

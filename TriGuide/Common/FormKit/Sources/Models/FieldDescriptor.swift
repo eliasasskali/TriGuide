@@ -55,7 +55,7 @@ public struct FieldDescriptor: Identifiable, Codable, Hashable, Sendable {
         self.placeholder = placeholder
         self.type = type
         self.required = required
-        self.pickerOptions = options
+        pickerOptions = options
         self.min = min
         self.max = max
         self.regex = regex

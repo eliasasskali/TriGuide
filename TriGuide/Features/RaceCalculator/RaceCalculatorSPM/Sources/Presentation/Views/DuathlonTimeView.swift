@@ -2,9 +2,9 @@
 //  TriGuide 2025
 //
 
-import SwiftUI
-import Localization
 import DesignSystem
+import Localization
+import SwiftUI
 import TriGuideDomain
 
 struct DuathlonTimeView: View {

@@ -2,13 +2,13 @@
 //  TriGuide 2025
 //
 
-import SwiftUI
 import Localization
+import SwiftUI
 import TriGuideDomain
 
 public struct RaceCalculatorView: View {
     @State private var selectedSport: SupportedSport = .run
-    
+
     @StateObject private var runViewModel: PaceCalculatorViewModel
     @StateObject private var swimViewModel: PaceCalculatorViewModel
     @StateObject private var bikeViewModel: PaceCalculatorViewModel
@@ -44,9 +44,9 @@ public struct RaceCalculatorView: View {
             .padding()
             .background(Color(UIColor.systemBackground))
             .zIndex(1)
-            
+
             Divider()
-            
+
             ScrollView {
                 selectedSportView
                     .padding()
@@ -69,19 +69,20 @@ private extension RaceCalculatorView {
         case .duathlon: duathlonTimeView
         }
     }
-    
+
     var swimTimeView: some View {
         VStack {
             PaceTimeCalculatorView<SwimmingDistance>(
                 sport: .swim,
                 viewModel: swimViewModel
             )
-            
+
             if let distance = swimViewModel.distance,
                distance > 0,
                let pace = swimViewModel.pace,
                pace > 0,
-               let paceUnit = swimViewModel.paceUnit {
+               let paceUnit = swimViewModel.paceUnit
+            {
                 SplitsTableView(
                     totalDistance: Binding(
                         get: { distance },
@@ -100,19 +101,20 @@ private extension RaceCalculatorView {
             }
         }
     }
-    
+
     var bikeTimeView: some View {
         VStack {
             PaceTimeCalculatorView<CyclingDistance>(
                 sport: .bike,
                 viewModel: bikeViewModel
             )
-            
+
             if let distance = bikeViewModel.distance,
                distance > 0,
                let speed = bikeViewModel.speed,
                speed > 0,
-               let paceUnit = bikeViewModel.paceUnit {
+               let paceUnit = bikeViewModel.paceUnit
+            {
                 SplitsTableView(
                     totalDistance: Binding(
                         get: { distance },
@@ -131,19 +133,20 @@ private extension RaceCalculatorView {
             }
         }
     }
-    
+
     var runTimeView: some View {
         VStack {
             PaceTimeCalculatorView<RunningDistance>(
                 sport: .run,
                 viewModel: runViewModel
             )
-            
+
             if let distance = runViewModel.distance,
                distance > 0,
                let pace = runViewModel.pace,
                pace > 0,
-               let paceUnit = runViewModel.paceUnit {
+               let paceUnit = runViewModel.paceUnit
+            {
                 SplitsTableView(
                     totalDistance: Binding(
                         get: { distance },
@@ -162,13 +165,13 @@ private extension RaceCalculatorView {
             }
         }
     }
-    
+
     var triathlonTimeView: some View {
         TriathlonTimeView(
             viewModel: TriathlonTimeViewModel()
         )
     }
-    
+
     var duathlonTimeView: some View {
         DuathlonTimeView(
             viewModel: DuathlonTimeViewModel()

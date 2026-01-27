@@ -11,7 +11,7 @@ struct CardBackground: ViewModifier {
 
     let cornerRadius: CGFloat = 10
     let shadowRadius: CGFloat = 2
-    
+
     func body(content: Content) -> some View {
         content
             .padding(.horizontal, innerHorizontalPadding)

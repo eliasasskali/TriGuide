@@ -2,10 +2,10 @@
 //  TriGuide 2025
 //
 
-import TriGuideDomain
-import SwiftUI
-import Localization
 import DesignSystem
+import Localization
+import SwiftUI
+import TriGuideDomain
 
 struct SplitsTableView: View {
     @Binding var totalDistance: Double
@@ -16,7 +16,7 @@ struct SplitsTableView: View {
     @State private var pickerDistanceUnit: DistanceUnit
 
     @ObservedObject private var viewModel: SplitsTableViewModel
-    
+
     init(
         totalDistance: Binding<Double>,
         pace: Binding<TimeInterval>,
@@ -24,18 +24,18 @@ struct SplitsTableView: View {
         splitsDistance: Double? = nil,
         viewModel: SplitsTableViewModel
     ) {
-        self._totalDistance = totalDistance
-        self._pace = pace
-        self._paceUnit = paceUnit
+        _totalDistance = totalDistance
+        _pace = pace
+        _paceUnit = paceUnit
         self.splitsDistance = splitsDistance ?? paceUnit.wrappedValue.defaultSplitsDistance
-        self.pickerDistanceUnit = paceUnit.wrappedValue.distanceUnit
+        pickerDistanceUnit = paceUnit.wrappedValue.distanceUnit
         self.viewModel = viewModel
     }
-    
+
     var body: some View {
         VStack(spacing: 16) {
             topBar
-            
+
             splitsGrid
         }
         .cardBackground()
@@ -54,14 +54,14 @@ private extension SplitsTableView {
         HStack {
             Text(Localizables.SplitsTable.tableTitle)
                 .font(.Custom.Medium.font4)
-            
+
             Spacer()
-            
+
             distancePicker
                 .fixedSize()
         }
     }
-    
+
     var distancePicker: some View {
         DistancePickerView(
             title: Localizables.SplitsTable.byDistance,
@@ -79,7 +79,7 @@ private extension SplitsTableView {
             )
         }
     }
-    
+
     @ViewBuilder
     var splitsGrid: some View {
         if splitsDistance > 0 {
@@ -90,9 +90,9 @@ private extension SplitsTableView {
                     Text(Localizables.SplitsTable.columnNameCumulativeTime)
                 }
                 .font(.Custom.Medium.font3)
-                
+
                 Divider()
-                
+
                 ForEach(viewModel.splits, id: \.distance) { split in
                     GridRow {
                         Text(split.formattedDistance(with: pickerDistanceUnit))
@@ -100,7 +100,7 @@ private extension SplitsTableView {
                         Text(split.cumulativeTime.formattedAsHourMinSec)
                     }
                     .font(.Custom.Regular.font3)
-                    
+
                     if split != viewModel.splits.last {
                         Divider()
                     }

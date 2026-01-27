@@ -2,10 +2,10 @@
 // TriGuide 2025
 //
 
+@testable import CarbItemsSPM
 import Foundation
 import Testing
 import TriGuideDomain
-@testable import CarbItemsSPM
 
 @Suite
 struct CarbItemsRepositoryDefaultTests {}
@@ -40,7 +40,7 @@ extension CarbItemsRepositoryDefaultTests {
     // MARK: - Remote & Cache
 
     @Test("Loads from remote and saves items in cache.")
-    func test_whenGetCarbItems_thenlLoadsFromRemoteAndCachesIt() async throws {
+    func whenGetCarbItems_thenlLoadsFromRemoteAndCachesIt() async throws {
         // Arrange
         let remote = RemoteCarbItemsDataSourceMock(dtos: [dto(id: "1", name: "Gel")])
         let cache = CachedCarbItemsDataSourceMock()
@@ -56,7 +56,7 @@ extension CarbItemsRepositoryDefaultTests {
     }
 
     @Test("When remote fails it loads from cache.")
-    func test_whenGetCarbItemsAndRemoteFails_thenlLoadsFromCache() async throws {
+    func whenGetCarbItemsAndRemoteFails_thenlLoadsFromCache() async throws {
         // Arrange
         let remote = RemoteCarbItemsDataSourceMock(shouldThrow: true)
         let cache = CachedCarbItemsDataSourceMock(
@@ -73,7 +73,7 @@ extension CarbItemsRepositoryDefaultTests {
     }
 
     @Test("Throws when both remote and cache fail.")
-    func test_whenGetCarbItemsAndBothRemoteAndCacheFail_thenItThrows() async throws {
+    func whenGetCarbItemsAndBothRemoteAndCacheFail_thenItThrows() async throws {
         // Arrange
         let remote = RemoteCarbItemsDataSourceMock(shouldThrow: true)
         let cache = CachedCarbItemsDataSourceMock(shouldThrowOnLoad: true)
@@ -100,7 +100,7 @@ extension CarbItemsRepositoryDefaultTests {
     // MARK: - User Items
 
     @Test("Adds a user carb item successfully.")
-    func test_whenAddUserCarbItem_thenItAddCarbItemSuccessfully() async throws {
+    func whenAddUserCarbItem_thenItAddCarbItemSuccessfully() async throws {
         // Arrange
         let item = domainItem(id: "u1", name: "Banana", carbs: 27)
         let sut = givenSut()
@@ -115,7 +115,7 @@ extension CarbItemsRepositoryDefaultTests {
     }
 
     @Test("Adding a duplicate item will throw an error.")
-    func test_whenAddDuplicateUserCarbItem_thenItThrowsDuplicateError() async throws {
+    func whenAddDuplicateUserCarbItem_thenItThrowsDuplicateError() async throws {
         // Arrange
         let item = domainItem(id: "u1", name: "Banana", carbs: 27)
         let sut = givenSut()
@@ -150,7 +150,7 @@ extension CarbItemsRepositoryDefaultTests {
     // MARK: - Favorite Items
 
     @Test("Toggles favorite status correctly.")
-    func test_whenToggleFavoriteStatus_thenItTogglesCorrectly() async throws {
+    func whenToggleFavoriteStatus_thenItTogglesCorrectly() async throws {
         // Arrange
         let item = dto(id: "f1", name: "Gel")
         let remote = RemoteCarbItemsDataSourceMock(dtos: [item])
@@ -172,5 +172,4 @@ extension CarbItemsRepositoryDefaultTests {
         // Assert
         #expect(items.first?.isFavorite == false)
     }
-
 }

@@ -17,7 +17,7 @@ actor FavoriteCarbItemsDataSourceDefault: FavoriteCarbItemsDataSource {
     ) {
         self.key = key
         self.defaults = defaults
-        self.cachedIds = Set(defaults.stringArray(forKey: key) ?? [])
+        cachedIds = Set(defaults.stringArray(forKey: key) ?? [])
     }
 
     func getFavoriteIds() async -> [String] {

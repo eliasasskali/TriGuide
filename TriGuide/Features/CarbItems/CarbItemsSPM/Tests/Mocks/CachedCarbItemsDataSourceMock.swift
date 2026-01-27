@@ -2,8 +2,8 @@
 // TriGuide 2025
 //
 
-import Foundation
 import CarbItemsSPM
+import Foundation
 
 final actor CachedCarbItemsDataSourceMock: CachedCarbItemsDataSource {
     var dtos: [CarbItemDto]
@@ -31,6 +31,6 @@ final actor CachedCarbItemsDataSourceMock: CachedCarbItemsDataSource {
     func saveCarbItems(_ items: [CarbItemDto]) async throws {
         if shouldThrowOnSave { throw NSError(domain: "CacheSaveError", code: 3) }
         didSave = true
-        self.dtos = items
+        dtos = items
     }
 }

@@ -2,9 +2,9 @@
 //  TriGuide 2025
 //
 
-import SwiftUI
-import Localization
 import DesignSystem
+import Localization
+import SwiftUI
 import TriGuideDomain
 
 struct DistancePickerView: View {
@@ -50,7 +50,7 @@ private extension DistancePickerView {
         NumberPickerView(
             whole: $whole,
             decimal: usesDecimals ? $decimal : nil,
-            maxWhole: usesDecimals ? 1000 : 100000,
+            maxWhole: usesDecimals ? 1000 : 100_000,
             wholeStep: usesDecimals ? 1 : 50,
             label: {
                 unitPicker

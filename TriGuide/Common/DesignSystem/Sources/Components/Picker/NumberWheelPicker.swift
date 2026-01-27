@@ -20,7 +20,7 @@ public struct NumberWheelPicker: View {
         step: Int = 1,
         label: String? = nil
     ) {
-        self._selection = selection
+        _selection = selection
         self.minValue = minValue
         self.maxValue = maxValue
         self.step = step
@@ -71,7 +71,7 @@ private extension NumberWheelPicker {
     NumberWheelPicker(
         selection: .constant(0),
         minValue: 0,
-        maxValue: 100000,
+        maxValue: 100_000,
         step: 100,
         label: "label"
     )

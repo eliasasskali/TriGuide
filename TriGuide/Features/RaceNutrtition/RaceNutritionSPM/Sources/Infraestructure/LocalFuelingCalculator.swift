@@ -6,7 +6,6 @@ import Foundation
 import TriGuideDomain
 
 public final class LocalFuelingCalculator: FuelingCalculatorDataSource {
-
     // MARK: - Constants
 
     private enum Constants {
@@ -37,7 +36,7 @@ public final class LocalFuelingCalculator: FuelingCalculatorDataSource {
         var instantItems: [CarbItem] = []
         for sel in selections where sel.item.gramsOfCarbs > 0 {
             let count = max(0, Int(sel.quantity))
-            for _ in 0..<count {
+            for _ in 0 ..< count {
                 if sel.item.type == .drink {
                     drinkItems.append(sel.item)
                 } else {
@@ -175,7 +174,7 @@ public final class LocalFuelingCalculator: FuelingCalculatorDataSource {
 
             let window = digestionWindowFor(
                 item: item,
-                totalCarbs: max(1.0,totalCarbs),
+                totalCarbs: max(1.0, totalCarbs),
                 batchesCount: batchesCount
             )
             applyInstant(
@@ -210,8 +209,8 @@ public final class LocalFuelingCalculator: FuelingCalculatorDataSource {
         let sortedEvents = events.sorted { a, b in
             func startTime(of ev: TriGuideDomain.FuelingEvent) -> TimeInterval {
                 switch ev.consumption {
-                case .instant(let t): return t
-                case .interval(let s, _): return s
+                case let .instant(t): return t
+                case let .interval(s, _): return s
                 }
             }
             return startTime(of: a) < startTime(of: b)
@@ -245,7 +244,7 @@ public final class LocalFuelingCalculator: FuelingCalculatorDataSource {
         var carbsPerInterval = Array(repeating: 0.0, count: intervalsCount)
         var caffeinePerInterval = Array(repeating: 0.0, count: intervalsCount)
         var waterVolumePerInterval = Array(repeating: 0.0, count: intervalsCount)
-        let intervalSlots: [(start: TimeInterval, end: TimeInterval)] = (0..<intervalsCount).map { i in
+        let intervalSlots: [(start: TimeInterval, end: TimeInterval)] = (0 ..< intervalsCount).map { i in
             let s = Double(i) * minutes * 60
             let e = min(totalDuration, Double(i + 1) * durationInSeconds)
             return (s, e)
@@ -254,7 +253,7 @@ public final class LocalFuelingCalculator: FuelingCalculatorDataSource {
         // Aggregate events into hours
         for ev in events {
             switch ev.consumption {
-            case .instant(let t):
+            case let .instant(t):
                 if let idx = intervalSlots.firstIndex(where: { t >= $0.start && t < $0.end }) {
                     carbsPerInterval[idx] += ev.carbItem.gramsOfCarbs
                     if let caf = ev.carbItem.caffeine {
@@ -264,7 +263,7 @@ public final class LocalFuelingCalculator: FuelingCalculatorDataSource {
                         waterVolumePerInterval[idx] += waterVolume
                     }
                 }
-            case .interval(let s, let e):
+            case let .interval(s, e):
                 for (i, slot) in intervalSlots.enumerated() {
                     let overlap = max(0.0, min(slot.end, e) - max(slot.start, s))
                     if overlap > 0 {
@@ -282,7 +281,7 @@ public final class LocalFuelingCalculator: FuelingCalculatorDataSource {
         }
 
         var hourlyBreakdown: [TriGuideDomain.IntervalFueling] = []
-        for i in 0..<intervalsCount {
+        for i in 0 ..< intervalsCount {
             hourlyBreakdown.append(
                 TriGuideDomain.IntervalFueling(
                     duration: durationInSeconds,
@@ -305,7 +304,7 @@ private extension LocalFuelingCalculator {
 
     func intervalBounds(_ event: FuelingEvent) -> (start: TimeInterval, end: TimeInterval)? {
         switch event.consumption {
-        case .interval(let s, let e): return (s, e)
+        case let .interval(s, e): return (s, e)
         case .instant: return nil
         }
     }
@@ -357,7 +356,7 @@ private extension LocalFuelingCalculator {
         totalDuration: TimeInterval
     ) {
         let intervalLen = max(1e-6, end - start)
-        for batch in 0..<batchesCount {
+        for batch in 0 ..< batchesCount {
             let batchStart = Double(batch) * Constants.batchSeconds
             let batchEnd = min(totalDuration, batchStart + Constants.batchSeconds)
             let overlap = max(0.0, min(batchEnd, end) - max(batchStart, start))
@@ -410,7 +409,7 @@ private extension LocalFuelingCalculator {
         var bestBatch = max(earliestBatch, 0)
         var bestScore = Double.greatestFiniteMagnitude
 
-        for batchIndex in max(earliestBatch, 0)..<batchesCount {
+        for batchIndex in max(earliestBatch, 0) ..< batchesCount {
             // compute hypothetical arrays
             var carbsHyp = carbsPerBatch
             var cafHyp = caffeinePerBatch
@@ -420,14 +419,14 @@ private extension LocalFuelingCalculator {
             let perBatchAdd = item.gramsOfCarbs / Double(window)
             let perBatchCafAdd = (item.caffeine ?? 0.0) / Double(window)
 
-            for windowIndex in 0..<window {
+            for windowIndex in 0 ..< window {
                 carbsHyp[batchIndex + windowIndex] += perBatchAdd
                 cafHyp[batchIndex + windowIndex] += perBatchCafAdd
             }
 
             // variance term
             var varAfter = 0.0
-            for i in 0..<batchesCount {
+            for i in 0 ..< batchesCount {
                 let d = carbsHyp[i] - targetCarbsPerBatch
                 varAfter += d * d
             }
@@ -492,7 +491,7 @@ private extension LocalFuelingCalculator {
         }
         let perBatchCarb = item.gramsOfCarbs / Double(win)
         let perBatchCaf = (item.caffeine ?? 0.0) / Double(win)
-        for k in 0..<win {
+        for k in 0 ..< win {
             carbsPerBatch[batch + k] += perBatchCarb
             caffeinePerBatch[batch + k] += perBatchCaf
         }
@@ -520,7 +519,7 @@ private extension LocalFuelingCalculator {
         var insts: [InstRec] = []
         for event in events {
             switch event.consumption {
-            case .instant(let time):
+            case let .instant(time):
                 let batch = Int(floor(time / Constants.batchSeconds))
                 insts.append(InstRec(item: event.carbItem, batch: max(batch, earliestInstantBatch)))
             default:
@@ -532,7 +531,7 @@ private extension LocalFuelingCalculator {
         if insts.isEmpty { return }
 
         // try moving each instant within +/- 2 batches
-        for i in 0..<insts.count {
+        for i in 0 ..< insts.count {
             let rec = insts[i]
             let currentBatch = rec.batch
             let window = digestionWindowFor(item: rec.item, totalCarbs: max(1.0, totalCarbs), batchesCount: batchesCount)
@@ -552,7 +551,7 @@ private extension LocalFuelingCalculator {
             // search neighborhood +/- 2 batches (bounded)
             let low = max(earliestInstantBatch, currentBatch - 2)
             let high = min(batchesCount - 1, currentBatch + 2)
-            for candidate in low...high {
+            for candidate in low ... high {
                 // apply tentatively at candidate
                 applyInstant(
                     item: rec.item,
@@ -626,7 +625,7 @@ private extension LocalFuelingCalculator {
         guard win > 0 else { return }
         let perBatchCarb = item.gramsOfCarbs / Double(win)
         let perBatchCaf = (item.caffeine ?? 0.0) / Double(win)
-        for k in 0..<win {
+        for k in 0 ..< win {
             carbsPerBatch[b + k] = max(0.0, carbsPerBatch[b + k] - perBatchCarb)
             caffeinePerBatch[b + k] = max(0.0, caffeinePerBatch[b + k] - perBatchCaf)
         }
