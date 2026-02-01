@@ -8,14 +8,20 @@ import SwiftUI
 import TriGuideDomain
 
 public class CarbItemsCoordinator: BaseCoordinator<CarbItemsCoordinator.Route, Never, CarbItemsView> {
+    // MARK: - Route
+
     public enum Route: Hashable {
         case form(existingItem: CarbItem?)
     }
+
+    // MARK: - Dependencies
 
     let factory: CarbItemsViewFactory
     public let onCompleteSelection: (([CarbItemSelection]) -> Void)?
 
     @Published public var viewModel: CarbItemsViewModel
+
+    // MARK: - Initializer
 
     public init(
         factory: CarbItemsViewFactory,
@@ -26,6 +32,8 @@ public class CarbItemsCoordinator: BaseCoordinator<CarbItemsCoordinator.Route, N
         viewModel = factory.buildCarbItemsViewModel()
         super.init()
     }
+
+    // MARK: - BaseCoordinator
 
     override public func start() -> CarbItemsView {
         factory.buildCarbItemsView(

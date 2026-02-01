@@ -10,33 +10,27 @@ import TriGuideDomain
 public struct CarbItemsView: View {
     @Environment(\.dismiss) private var dismiss
 
+    // MARK: - Dependencies
+
     @ObservedObject private var viewModel: CarbItemsViewModel
     @ObservedObject private var coordinator: CarbItemsCoordinator
 
+    // MARK: - Properties
+
     @State private var searchText = ""
     @State private var quantities: [String: Int] = [:]
+
+    // MARK: - Computed properties
 
     private var inSelectionMode: Bool {
         viewModel.totalCarbGrams != nil
     }
 
-    var progressText: String {
+    private var progressText: String {
         let carbs = viewModel.selectedItemsCarbsSum.formattedAsDecimal(maxFractionDigits: 1)
         let total = (viewModel.totalCarbGrams ?? 0).formattedAsDecimal(maxFractionDigits: 1)
         return "\(carbs) / \(total)\(Localizables.Units.gSymbol)"
     }
-
-    // MARK: - Init
-
-    public init(
-        viewModel: CarbItemsViewModel,
-        coordinator: CarbItemsCoordinator
-    ) {
-        self.viewModel = viewModel
-        self.coordinator = coordinator
-    }
-
-    // MARK: - Filtering
 
     private var filteredItems: [CarbItem] {
         searchText.isEmpty
@@ -48,6 +42,16 @@ public struct CarbItemsView: View {
         searchText.isEmpty
             ? viewModel.userCarbItems
             : viewModel.filterUserCarbItems(by: searchText)
+    }
+
+    // MARK: - Initializer
+
+    public init(
+        viewModel: CarbItemsViewModel,
+        coordinator: CarbItemsCoordinator
+    ) {
+        self.viewModel = viewModel
+        self.coordinator = coordinator
     }
 
     // MARK: - Body
@@ -77,6 +81,7 @@ public struct CarbItemsView: View {
                 if viewModel.state == .loading { ProgressView() }
             }
             .task { await refreshAll() }
+            .errorAlert(message: $viewModel.errorMessage)
             .navigationDestination(for: CarbItemsCoordinator.Route.self) { route in
                 switch route {
                 case let .form(existing):

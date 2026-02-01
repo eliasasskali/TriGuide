@@ -14,6 +14,8 @@ public protocol LoadCarbItemsUseCase: UseCase {
 // MARK: - LoadCarbItemsUseCaseDefault
 
 public struct LoadCarbItemsUseCaseDefault {
+    // MARK: - Dependencies
+
     let repository: CarbItemsRepository
 }
 

@@ -9,9 +9,7 @@ import TriGuideDomain
 
 @MainActor
 public final class CarbItemFormViewModel: ObservableObject {
-    let sections: [FormSection]
-    private let existingItem: CarbItem?
-    private let saveAction: (CarbItem) -> Void
+    // MARK: - Constants
 
     public static let defaultSections: [FormSection] = [
         FormSection(
@@ -84,6 +82,14 @@ public final class CarbItemFormViewModel: ObservableObject {
         ),
     ]
 
+    // MARK: - Dependencies
+
+    let sections: [FormSection]
+    private let existingItem: CarbItem?
+    private let saveAction: (CarbItem) -> Void
+
+    // MARK: - Initializer
+
     public init(
         sections: [FormSection] = CarbItemFormViewModel.defaultSections,
         existingItem: CarbItem? = nil,
@@ -93,6 +99,8 @@ public final class CarbItemFormViewModel: ObservableObject {
         self.existingItem = existingItem
         self.saveAction = saveAction
     }
+
+    // MARK: - Computed properties
 
     var initialFormResult: FormResult? {
         guard let item = existingItem else { return nil }
@@ -107,6 +115,8 @@ public final class CarbItemFormViewModel: ObservableObject {
             "type": .string(item.type.rawValue),
         ]
     }
+
+    // MARK: - Submission Handling
 
     func handleSubmit(result: FormResult) {
         func toDouble(_ key: String) -> Double? {

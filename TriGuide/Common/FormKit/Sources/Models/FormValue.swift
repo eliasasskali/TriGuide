@@ -5,7 +5,6 @@
 import Foundation
 
 public typealias FormResult = [String: FormValue]
-extension FormResult: @unchecked Sendable {}
 
 public enum FormValue: Codable, Equatable, Sendable {
     case string(String)

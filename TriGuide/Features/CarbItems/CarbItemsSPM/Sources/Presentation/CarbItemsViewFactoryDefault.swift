@@ -7,6 +7,8 @@ import Foundation
 import TriGuideDomain
 
 public final class CarbItemsViewFactoryDefault {
+    // MARK: - Dependencies
+
     public struct Dependencies {
         let loadCarbItemsUseCase: LoadCarbItemsUseCase
         let loadUserCarbItemsUseCase: LoadUserCarbItemsUseCase
@@ -54,6 +56,8 @@ public final class CarbItemsViewFactoryDefault {
     }
 
     private let dependencies: Dependencies
+
+    // MARK: - Initializer
 
     public init(dependencies: Dependencies) {
         self.dependencies = dependencies

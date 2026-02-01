@@ -6,6 +6,8 @@ import Foundation
 import TriGuideDomain
 
 public struct CarbItemDto: Codable, Sendable {
+    // MARK: - Dependencies
+
     let id: String
     let name: String
     let gramsOfCarbs: Double
@@ -14,6 +16,8 @@ public struct CarbItemDto: Codable, Sendable {
     let waterVolumeML: Double?
     let type: CarbType
     let brand: String?
+
+    // MARK: - Initializer
 
     init(
         id: String,

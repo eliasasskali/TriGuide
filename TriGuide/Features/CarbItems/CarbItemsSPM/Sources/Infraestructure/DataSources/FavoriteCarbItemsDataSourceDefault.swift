@@ -5,11 +5,17 @@
 import Foundation
 
 actor FavoriteCarbItemsDataSourceDefault: FavoriteCarbItemsDataSource {
+    // MARK: - Constants
+
     static let favDefaultsKey = "favorite_carb_item_ids"
+
+    // MARK: - Dependencies
 
     private let key: String
     private let defaults: UserDefaults
     private var cachedIds: Set<String>
+
+    // MARK: - Initializer
 
     init(
         key: String = FavoriteCarbItemsDataSourceDefault.favDefaultsKey,
@@ -19,6 +25,8 @@ actor FavoriteCarbItemsDataSourceDefault: FavoriteCarbItemsDataSource {
         self.defaults = defaults
         cachedIds = Set(defaults.stringArray(forKey: key) ?? [])
     }
+
+    // MARK: - FavoriteCarbItemsDataSource
 
     func getFavoriteIds() async -> [String] {
         Array(cachedIds)

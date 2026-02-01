@@ -8,12 +8,18 @@ import SwiftUI
 import TriGuideDomain
 
 struct CarbItemView: View {
+    // MARK: - Dependencies
+
     let item: CarbItem
     let selectable: Bool
     let onQuantityChange: ((Double) -> Void)?
 
+    // MARK: - Properties
+
     @State private var isExpanded: Bool = false
     @Binding var quantity: Int?
+
+    // MARK: - Initializer
 
     init(
         item: CarbItem,
@@ -26,6 +32,8 @@ struct CarbItemView: View {
         self.selectable = selectable
         self.onQuantityChange = onQuantityChange
     }
+
+    // MARK: - Body
 
     var body: some View {
         itemView
@@ -218,6 +226,8 @@ private extension CarbItemView {
         }
     }
 }
+
+// MARK: - Preview
 
 #Preview {
     CarbItemView(

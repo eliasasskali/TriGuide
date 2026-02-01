@@ -5,10 +5,16 @@
 import Foundation
 
 struct RemoteCarbItemsDataSourceDefault: RemoteCarbItemsDataSource {
+    // MARK: - Constants
+
     static let carbItemsUrlString = "https://raw.githubusercontent.com/eliasasskali/TriGuideData/master/nutrition/carb_items.json"
+
+    // MARK: - Dependencies
 
     private let session: URLSession
     private let urlString: String
+
+    // MARK: - Initializer
 
     init(
         session: URLSession = .shared,
@@ -17,6 +23,8 @@ struct RemoteCarbItemsDataSourceDefault: RemoteCarbItemsDataSource {
         self.session = session
         self.urlString = urlString
     }
+
+    // MARK: - RemoteCarbItemsDataSource
 
     func fetchCarbItems() async throws -> [CarbItemDto] {
         guard let url = URL(string: urlString) else {

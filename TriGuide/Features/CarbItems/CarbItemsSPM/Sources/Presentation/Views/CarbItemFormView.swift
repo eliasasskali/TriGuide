@@ -8,11 +8,18 @@ import SwiftUI
 
 public struct CarbItemFormView: View {
     @Environment(\.dismiss) private var dismiss
+
+    // MARK: - Dependencies
+
     @StateObject private var viewModel: CarbItemFormViewModel
+
+    // MARK: - Initializer
 
     public init(viewModel: CarbItemFormViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
     }
+
+    // MARK: - Body
 
     public var body: some View {
         DynamicFormView(
@@ -29,6 +36,8 @@ public struct CarbItemFormView: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 }
+
+// MARK: - Preview
 
 #Preview {
     NavigationStack {
