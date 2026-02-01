@@ -47,6 +47,14 @@ public enum Localizables {
         public static var continueLabel: String {
             String(localized: "continue", bundle: .module)
         }
+
+        public static var error: String {
+            String(localized: "error", bundle: .module)
+        }
+
+        public static var ok: String {
+            String(localized: "ok", bundle: .module)
+        }
     }
 
     // MARK: - App tabs

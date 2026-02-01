@@ -11,11 +11,6 @@ public enum LocalStorageError: Error, LocalizedError {
     case loadFailed(_ error: Error)
     case decodeFailed(_ error: Error)
     case deleteFailed(_ error: Error)
-
-    public var errorDescription: String? {
-        // TODO: Custom error descriptions
-        "Local storage error occurred."
-    }
 }
 
 // MARK: - Equatable

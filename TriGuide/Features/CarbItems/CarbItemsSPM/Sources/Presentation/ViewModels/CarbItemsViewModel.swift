@@ -3,15 +3,29 @@
 //
 
 import Foundation
+import Localization
 import TriGuideDomain
 
 @MainActor
 public class CarbItemsViewModel: ObservableObject {
+    // MARK: - State
+
     enum ViewState: Equatable {
         case unloaded
         case loading
         case loaded
     }
+
+    // MARK: - Dependencies
+
+    let loadCarbItemsUseCase: LoadCarbItemsUseCase
+    let loadUserCarbItemsUseCase: LoadUserCarbItemsUseCase
+    let addUserCarbItemUseCase: AddUserCarbItemUseCase
+    let deleteUserCarbItemUseCase: DeleteUserCarbItemUseCase
+    let toggleFavoriteCarbItemUseCase: ToggleFavoriteCarbItemUseCase
+    let searchCarbItemsUseCase: SearchCarbItemsUseCase
+
+    // MARK: - Properties
 
     @Published var state: ViewState = .unloaded
     @Published var errorMessage: String? = nil
@@ -19,6 +33,8 @@ public class CarbItemsViewModel: ObservableObject {
     @Published var userCarbItems: [CarbItem] = []
     @Published var selectedCarbItems: [CarbItemSelection] = []
     @Published public var totalCarbGrams: Double?
+
+    // MARK: - Computed Properties
 
     var selectedItemsCarbsSum: Double {
         selectedCarbItems.reduce(0.0) {
@@ -33,12 +49,7 @@ public class CarbItemsViewModel: ObservableObject {
         return selectedItemsCarbsSum / totalCarbGrams
     }
 
-    let loadCarbItemsUseCase: LoadCarbItemsUseCase
-    let loadUserCarbItemsUseCase: LoadUserCarbItemsUseCase
-    let addUserCarbItemUseCase: AddUserCarbItemUseCase
-    let deleteUserCarbItemUseCase: DeleteUserCarbItemUseCase
-    let toggleFavoriteCarbItemUseCase: ToggleFavoriteCarbItemUseCase
-    let searchCarbItemsUseCase: SearchCarbItemsUseCase
+    // MARK: - Initializer
 
     init(
         loadCarbItemsUseCase: LoadCarbItemsUseCase,
@@ -170,8 +181,20 @@ public extension CarbItemsViewModel {
 }
 
 private extension CarbItemsViewModel {
-    func handle(_ error: Error) { // TODO: Complete
-        errorMessage = "TODO: handle error \(error.localizedDescription)"
+    func handle(_ error: Error) {
+        guard let repositoryError =
+            error as? CarbItemsRepositoryDefault.RepositoryError
+        else {
+            errorMessage = Localizables.Errors.generic
+            return
+        }
+
+        switch repositoryError {
+        case .duplicateUserItem:
+            errorMessage = Localizables.Errors.carbItemsDuplicateItem
+        case .remoteAndCacheFailed(remoteError: _, cacheError: _):
+            errorMessage = Localizables.Errors.carbItemsLoadingFailed
+        }
     }
 
     func sortCarbItemsByFavourites(_ items: [CarbItem]) -> [CarbItem] {

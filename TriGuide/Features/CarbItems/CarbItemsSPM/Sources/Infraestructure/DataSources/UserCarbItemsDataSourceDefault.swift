@@ -7,7 +7,11 @@ import StorageKit
 import TriGuideDomain
 
 actor UserCarbItemsDataSourceDefault: UserCarbItemsDataSource {
+    // MARK: - Dependencies
+
     private let storage: LocalStorage<[CarbItemDto]>
+
+    // MARK: - Initializer
 
     init(storage: LocalStorage<[CarbItemDto]>? = nil) throws {
         if let storage = storage {
@@ -19,6 +23,8 @@ actor UserCarbItemsDataSourceDefault: UserCarbItemsDataSource {
             )
         }
     }
+
+    // MARK: - UserCarbItemsDataSource
 
     func getCarbItems() async throws -> [CarbItem] {
         do {

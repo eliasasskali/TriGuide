@@ -6,7 +6,11 @@ import Foundation
 import StorageKit
 
 actor CachedCarbItemsDataSourceDefault: CachedCarbItemsDataSource {
+    // MARK: - Dependencies
+
     private let storage: LocalStorage<[CarbItemDto]>
+
+    // MARK: - Initializer
 
     init(storage: LocalStorage<[CarbItemDto]>? = nil) throws {
         if let storage {
@@ -18,6 +22,8 @@ actor CachedCarbItemsDataSourceDefault: CachedCarbItemsDataSource {
             )
         }
     }
+
+    // MARK: - CachedCarbItemsDataSource
 
     func loadCarbItems() async throws -> [CarbItemDto] {
         do {

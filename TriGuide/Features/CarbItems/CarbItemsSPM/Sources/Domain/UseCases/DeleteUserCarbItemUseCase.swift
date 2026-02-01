@@ -14,6 +14,8 @@ public protocol DeleteUserCarbItemUseCase: UseCase {
 // MARK: - DeleteUserCarbItemUseCaseDefault
 
 public struct DeleteUserCarbItemUseCaseDefault {
+    // MARK: - Dependencies
+
     let repository: CarbItemsRepository
 }
 

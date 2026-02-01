@@ -12,6 +12,8 @@ public protocol ToggleFavoriteCarbItemUseCase: UseCase {
 // MARK: - ToggleFavoriteCarbItemUseCaseDefault
 
 public struct ToggleFavoriteCarbItemUseCaseDefault {
+    // MARK: - Dependencies
+
     let repository: CarbItemsRepository
 }
 

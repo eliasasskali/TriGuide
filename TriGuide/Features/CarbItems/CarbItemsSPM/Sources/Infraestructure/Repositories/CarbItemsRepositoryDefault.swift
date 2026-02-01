@@ -6,6 +6,8 @@ import Foundation
 import TriGuideDomain
 
 actor CarbItemsRepositoryDefault: CarbItemsRepository {
+    // MARK: - Repository Error
+
     enum RepositoryError: Error, Equatable {
         case remoteAndCacheFailed(remoteError: Error, cacheError: Error?)
         case duplicateUserItem
@@ -21,17 +23,23 @@ actor CarbItemsRepositoryDefault: CarbItemsRepository {
         }
     }
 
+    // MARK: - Dependencies
+
     private let remoteItemsDataSource: RemoteCarbItemsDataSource
     private let cachedItemsDataSource: CachedCarbItemsDataSource
     private let favoriteCarbItemsDataSource: FavoriteCarbItemsDataSource
     private let userItemsDataSource: UserCarbItemsDataSource
     private let timeToRefresh: TimeInterval
 
+    // MARK: - Properties
+
     private var items: [CarbItem] = []
     private var lastLoadedAt: Date?
     private var userItems: [CarbItem] = []
     private var hasLoadedOnce = false
     private var favoriteIds: [String] = []
+
+    // MARK: - Initializer
 
     init(
         remoteCarbItemsDataSource: RemoteCarbItemsDataSource,
@@ -54,62 +62,6 @@ extension CarbItemsRepositoryDefault {
     func getCarbItems(forceRefresh: Bool = false) async throws -> [CarbItem] {
         let items = try await getCarbItemsWithoutFavourites(forceRefresh: forceRefresh)
         return await mapWithFavourites(items)
-    }
-
-    private func getCarbItemsWithoutFavourites(forceRefresh: Bool = false) async throws -> [CarbItem] {
-        if hasLoadedOnce, !forceRefresh {
-            if let lastLoadedAt, Date().timeIntervalSince(lastLoadedAt) < timeToRefresh {
-                return items
-            }
-        }
-
-        do {
-            let remoteDtos = try await remoteItemsDataSource.fetchCarbItems()
-            let remoteItems = remoteDtos.map { $0.toDomain() }
-
-            if remoteItems.isEmpty {
-                do {
-                    let localDtos = try await cachedItemsDataSource.loadCarbItems()
-                    if !localDtos.isEmpty {
-                        let localItems = localDtos.map { $0.toDomain() }
-                        items = localItems
-                        lastLoadedAt = Date()
-                        hasLoadedOnce = true
-                        return items
-                    }
-                } catch {
-                    // In this case, we continue and return the empty remote
-                }
-            }
-
-            items = remoteItems
-            lastLoadedAt = Date()
-            hasLoadedOnce = true
-
-            do {
-                try await cachedItemsDataSource.saveCarbItems(remoteDtos)
-            } catch {
-                // It failed saving to cache, but we can continue
-                // TODO: Log error saving to cache
-            }
-
-            return items
-        } catch {
-            let remoteError = error
-            do {
-                let localDtos = try await cachedItemsDataSource.loadCarbItems()
-                guard !localDtos.isEmpty else {
-                    throw RepositoryError.remoteAndCacheFailed(remoteError: remoteError, cacheError: nil)
-                }
-                let localItems = localDtos.map { $0.toDomain() }
-                items = localItems
-                lastLoadedAt = Date()
-                hasLoadedOnce = true
-                return items
-            } catch {
-                throw RepositoryError.remoteAndCacheFailed(remoteError: remoteError, cacheError: error)
-            }
-        }
     }
 
     // MARK: - Favorites
@@ -167,6 +119,61 @@ private extension CarbItemsRepositoryDefault {
             var newItem = item
             newItem.isFavorite = favoriteIds.contains(item.id)
             return newItem
+        }
+    }
+
+    func getCarbItemsWithoutFavourites(forceRefresh: Bool = false) async throws -> [CarbItem] {
+        if hasLoadedOnce, !forceRefresh {
+            if let lastLoadedAt, Date().timeIntervalSince(lastLoadedAt) < timeToRefresh {
+                return items
+            }
+        }
+
+        do {
+            let remoteDtos = try await remoteItemsDataSource.fetchCarbItems()
+            let remoteItems = remoteDtos.map { $0.toDomain() }
+
+            if remoteItems.isEmpty {
+                do {
+                    let localDtos = try await cachedItemsDataSource.loadCarbItems()
+                    if !localDtos.isEmpty {
+                        let localItems = localDtos.map { $0.toDomain() }
+                        items = localItems
+                        lastLoadedAt = Date()
+                        hasLoadedOnce = true
+                        return items
+                    }
+                } catch {
+                    // In this case, we continue and return the empty remote
+                }
+            }
+
+            items = remoteItems
+            lastLoadedAt = Date()
+            hasLoadedOnce = true
+
+            do {
+                try await cachedItemsDataSource.saveCarbItems(remoteDtos)
+            } catch {
+                // It failed saving to cache, but we can continue
+            }
+
+            return items
+        } catch {
+            let remoteError = error
+            do {
+                let localDtos = try await cachedItemsDataSource.loadCarbItems()
+                guard !localDtos.isEmpty else {
+                    throw RepositoryError.remoteAndCacheFailed(remoteError: remoteError, cacheError: nil)
+                }
+                let localItems = localDtos.map { $0.toDomain() }
+                items = localItems
+                lastLoadedAt = Date()
+                hasLoadedOnce = true
+                return items
+            } catch {
+                throw RepositoryError.remoteAndCacheFailed(remoteError: remoteError, cacheError: error)
+            }
         }
     }
 }
