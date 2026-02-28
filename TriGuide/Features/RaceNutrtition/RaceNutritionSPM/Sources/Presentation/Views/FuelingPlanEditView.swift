@@ -30,30 +30,32 @@ struct FuelingPlanEditView: View {
     // MARK: - Body
 
     var body: some View {
-        ScrollView {
-            LazyVStack(spacing: 16) {
-                if !editableInstantEvents.isEmpty {
-                    InstantEventsTimelineEditor(
-                        duration: result.duration,
-                        events: $editableInstantEvents
-                    )
-                    .padding(.horizontal)
-                }
+        VStack(spacing: 0) {
+            ScrollView {
+                LazyVStack(spacing: 16) {
+                    if !editableInstantEvents.isEmpty {
+                        InstantEventsTimelineEditor(
+                            duration: result.duration,
+                            events: $editableInstantEvents
+                        )
+                        .padding(.horizontal)
+                    }
 
-                if !editableIntervalEvents.isEmpty {
-                    IntervalEventsTimelineEditor(
-                        duration: result.duration,
-                        events: $editableIntervalEvents
-                    )
-                    .padding(.horizontal)
-                }
+                    if !editableIntervalEvents.isEmpty {
+                        IntervalEventsTimelineEditor(
+                            duration: result.duration,
+                            events: $editableIntervalEvents
+                        )
+                        .padding(.horizontal)
+                    }
 
-                breakdownView
+                    breakdownView
+                }
             }
-        }
-        .scrollIndicators(.hidden)
-        .safeAreaInset(edge: .bottom) {
+            .scrollIndicators(.hidden)
+
             actionButtons
+                .padding()
         }
         .onChange(of: editableInstantEvents) {
             recomputeLiveBreakdown()
@@ -87,29 +89,25 @@ private extension FuelingPlanEditView {
     }
 
     var actionButtons: some View {
-        VStack(spacing: 10) {
-            HStack(spacing: 12) {
-                ActionButton(
-                    Localizables.RaceNutritionResults.editViewResetButtonLabel,
-                    accessibilityHint: Localizables.AccessibilityHints.tapTo(
-                        Localizables.RaceNutritionResults.editViewResetButtonLabel
-                    ),
-                    action: resetToOriginal
-                )
-                .frame(maxWidth: .infinity)
+        HStack(spacing: 12) {
+            ActionButton(
+                Localizables.RaceNutritionResults.editViewResetButtonLabel,
+                accessibilityHint: Localizables.AccessibilityHints.tapTo(
+                    Localizables.RaceNutritionResults.editViewResetButtonLabel
+                ),
+                action: resetToOriginal
+            )
+            .frame(maxWidth: .infinity)
 
-                ActionButton(
-                    Localizables.RaceNutritionResults.editViewApplyButtonLabel,
-                    accessibilityHint: Localizables.AccessibilityHints.tapTo(
-                        Localizables.RaceNutritionResults.editViewApplyButtonLabel
-                    ),
-                    action: applyChanges
-                )
-                .frame(maxWidth: .infinity)
-            }
-            .padding(8)
+            ActionButton(
+                Localizables.RaceNutritionResults.editViewApplyButtonLabel,
+                accessibilityHint: Localizables.AccessibilityHints.tapTo(
+                    Localizables.RaceNutritionResults.editViewApplyButtonLabel
+                ),
+                action: applyChanges
+            )
+            .frame(maxWidth: .infinity)
         }
-        .background(.ultraThinMaterial)
     }
 
     // MARK: - Action methods

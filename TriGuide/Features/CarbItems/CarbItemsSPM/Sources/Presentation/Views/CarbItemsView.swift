@@ -73,8 +73,8 @@ public struct CarbItemsView: View {
                         dismiss()
                         coordinator.onCompleteSelection?(viewModel.selectedCarbItems)
                     }
-                    .padding(.bottom)
                     .padding(.horizontal)
+                    .padding(.vertical, 8)
                 }
             }
             .background(Color(.systemGroupedBackground))

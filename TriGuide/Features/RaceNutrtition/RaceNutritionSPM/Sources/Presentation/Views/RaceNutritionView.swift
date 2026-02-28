@@ -10,14 +10,18 @@ public struct RaceNutritionView: View {
     @ObservedObject private var viewModel: RaceNutritionViewModel
     @ObservedObject private var coordinator: RaceNutritionCoordinator
 
+    private let factory: RaceNutritionViewFactory
+
     // MARK: - Initializer
 
     public init(
         viewModel: RaceNutritionViewModel,
-        coordinator: RaceNutritionCoordinator
+        coordinator: RaceNutritionCoordinator,
+        factory: RaceNutritionViewFactory
     ) {
         self.viewModel = viewModel
         self.coordinator = coordinator
+        self.factory = factory
     }
 
     // MARK: - Body
@@ -43,7 +47,7 @@ public struct RaceNutritionView: View {
                         get: { viewModel.fuelingResult },
                         set: { viewModel.fuelingResult = $0 }
                     ).unwrap() {
-                        RaceNutritionResultView(
+                        factory.buildRaceNutritionResultView(
                             coordinator: coordinator,
                             fuelingResult: binding
                         )

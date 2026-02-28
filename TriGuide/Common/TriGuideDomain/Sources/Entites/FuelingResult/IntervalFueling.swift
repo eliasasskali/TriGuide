@@ -4,12 +4,16 @@
 
 import Foundation
 
-public struct IntervalFueling: Sendable, Hashable, Equatable {
+public struct IntervalFueling: Sendable, Hashable, Equatable, Codable {
+    // MARK: - Dependencies
+
     public let duration: TimeInterval
     public let index: Int
     public let carbGrams: Double
     public let caffeine: Double
     public let waterVolumeML: Double
+
+    // MARK: - Initializer
 
     public init(
         duration: TimeInterval,
@@ -24,6 +28,8 @@ public struct IntervalFueling: Sendable, Hashable, Equatable {
         self.caffeine = caffeine
         self.waterVolumeML = waterVolumeML
     }
+
+    // MARK: - Computed Properties
 
     public var formatted: String {
         let startTime = duration * Double(index)

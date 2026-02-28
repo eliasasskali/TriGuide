@@ -66,7 +66,7 @@ struct RaceNutritionCalculatorView: View {
                 }
             )
             .padding(.horizontal)
-            .padding(.bottom, 8)
+            .padding(.vertical, viewModel.estimatedTotalGrams != nil ? 8 : 16)
         }
         .loadingOverlay(isLoading: $viewModel.isLoading)
         .onReceive(viewModel.$didFinishCalculation) { didFinish in

@@ -2,6 +2,7 @@
 // TriGuide 2025
 //
 
+import DesignSystem
 import Localization
 import SwiftUI
 import TriGuideDomain
@@ -10,11 +11,15 @@ public struct RaceNutritionResultView: View {
     // MARK: - Dependencies
 
     @ObservedObject private var coordinator: RaceNutritionCoordinator
+    @ObservedObject private var viewModel: RaceNutritionResultViewModel
     @Binding var fuelingResult: FuelingResult
 
     // MARK: - Properties
 
     @State private var shouldShowSelectedItems = false
+    @State private var showSavedSuccessfullyToast = false
+    @State private var showPlanNameDialog = false
+    @State private var planName = ""
 
     // MARK: - Computed properties
 
@@ -60,10 +65,12 @@ public struct RaceNutritionResultView: View {
 
     public init(
         coordinator: RaceNutritionCoordinator,
+        viewModel: RaceNutritionResultViewModel,
         shouldShowSelectedItems: Bool = false,
         fuelingResult: Binding<FuelingResult>
     ) {
         self.coordinator = coordinator
+        self.viewModel = viewModel
         self.shouldShowSelectedItems = shouldShowSelectedItems
         _fuelingResult = fuelingResult
     }
@@ -71,16 +78,52 @@ public struct RaceNutritionResultView: View {
     // MARK: - Body
 
     public var body: some View {
-        ScrollView {
-            VStack(spacing: 16) {
-                planSummary
-                selectedItems
-                fuelingPlan
-                hourlyBreakdown
+        VStack(spacing: 0) {
+            ScrollView {
+                VStack(spacing: 16) {
+                    planSummary
+                    selectedItems
+                    fuelingPlan
+                    hourlyBreakdown
+                }
+                .padding(.vertical)
             }
-            .padding(.vertical)
+            .scrollIndicators(.hidden)
+
+            saveButton
+                .padding()
         }
-        .scrollIndicators(.hidden)
+        .errorAlert(message: $viewModel.errorMessage)
+        .toast(
+            isPresented: $showSavedSuccessfullyToast,
+            message: Localizables.RaceNutritionResults.saveSuccessToastMessage
+        )
+        .alert(
+            Localizables.RaceNutritionResults.savePlanButtonLabel,
+            isPresented: $showPlanNameDialog
+        ) {
+            TextField(
+                Localizables.RaceNutritionResults.savePlanNamePlaceholder,
+                text: $planName
+            )
+
+            Button(Localizables.Common.cancel, role: .cancel) {
+                showPlanNameDialog = false
+            }
+
+            Button(Localizables.Common.save) {
+                Task {
+                    let savedSuccessfully =
+                        await viewModel.saveFuelingPlan(
+                            fuelingResult,
+                            planName: planName
+                        )
+                    showSavedSuccessfullyToast = savedSuccessfully
+                    planName = ""
+                }
+            }
+            .accessibilityHint(Localizables.AccessibilityHints.tapTo(Localizables.RaceNutritionResults.savePlanButtonHint))
+        }
     }
 }
 
@@ -251,12 +294,32 @@ private extension RaceNutritionResultView {
             }
         }
     }
+
+    @ViewBuilder
+    var saveButton: some View {
+        ActionButton(
+            Localizables.RaceNutritionResults.savePlanButtonLabel,
+            accessibilityHint: Localizables.AccessibilityHints.tapTo(
+                Localizables.RaceNutritionResults.savePlanButtonHint
+            ),
+            action: {
+                showPlanNameDialog = true
+            }
+        )
+    }
 }
 
 #Preview {
     RaceNutritionResultView(
         coordinator: RaceNutritionCoordinator(
             factory: RaceNutritionViewFactoryDefault(dependencies: .init())
+        ),
+        viewModel: RaceNutritionResultViewModel(
+            saveFuelingPlanUseCase: SaveFuelingPlanUseCaseDefault(
+                repository: NutritionPlansRepositoryDefault(
+                    nutritionPlansDataSource: try! StoredNutritionPlansDataSourceDefault()
+                )
+            )
         ),
         fuelingResult: .constant(
             .init(
