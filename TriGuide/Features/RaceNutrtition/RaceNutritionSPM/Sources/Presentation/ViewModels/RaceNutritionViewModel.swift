@@ -18,6 +18,8 @@ public class RaceNutritionViewModel: ObservableObject {
     @Published var duration: TimeInterval?
     @Published var weight: Double?
     @Published var intensity: Intensity?
+    @Published var hasConsumedCaffeineBefore: Bool = false
+    @Published var startEatingAt: TimeInterval = 0.0
     @Published var fasted: Bool = false
     @Published var capped: Bool = true
     @Published var gutTrained: Bool = false
@@ -80,7 +82,9 @@ public class RaceNutritionViewModel: ObservableObject {
             carbItemSelection: selection,
             carbsTarget: estimatedTotalGrams,
             duration: duration,
-            sport: sport
+            sport: sport,
+            startBuffer: startEatingAt,
+            hasConsumedCaffeineBefore: hasConsumedCaffeineBefore
         )
         fuelingResult = calculateFuelingResultUseCase.execute(fuelingInput: fuelingInput)
         return fuelingResult

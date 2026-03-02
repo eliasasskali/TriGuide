@@ -254,6 +254,15 @@ private extension RaceNutritionCalculatorView {
                 }
 
                 if shouldShowAdvancedOptions {
+                    Toggle(isOn: $viewModel.hasConsumedCaffeineBefore) {
+                        HStack {
+                            InfoLabel {
+                                Text(Localizables.RaceNutritionCalculator.consumedCaffeineBeforeInformationDescription)
+                            }
+                            Text(Localizables.RaceNutritionCalculator.consumedCaffeineBefore)
+                        }
+                    }
+
                     Toggle(isOn: $viewModel.fasted) {
                         HStack {
                             InfoLabel {
@@ -280,6 +289,28 @@ private extension RaceNutritionCalculatorView {
                             Text(Localizables.RaceNutritionCalculator.applyAmateurLimits)
                         }
                     }
+
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack {
+                            HStack {
+                                InfoLabel {
+                                    VStack {
+                                        Text(Localizables.RaceNutritionCalculator.startEatingAtInformationDescription)
+                                    }
+                                }
+                                Text(Localizables.RaceNutritionCalculator.startEatingAt)
+                                Spacer()
+                                Text(viewModel.startEatingAt.formattedAsHourMin)
+                                    .monospacedDigit()
+                            }
+                        }
+                        Slider(
+                            value: $viewModel.startEatingAt,
+                            in: -0 ... (viewModel.duration ?? 0),
+                            step: 1
+                        ) { Text(Localizables.RaceNutritionCalculator.startEatingAt) }
+                    }
+                    .padding(.top, 4)
 
                     VStack(alignment: .leading, spacing: 8) {
                         HStack {

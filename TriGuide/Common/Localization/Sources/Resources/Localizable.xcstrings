@@ -1653,6 +1653,50 @@
         }
       }
     },
+    "race_nutrition_calculator-consumed-caffeine-before" : {
+      "localizations" : {
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Has pres cafeïna abans de començar"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Consumed caffeine before start"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Has consumido cafeína antes de empezar"
+          }
+        }
+      }
+    },
+    "race_nutrition_calculator-consumed-caffeine-before-information-description" : {
+      "localizations" : {
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activa-ho si has pres cafeïna abans de començar. Això ajuda a repartir millor la cafeïna durant l’activitat."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn this on if you had caffeine before starting. This helps distribute in-session caffeine more effectively."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Actívalo si has tomado cafeína antes de empezar. Esto ayuda a distribuir mejor la cafeína durante la sesión."
+          }
+        }
+      }
+    },
     "race_nutrition_calculator-duration" : {
       "localizations" : {
         "ca" : {
@@ -1935,6 +1979,50 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Selecciona deporte"
+          }
+        }
+      }
+    },
+    "race_nutrition_calculator-start-eating-at" : {
+      "localizations" : {
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comença la ingesta d’hidrats a"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start carb intake at"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inicia la ingesta de carbohidratos en"
+          }
+        }
+      }
+    },
+    "race_nutrition_calculator-start-eating-at-information-description" : {
+      "localizations" : {
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Defineix quan vols començar la ingesta d’hidrats durant l’activitat."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set when you want to begin your carb intake during the session."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Define cuándo quieres empezar la ingesta de carbohidratos durante la sesión."
           }
         }
       }

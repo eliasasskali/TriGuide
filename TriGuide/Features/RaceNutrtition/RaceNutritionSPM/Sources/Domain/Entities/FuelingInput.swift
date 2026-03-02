@@ -17,6 +17,7 @@ public struct FuelingInput {
     public let minCarbSpacing: TimeInterval
     public let minCaffeineSpacing: TimeInterval
     public let maxCaffeinePerDose: Double?
+    public let hasConsumedCaffeineBefore: Bool
 
     // MARK: - Initializer
 
@@ -29,7 +30,8 @@ public struct FuelingInput {
         endBuffer: TimeInterval = 10 * 60,
         minCarbSpacing: TimeInterval = 10 * 60,
         minCaffeineSpacing: TimeInterval = 45 * 60,
-        maxCaffeinePerDose: Double? = nil
+        maxCaffeinePerDose: Double? = nil,
+        hasConsumedCaffeineBefore: Bool = false
     ) {
         self.carbItemSelection = carbItemSelection
         self.carbsTarget = carbsTarget
@@ -40,5 +42,6 @@ public struct FuelingInput {
         self.minCarbSpacing = minCarbSpacing
         self.minCaffeineSpacing = minCaffeineSpacing
         self.maxCaffeinePerDose = maxCaffeinePerDose
+        self.hasConsumedCaffeineBefore = hasConsumedCaffeineBefore
     }
 }
