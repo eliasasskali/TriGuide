@@ -9,33 +9,56 @@ public final class LocalFuelingCalculator: FuelingCalculatorDataSource {
     // MARK: - Constants
 
     private enum Constants {
-        static let batchSeconds: TimeInterval = 300.0 // 5 minutes
-        static let digestionWindowScale: Double = 1.5 // scales gram-proportion -> window length in batches
-        static let wVariance: Double = 1.0
-        static let wCafPeak: Double = 200.0
-        static let wAdjSame: Double = 50.0
-        static let occupiedBatchPenalty: Double = 1e6
-        static let minCaffeineSpacingMin: Int = 40 // minutes (default from your earlier algorithm)
+        /// Each time-slot is 5 minutes (the atomic unit for scheduling).
+        static let slotDuration: TimeInterval = 300.0
+
+        /// Caffeine pharmacokinetics.
+        static let caffeineHalfLifeSeconds: TimeInterval = 5 * 3600 // 5 h
+        static let caffeineLeadTimeSeconds: TimeInterval = 3 * 3600 // ideal: ~3 h before finish
+
+        /// Simulated-annealing hyper-parameters
+        static let saIterations = 30000
+        static let saInitialTemperature = 500.0
+        static let saCoolingRate = 0.99975
+
+        /// Sliding-window size for the smoothness objective (12 slots = 1 hour).
+        static let smoothnessWindowSlots = 12
+
+        /// Objective weights
+        static let wWindowSmoothness: Double = 1.0
+        static let wCaffeineTiming: Double = 30.0
+
+        /// How strongly to penalise early-hour surpluses over late-hour ones.
+        /// 0.0 = no bias; higher values push more carbs toward the end.
+        static let wEarlyLoadBias: Double = 0.15
     }
 
     // MARK: - Public initializer
 
-    public init() {}
+    private let randomSeed: UInt64?
+
+    public init() {
+        randomSeed = nil
+    }
+
+    init(randomSeed: UInt64?) {
+        self.randomSeed = randomSeed
+    }
 
     // MARK: - FuelingCalculatorDataSource
 
     public func calculateFueling(from input: FuelingInput) -> TriGuideDomain.FuelingResult {
-        // high-level steps: expand selections -> batches -> place drinks -> place instants (caffeinated first) -> refinement -> build output
-
-        let selections = input.carbItemSelection
         let totalDuration = input.duration
         let startBuffer = input.startBuffer
+        let endBuffer = input.endBuffer
+        let minCarbSpacing = input.minCarbSpacing
+        let minCafSpacing = input.minCaffeineSpacing
 
-        // Expand selections into individual items (respecting quantity)
+        // Expand selections into individual items
         var drinkItems: [CarbItem] = []
         var instantItems: [CarbItem] = []
-        for sel in selections where sel.item.gramsOfCarbs > 0 {
-            let count = max(0, Int(sel.quantity))
+        for sel in input.carbItemSelection where sel.item.gramsOfCarbs > 0 {
+            let count = max(0, Int(sel.quantity.rounded()))
             for _ in 0 ..< count {
                 if sel.item.type == .drink {
                     drinkItems.append(sel.item)
@@ -45,190 +68,130 @@ public final class LocalFuelingCalculator: FuelingCalculatorDataSource {
             }
         }
 
-        drinkItems = drinkItems.sorted(by: { $0.gramsOfCarbs < $1.gramsOfCarbs })
+        let slotCount = max(1, Int(ceil(totalDuration / Constants.slotDuration)))
+        let allItems = drinkItems + instantItems
+        let totalCarbs = allItems.reduce(0.0) { $0 + $1.gramsOfCarbs }
 
-        // Basic totals
-        let totalCarbs = (drinkItems + instantItems).reduce(0.0) { $0 + $1.gramsOfCarbs }
-        let totalCaffeine = (drinkItems + instantItems).reduce(0.0) { $0 + ($1.caffeine ?? 0.0) }
+        // The effective fueling window is [startBuffer, totalDuration].
+        // Compute the target per slot based on that window so the first
+        // slots (before startBuffer) having 0 carbs is expected.
+        let fuelingSlotCount = max(1, slotCount - Int(ceil(startBuffer / Constants.slotDuration)))
+        let targetCarbsPerSlot = totalCarbs / Double(fuelingSlotCount)
 
-        // Batches across entire duration
-        let batchesCount = max(1, Int(ceil(totalDuration / Constants.batchSeconds)))
-        let earliestInstantBatch = Int(ceil(startBuffer / Constants.batchSeconds))
+        // Place drinks as sequential intervals [startBuffer, totalDuration]
+        let orderedDrinks = orderDrinksForSmoothness(drinkItems)
+        let drinkEvents = placeDrinks(
+            drinkItems: orderedDrinks,
+            startTime: startBuffer,
+            totalDuration: totalDuration
+        )
 
-        // Arrays representing current plan state
-        var carbsPerBatch = Array(repeating: 0.0, count: batchesCount)
-        var caffeinePerBatch = Array(repeating: 0.0, count: batchesCount)
-        var occupiedInstantBatch = Array(repeating: false, count: batchesCount)
-
-        // Helper for batch time
-        func batchStartTime(_ b: Int) -> TimeInterval { Double(b) * Constants.batchSeconds }
-        func batchCenterTime(_ b: Int) -> TimeInterval { batchStartTime(b) + Constants.batchSeconds / 2.0 }
-
-        // Events container
-        var events: [TriGuideDomain.FuelingEvent] = []
-
-        // Place drinks as continuous intervals across totalDuration, start at time 0
-        let drinkEvents = placeDrinks(drinkItems: drinkItems, totalDuration: totalDuration)
+        // Carb baseline from drinks per slot
+        var drinkCarbsPerSlot = Array(repeating: 0.0, count: slotCount)
         for event in drinkEvents {
-            if let (start, end) = intervalBounds(event) {
-                events.append(event)
-                // Distribute drink carbs/caffeine into batches by overlap
-                distributeIntervalToBatches(
-                    start: start,
-                    end: end,
-                    item: event.carbItem,
-                    carbsPerBatch: &carbsPerBatch,
-                    caffeinePerBatch: &caffeinePerBatch,
-                    batchesCount: batchesCount,
+            if case let .interval(start, end) = event.consumption {
+                distributeIntervalToSlots(
+                    start: start, end: end,
+                    carbs: event.carbItem.gramsOfCarbs,
+                    into: &drinkCarbsPerSlot,
+                    slotCount: slotCount,
                     totalDuration: totalDuration
                 )
             }
         }
 
-        let carbsAssignedFromDrinks = carbsPerBatch.reduce(0.0, +)
-        let remainingCarbs = max(0.0, totalCarbs - carbsAssignedFromDrinks)
+        // Valid placement range for instants
+        let minSlot = max(0, Int(ceil(startBuffer / Constants.slotDuration)))
+        let maxSlot = max(minSlot,
+                          min(slotCount - 1,
+                              Int(floor((totalDuration - endBuffer) / Constants.slotDuration))))
+        let spacingSlots = max(1, Int(ceil(minCarbSpacing / Constants.slotDuration)))
+        let cafSpacingSlots = max(1, Int(ceil(minCafSpacing / Constants.slotDuration)))
 
-        // keep original overall target for objective
-        let targetCarbsPerBatch = totalCarbs / Double(batchesCount)
-
-        // but use a separate target for instants that reflects only the remaining carbs
-        let remainingBatches = max(1, batchesCount - earliestInstantBatch)
-        let targetCarbsPerBatchForInstants = remainingCarbs / Double(remainingBatches)
-
-        // keep caffeine baseline per batch — useful for penalizing caffeine peaks
-        let targetCafPerBatch = totalCaffeine / Double(batchesCount)
-
-        // Place instants (split caffeinated first)
-        let caffeinatedInstants = instantItems.filter {
-            ($0.caffeine ?? 0.0) > 0.0
-        }.sorted {
-            $0.gramsOfCarbs > $1.gramsOfCarbs
-        }
-        let nonCaffeinatedInstants = instantItems.filter {
-            ($0.caffeine ?? 0.0) <= 0.0
-        }.sorted {
-            $0.gramsOfCarbs > $1.gramsOfCarbs
-        }
-
-        // Track placements for spacing and repetition penalties
-        var lastPlacementById: [String: Int] = [:]
-        var caffeinatedPlacementIndices: [Int] = []
-        let minCaffeineSpacingBatches = max(1, Int(ceil(Double(Constants.minCaffeineSpacingMin) / 5.0)))
-
-        // Place caffeinated first
-        for item in caffeinatedInstants {
-            let chosenBatch = chooseBestBatchForInstant(
-                item: item,
-                earliestBatch: earliestInstantBatch,
-                batchesCount: batchesCount,
-                carbsPerBatch: carbsPerBatch,
-                caffeinePerBatch: caffeinePerBatch,
-                occupiedInstantBatch: occupiedInstantBatch,
-                lastPlacementById: lastPlacementById,
-                caffeinatedPlacementIndices: caffeinatedPlacementIndices,
-                totalCarbs: totalCarbs,
-                targetCarbsPerBatch: targetCarbsPerBatchForInstants,
-                targetCafPerBatch: targetCafPerBatch,
-                minCaffeineSpacingBatches: minCaffeineSpacingBatches
-            )
-
-            // Apply placement
-            let window = digestionWindowFor(
-                item: item,
-                totalCarbs: max(1.0, totalCarbs),
-                batchesCount: batchesCount
-            )
-            applyInstant(
-                item: item,
-                atBatch: chosenBatch,
-                windowBatches: window,
-                carbsPerBatch: &carbsPerBatch,
-                caffeinePerBatch: &caffeinePerBatch,
-                occupiedInstantBatch: &occupiedInstantBatch
-            )
-
-            // Record event
-            let time = max(batchCenterTime(chosenBatch), startBuffer) // never before startBuffer
-            let timeRounded = time.roundedToNearest(minutes: 5)
-            events.append(TriGuideDomain.FuelingEvent(consumption: .instant(time: timeRounded), carbItem: item))
-            lastPlacementById[item.id] = chosenBatch
-            caffeinatedPlacementIndices.append(chosenBatch)
-        }
-
-        // Place non-caffeinated instants
-        for item in nonCaffeinatedInstants {
-            let chosenBatch = chooseBestBatchForInstant(
-                item: item,
-                earliestBatch: earliestInstantBatch,
-                batchesCount: batchesCount,
-                carbsPerBatch: carbsPerBatch,
-                caffeinePerBatch: caffeinePerBatch,
-                occupiedInstantBatch: occupiedInstantBatch,
-                lastPlacementById: lastPlacementById,
-                caffeinatedPlacementIndices: caffeinatedPlacementIndices,
-                totalCarbs: totalCarbs,
-                targetCarbsPerBatch: targetCarbsPerBatchForInstants,
-                targetCafPerBatch: targetCafPerBatch,
-                minCaffeineSpacingBatches: minCaffeineSpacingBatches
-            )
-
-            let window = digestionWindowFor(
-                item: item,
-                totalCarbs: max(1.0, totalCarbs),
-                batchesCount: batchesCount
-            )
-            applyInstant(
-                item: item,
-                atBatch: chosenBatch,
-                windowBatches: window,
-                carbsPerBatch: &carbsPerBatch,
-                caffeinePerBatch: &caffeinePerBatch,
-                occupiedInstantBatch: &occupiedInstantBatch
-            )
-
-            let time = max(batchCenterTime(chosenBatch), startBuffer)
-            let timeRounded = time.roundedToNearest(minutes: 5)
-            events.append(TriGuideDomain.FuelingEvent(consumption: .instant(time: timeRounded), carbItem: item))
-            lastPlacementById[item.id] = chosenBatch
-        }
-
-        // Local refinement: try small moves to reduce variance and caffeine peaks
-        localRefinement(
-            events: &events,
-            carbsPerBatch: &carbsPerBatch,
-            caffeinePerBatch: &caffeinePerBatch,
-            occupiedInstantBatch: &occupiedInstantBatch,
-            lastPlacementById: &lastPlacementById,
-            totalCarbs: totalCarbs,
-            targetCarbsPerBatch: targetCarbsPerBatch,
-            batchesCount: batchesCount,
-            earliestInstantBatch: earliestInstantBatch
-        )
-
-        // Sort timeline
-        let sortedEvents = events.sorted { a, b in
-            func startTime(of ev: TriGuideDomain.FuelingEvent) -> TimeInterval {
-                switch ev.consumption {
-                case let .instant(t): return t
-                case let .interval(s, _): return s
-                }
-            }
-            return startTime(of: a) < startTime(of: b)
-        }
-
-        // Build interval breakdown
-        let intervalBreakdown = Self.computeBreakDown(
-            totalDuration: totalDuration,
-            events: events
-        )
-
-        return TriGuideDomain.FuelingResult(
-            name: nil,
-            timeLine: sortedEvents,
-            totalCarbsTarget: input.carbsTarget,
+        // Caffeine timing target
+        let idealCafSlot = idealCaffeineSlot(
             duration: totalDuration,
-            selectedItems: input.carbItemSelection,
-            hourlyBreakdown: intervalBreakdown
+            startBuffer: startBuffer,
+            endBuffer: endBuffer,
+            slotCount: slotCount,
+            hasConsumedCaffeineBefore: input.hasConsumedCaffeineBefore
+        )
+
+        // Order instants: caffeinated first, then by size desc
+        let caffeinatedInstants = instantItems
+            .filter { ($0.caffeine ?? 0) > 0 }
+            .sorted { $0.gramsOfCarbs > $1.gramsOfCarbs }
+        let nonCaffeinatedInstants = instantItems
+            .filter { ($0.caffeine ?? 0) <= 0 }
+            .sorted { $0.gramsOfCarbs > $1.gramsOfCarbs }
+        let orderedInstants = caffeinatedInstants + nonCaffeinatedInstants
+        let cafCount = caffeinatedInstants.count
+
+        // Early exit when there are no instants
+        guard !orderedInstants.isEmpty else {
+            return buildResult(
+                drinkEvents: drinkEvents,
+                instantPlacements: [],
+                instants: [],
+                input: input
+            )
+        }
+
+        // Greedy initial placement
+        var placements = greedyPlacement(
+            instants: orderedInstants,
+            baseCarbsPerSlot: drinkCarbsPerSlot,
+            targetPerSlot: targetCarbsPerSlot,
+            minSlot: minSlot,
+            maxSlot: maxSlot,
+            spacingSlots: spacingSlots,
+            cafSpacingSlots: cafSpacingSlots,
+            idealCafSlot: idealCafSlot,
+            cafCount: cafCount,
+            slotCount: slotCount
+        )
+
+        // Simulated-annealing refinement
+        if let randomSeed {
+            var rng = SeededRandomNumberGenerator(seed: randomSeed)
+            placements = annealPlacements(
+                placements: placements,
+                instants: orderedInstants,
+                baseCarbsPerSlot: drinkCarbsPerSlot,
+                targetPerSlot: targetCarbsPerSlot,
+                minSlot: minSlot,
+                maxSlot: maxSlot,
+                spacingSlots: spacingSlots,
+                cafSpacingSlots: cafSpacingSlots,
+                idealCafSlot: idealCafSlot,
+                cafCount: cafCount,
+                slotCount: slotCount,
+                rng: &rng
+            )
+        } else {
+            var rng = SystemRandomNumberGenerator()
+            placements = annealPlacements(
+                placements: placements,
+                instants: orderedInstants,
+                baseCarbsPerSlot: drinkCarbsPerSlot,
+                targetPerSlot: targetCarbsPerSlot,
+                minSlot: minSlot,
+                maxSlot: maxSlot,
+                spacingSlots: spacingSlots,
+                cafSpacingSlots: cafSpacingSlots,
+                idealCafSlot: idealCafSlot,
+                cafCount: cafCount,
+                slotCount: slotCount,
+                rng: &rng
+            )
+        }
+
+        // Build output
+        return buildResult(
+            drinkEvents: drinkEvents,
+            instantPlacements: placements,
+            instants: orderedInstants,
+            input: input
         )
     }
 
@@ -245,12 +208,11 @@ public final class LocalFuelingCalculator: FuelingCalculatorDataSource {
         var caffeinePerInterval = Array(repeating: 0.0, count: intervalsCount)
         var waterVolumePerInterval = Array(repeating: 0.0, count: intervalsCount)
         let intervalSlots: [(start: TimeInterval, end: TimeInterval)] = (0 ..< intervalsCount).map { i in
-            let s = Double(i) * minutes * 60
+            let s = Double(i) * durationInSeconds
             let e = min(totalDuration, Double(i + 1) * durationInSeconds)
             return (s, e)
         }
 
-        // Aggregate events into hours
         for ev in events {
             switch ev.consumption {
             case let .instant(t):
@@ -264,10 +226,11 @@ public final class LocalFuelingCalculator: FuelingCalculatorDataSource {
                     }
                 }
             case let .interval(s, e):
+                let len = max(1e-9, e - s)
                 for (i, slot) in intervalSlots.enumerated() {
                     let overlap = max(0.0, min(slot.end, e) - max(slot.start, s))
                     if overlap > 0 {
-                        let frac = overlap / (e - s)
+                        let frac = overlap / len
                         carbsPerInterval[i] += ev.carbItem.gramsOfCarbs * frac
                         if let caf = ev.carbItem.caffeine {
                             caffeinePerInterval[i] += caf * frac
@@ -280,364 +243,466 @@ public final class LocalFuelingCalculator: FuelingCalculatorDataSource {
             }
         }
 
-        var hourlyBreakdown: [TriGuideDomain.IntervalFueling] = []
-        for i in 0 ..< intervalsCount {
-            hourlyBreakdown.append(
-                TriGuideDomain.IntervalFueling(
-                    duration: durationInSeconds,
-                    hourIndex: i,
-                    carbGrams: carbsPerInterval[i],
-                    caffeine: caffeinePerInterval[i],
-                    waterVolumeML: waterVolumePerInterval[i]
-                )
+        return (0 ..< intervalsCount).map { i in
+            IntervalFueling(
+                duration: durationInSeconds,
+                hourIndex: i,
+                carbGrams: carbsPerInterval[i],
+                caffeine: caffeinePerInterval[i],
+                waterVolumeML: waterVolumePerInterval[i]
             )
         }
-
-        return hourlyBreakdown
     }
 }
 
-// MARK: - Private methods
+// MARK: - Private helpers
 
 private extension LocalFuelingCalculator {
-    // MARK: Interval Bounds Helper
+    // MARK: Build final result
 
-    func intervalBounds(_ event: FuelingEvent) -> (start: TimeInterval, end: TimeInterval)? {
-        switch event.consumption {
-        case let .interval(s, e): return (s, e)
-        case .instant: return nil
+    func buildResult(
+        drinkEvents: [FuelingEvent],
+        instantPlacements: [Int],
+        instants: [CarbItem],
+        input: FuelingInput
+    ) -> FuelingResult {
+        var allEvents = drinkEvents
+        for (i, slot) in instantPlacements.enumerated() {
+            let rawTime = Double(slot) * Constants.slotDuration + Constants.slotDuration / 2.0
+            let clamped = max(input.startBuffer,
+                              min(input.duration - input.endBuffer, rawTime))
+            let rounded = clamped.roundedToNearest(minutes: 5)
+            allEvents.append(
+                FuelingEvent(consumption: .instant(time: rounded),
+                             carbItem: instants[i])
+            )
         }
+        let sorted = allEvents.sorted { $0.consumptionTimeOrZero < $1.consumptionTimeOrZero }
+        let breakdown = Self.computeBreakDown(totalDuration: input.duration, events: allEvents)
+        return FuelingResult(
+            name: nil,
+            timeLine: sorted,
+            totalCarbsTarget: input.carbsTarget,
+            duration: input.duration,
+            selectedItems: input.carbItemSelection,
+            hourlyBreakdown: breakdown
+        )
     }
 
-    // MARK: - Drinks placement
+    // MARK: Drink ordering & placement
 
+    /// Re-order drinks so that high-carb-rate and low-carb-rate intervals
+    /// alternate, yielding a flatter carb curve across the whole race.
+    func orderDrinksForSmoothness(_ drinks: [CarbItem]) -> [CarbItem] {
+        guard drinks.count > 1 else { return drinks }
+
+        // carb-rate ∝ gramsOfCarbs / waterVolumeML (concentration)
+        let sorted = drinks.sorted {
+            let vol0 = max(0.001, $0.waterVolumeML ?? $0.gramsOfCarbs)
+            let vol1 = max(0.001, $1.waterVolumeML ?? $1.gramsOfCarbs)
+            return ($0.gramsOfCarbs / vol0) < ($1.gramsOfCarbs / vol1)
+        }
+
+        // Interleave from the extremes: high, low, 2nd-high, 2nd-low
+        var result: [CarbItem] = []
+        var lo = 0, hi = sorted.count - 1
+        var takeHigh = true
+        while lo <= hi {
+            result.append(takeHigh ? sorted[hi] : sorted[lo])
+            if takeHigh { hi -= 1 } else { lo += 1 }
+            takeHigh.toggle()
+        }
+        return result
+    }
+
+    /// Tile drinks as back-to-back intervals over `[startTime, totalDuration]`.
+    /// Each drink's duration is proportional to its `waterVolumeML`
+    /// (falls back to `gramsOfCarbs` when volume is nil).
     func placeDrinks(
         drinkItems: [CarbItem],
+        startTime: TimeInterval,
         totalDuration: TimeInterval
-    ) -> [TriGuideDomain.FuelingEvent] {
+    ) -> [FuelingEvent] {
         guard !drinkItems.isEmpty else { return [] }
-        // weight by waterVolumeML (fallback to gramsOfCarbs)
-        let weights = drinkItems.map {
-            max(0.0001, $0.gramsOfCarbs)
-        }
+
+        let availableDuration = max(0, totalDuration - startTime)
+        let weights = drinkItems.map { max(0.001, $0.waterVolumeML ?? $0.gramsOfCarbs) }
         let totalWeight = weights.reduce(0.0, +)
-        var cursor: TimeInterval = 0.0
-        var results: [TriGuideDomain.FuelingEvent] = []
+        var cursor: TimeInterval = startTime
+        var results: [FuelingEvent] = []
+
         for (i, item) in drinkItems.enumerated() {
-            let segLen = totalDuration * (weights[i] / totalWeight)
-            let start = cursor
-            let end = min(totalDuration, cursor + segLen)
-            let event = TriGuideDomain.FuelingEvent(consumption: .interval(start: start.roundedToNearest(minutes: 5), end: end.roundedToNearest(minutes: 5)), carbItem: item)
-            results.append(event)
-            cursor = end
+            let segLen = availableDuration * (weights[i] / totalWeight)
+            let start = cursor.roundedToNearest(minutes: 5)
+            let end = min(totalDuration, cursor + segLen).roundedToNearest(minutes: 5)
+            results.append(
+                FuelingEvent(consumption: .interval(start: start, end: end),
+                             carbItem: item)
+            )
+            cursor += segLen
         }
-        // ensure last covers to end
+
+        // Make sure the last drink reaches the end of the race
         if let last = results.last,
-           let (_, end) = intervalBounds(last),
-           end < totalDuration,
-           let start = intervalBounds(last)?.start
+           case let .interval(start, end) = last.consumption,
+           end < totalDuration
         {
             let newEnd = totalDuration.roundedToNearest(minutes: 5)
-            let startClamped = min(start, newEnd)
-            results[results.count - 1] = TriGuideDomain.FuelingEvent(consumption: .interval(start: startClamped, end: newEnd), carbItem: last.carbItem)
+            results[results.count - 1] =
+                FuelingEvent(consumption: .interval(start: min(start, newEnd), end: newEnd),
+                             carbItem: last.carbItem)
         }
         return results
     }
 
-    // MARK: - Utility: distribute interval into batches
+    // MARK: Slot-level helpers
 
-    func distributeIntervalToBatches(
+    /// Distribute the carbs of a drink interval across 5-minute slots
+    /// proportionally to each slot's overlap with the interval.
+    func distributeIntervalToSlots(
         start: TimeInterval,
         end: TimeInterval,
-        item: CarbItem,
-        carbsPerBatch: inout [Double],
-        caffeinePerBatch: inout [Double],
-        batchesCount: Int,
+        carbs: Double,
+        into slotsCarbs: inout [Double],
+        slotCount: Int,
         totalDuration: TimeInterval
     ) {
-        let intervalLen = max(1e-6, end - start)
-        for batch in 0 ..< batchesCount {
-            let batchStart = Double(batch) * Constants.batchSeconds
-            let batchEnd = min(totalDuration, batchStart + Constants.batchSeconds)
-            let overlap = max(0.0, min(batchEnd, end) - max(batchStart, start))
+        let intervalLen = max(1e-9, end - start)
+        for slot in 0 ..< slotCount {
+            let slotStart = Double(slot) * Constants.slotDuration
+            let slotEnd = min(totalDuration, slotStart + Constants.slotDuration)
+            let overlap = max(0.0, min(slotEnd, end) - max(slotStart, start))
             if overlap > 0 {
-                let fraction = overlap / intervalLen
-                carbsPerBatch[batch] += item.gramsOfCarbs * fraction
-                if let caf = item.caffeine {
-                    caffeinePerBatch[batch] += caf * fraction
-                }
+                slotsCarbs[slot] += carbs * (overlap / intervalLen)
             }
         }
     }
 
-    // MARK: - Digestion window based on grams proportion
+    // MARK: Caffeine timing
 
-    func digestionWindowFor(
-        item: CarbItem,
-        totalCarbs: Double,
-        batchesCount: Int
+    /// The ideal slot to place caffeine.
+    ///
+    /// Strategy based on caffeine's 5 h aprox half-life:
+    /// • Short races (≤ half-life) **without** pre-race caffeine → midpoint.
+    /// • Short races **with** pre-race caffeine → pushed to ~60-70 % mark
+    ///   so the exogenous dose kicks in as the pre-race caffeine wanes.
+    /// • Long races → around 3 h before the finish regardless, so the effect
+    ///   is strongest during the hardest final stretch.
+    func idealCaffeineSlot(
+        duration: TimeInterval,
+        startBuffer: TimeInterval,
+        endBuffer: TimeInterval,
+        slotCount: Int,
+        hasConsumedCaffeineBefore: Bool
     ) -> Int {
-        guard totalCarbs > 0 else { return 1 }
-        let proportion = item.gramsOfCarbs / totalCarbs
-        let raw = proportion * Double(batchesCount) * Constants.digestionWindowScale
-        let w = max(1, Int(round(raw)))
-        return min(w, max(1, batchesCount))
+        let maxValidSlot = max(0,
+                               min(slotCount - 1,
+                                   Int(floor((duration - endBuffer) / Constants.slotDuration))))
+        let minValidSlot = max(0, Int(ceil(startBuffer / Constants.slotDuration)))
+
+        let idealTime: TimeInterval
+        if duration <= Constants.caffeineHalfLifeSeconds {
+            // Short race: caffeine will last until the end anyway.
+            if hasConsumedCaffeineBefore {
+                // Pre-race dose is still active, delay in-race caffeine
+                // to 65 % of the race so it refreshes the effect.
+                idealTime = duration * 0.65
+            } else {
+                // No prior caffeine, place around the midpoint so the
+                // peak effect covers the toughest middle-to-end portion.
+                idealTime = duration * 0.50
+            }
+        } else {
+            // Long race: target 3 h before finish.
+            idealTime = max(startBuffer, duration - Constants.caffeineLeadTimeSeconds)
+        }
+
+        let raw = Int(round(idealTime / Constants.slotDuration))
+        return max(minValidSlot, min(raw, maxValidSlot))
     }
 
-    // MARK: - Choose best batch for an instant (scoring)
+    // MARK: Constraint checking
 
-    func chooseBestBatchForInstant(
-        item: CarbItem,
-        earliestBatch: Int,
-        batchesCount: Int,
-        carbsPerBatch: [Double],
-        caffeinePerBatch: [Double],
-        occupiedInstantBatch: [Bool],
-        lastPlacementById: [String: Int],
-        caffeinatedPlacementIndices: [Int],
-        totalCarbs: Double,
-        targetCarbsPerBatch: Double,
-        targetCafPerBatch: Double,
-        minCaffeineSpacingBatches: Int
-    ) -> Int {
-        let windowDefault = digestionWindowFor(
-            item: item,
-            totalCarbs: max(1.0, totalCarbs),
-            batchesCount: batchesCount
-        )
-
-        var bestBatch = max(earliestBatch, 0)
-        var bestScore = Double.greatestFiniteMagnitude
-
-        for batchIndex in max(earliestBatch, 0) ..< batchesCount {
-            // compute hypothetical arrays
-            var carbsHyp = carbsPerBatch
-            var cafHyp = caffeinePerBatch
-
-            // window length truncated to available batches
-            let window = min(windowDefault, batchesCount - batchIndex)
-            let perBatchAdd = item.gramsOfCarbs / Double(window)
-            let perBatchCafAdd = (item.caffeine ?? 0.0) / Double(window)
-
-            for windowIndex in 0 ..< window {
-                carbsHyp[batchIndex + windowIndex] += perBatchAdd
-                cafHyp[batchIndex + windowIndex] += perBatchCafAdd
-            }
-
-            // variance term
-            var varAfter = 0.0
-            for i in 0 ..< batchesCount {
-                let d = carbsHyp[i] - targetCarbsPerBatch
-                varAfter += d * d
-            }
-            let termVariance = Constants.wVariance * varAfter
-
-            // caffeine proximity penalty (only for caffeinated items)
-            var termCafProx = 0.0
-            if (item.caffeine ?? 0.0) > 0.0 {
-                var minDist = Double.greatestFiniteMagnitude
-                for placed in caffeinatedPlacementIndices {
-                    minDist = min(minDist, Double(abs(placed - batchIndex)))
-                }
-                if minDist.isFinite {
-                    if minDist < Double(minCaffeineSpacingBatches) {
-                        let diff = Double(minCaffeineSpacingBatches) - minDist
-                        termCafProx = Constants.wCafPeak * diff * diff
-                    }
-                }
-                // also penalize caffeine peak in window center
-                let windowCenterIndex = batchIndex + window / 2
-                if windowCenterIndex < cafHyp.count {
-                    let cafBaseline = targetCafPerBatch
-                    let cafExcess = max(0.0, cafHyp[windowCenterIndex] - cafBaseline)
-                    termCafProx += Constants.wCafPeak * cafExcess * cafExcess
-                }
-            }
-
-            // same-item adjacency penalty
-            var termAdj = 0.0
-            if let last = lastPlacementById[item.id] {
-                let dist = abs(last - batchIndex)
-                termAdj = Constants.wAdjSame / Double(1 + dist)
-            }
-
-            // occupied instant penalty
-            let occPenalty = occupiedInstantBatch[batchIndex] ? Constants.occupiedBatchPenalty : 0.0
-
-            let score = termVariance + termCafProx + termAdj + occPenalty
-
-            if score < bestScore {
-                bestScore = score
-                bestBatch = batchIndex
+    /// Check that placing instant `index` at `slot` respects all hard
+    /// spacing constraints relative to every other already-assigned instant.
+    func satisfiesSpacing(
+        index: Int,
+        slot: Int,
+        placements: [Int],
+        instants: [CarbItem],
+        spacingSlots: Int,
+        cafSpacingSlots: Int
+    ) -> Bool {
+        let isCaf = (instants[index].caffeine ?? 0) > 0
+        for (j, other) in placements.enumerated() where j != index {
+            let dist = abs(slot - other)
+            if dist < spacingSlots { return false }
+            if isCaf, (instants[j].caffeine ?? 0) > 0, dist < cafSpacingSlots {
+                return false
             }
         }
-
-        return bestBatch
+        return true
     }
 
-    // MARK: - Apply instant (commit)
+    // MARK: Objective function
 
-    func applyInstant(
-        item: CarbItem,
-        atBatch batch: Int,
-        windowBatches: Int,
-        carbsPerBatch: inout [Double],
-        caffeinePerBatch: inout [Double],
-        occupiedInstantBatch: inout [Bool]
-    ) {
-        let win = min(windowBatches, carbsPerBatch.count - batch)
-        guard win > 0 else {
-            return
+    /// Sliding-window smoothness + caffeine-timing penalty +
+    /// early-load bias (prefer fewer carbs in the first hours).
+    func objective(
+        placements: [Int],
+        instants: [CarbItem],
+        baseCarbsPerSlot: [Double],
+        targetPerSlot: Double,
+        idealCafSlot: Int,
+        slotCount: Int
+    ) -> Double {
+        // Build total carbs per slot
+        var carbs = baseCarbsPerSlot
+        for (i, slot) in placements.enumerated() {
+            guard slot >= 0, slot < carbs.count else { continue }
+            carbs[slot] += instants[i].gramsOfCarbs
         }
-        let perBatchCarb = item.gramsOfCarbs / Double(win)
-        let perBatchCaf = (item.caffeine ?? 0.0) / Double(win)
-        for k in 0 ..< win {
-            carbsPerBatch[batch + k] += perBatchCarb
-            caffeinePerBatch[batch + k] += perBatchCaf
-        }
-        occupiedInstantBatch[batch] = true
-    }
 
-    // MARK: - Local refinement (simple hill-climb moves)
+        // Sliding-window hourly smoothness with early-load bias
+        let w = min(Constants.smoothnessWindowSlots, slotCount)
+        let targetPerWindow = targetPerSlot * Double(w)
+        let numWindows = max(1, slotCount - w + 1)
+        let bias = Constants.wEarlyLoadBias
 
-    private func localRefinement(
-        events: inout [TriGuideDomain.FuelingEvent],
-        carbsPerBatch: inout [Double],
-        caffeinePerBatch: inout [Double],
-        occupiedInstantBatch: inout [Bool],
-        lastPlacementById: inout [String: Int],
-        totalCarbs: Double,
-        targetCarbsPerBatch: Double,
-        batchesCount: Int,
-        earliestInstantBatch: Int
-    ) {
-        // reconstruct instant placements from events (only instants)
-        struct InstRec {
-            var item: CarbItem
-            var batch: Int
+        // First window
+        var windowSum = 0.0
+        for j in 0 ..< w {
+            windowSum += carbs[j]
         }
-        var insts: [InstRec] = []
-        for event in events {
-            switch event.consumption {
-            case let .instant(time):
-                let batch = Int(floor(time / Constants.batchSeconds))
-                insts.append(InstRec(item: event.carbItem, batch: max(batch, earliestInstantBatch)))
-            default:
-                break
+        var windowVariance = 0.0
+        let d0 = windowSum - targetPerWindow
+        // Weight: early windows (start=0) get weight > 1, later ones ≈ 1.
+        // 1 + bias*(1 - t) where t ∈ [0,1] maps the window position.
+        let w0 = 1.0 + bias * (1.0 - 0.0 / Double(max(1, numWindows - 1)))
+        windowVariance += d0 * d0 * w0
+
+        // Slide
+        for start in 1 ..< numWindows {
+            windowSum += carbs[start + w - 1] - carbs[start - 1]
+            let d = windowSum - targetPerWindow
+            let t = Double(start) / Double(max(1, numWindows - 1))
+            let weight = 1.0 + bias * (1.0 - t)
+            windowVariance += d * d * weight
+        }
+        windowVariance /= Double(numWindows)
+
+        // Caffeine timing penalty (squared distance from ideal slot)
+        var cafPenalty = 0.0
+        for (i, slot) in placements.enumerated() {
+            if (instants[i].caffeine ?? 0) > 0 {
+                let d = Double(abs(slot - idealCafSlot))
+                cafPenalty += d * d
             }
         }
+        cafPenalty = Constants.wCaffeineTiming * cafPenalty / Double(max(1, slotCount))
 
-        // nothing to do
-        if insts.isEmpty { return }
+        return Constants.wWindowSmoothness * windowVariance + cafPenalty
+    }
 
-        // try moving each instant within +/- 2 batches
-        for i in 0 ..< insts.count {
-            let rec = insts[i]
-            let currentBatch = rec.batch
-            let window = digestionWindowFor(item: rec.item, totalCarbs: max(1.0, totalCarbs), batchesCount: batchesCount)
-            var bestBatch = currentBatch
-            var bestScore = globalObjective(carbsPerBatch: carbsPerBatch, target: targetCarbsPerBatch)
+    // MARK: Greedy initial placement
 
-            // remove current contribution (this also clears occupiedInstantBatch[currentBatch])
-            removeInstantContribution(
-                item: rec.item,
-                atBatch: currentBatch,
-                windowBatches: window,
-                carbsPerBatch: &carbsPerBatch,
-                caffeinePerBatch: &caffeinePerBatch,
-                occupiedInstantBatch: &occupiedInstantBatch
-            )
+    func greedyPlacement(
+        instants: [CarbItem],
+        baseCarbsPerSlot: [Double],
+        targetPerSlot: Double,
+        minSlot: Int,
+        maxSlot: Int,
+        spacingSlots: Int,
+        cafSpacingSlots: Int,
+        idealCafSlot: Int,
+        cafCount _: Int,
+        slotCount: Int
+    ) -> [Int] {
+        var placements: [Int] = []
 
-            // search neighborhood +/- 2 batches (bounded)
-            let low = max(earliestInstantBatch, currentBatch - 2)
-            let high = min(batchesCount - 1, currentBatch + 2)
-            for candidate in low ... high {
-                // apply tentatively at candidate
-                applyInstant(
-                    item: rec.item,
-                    atBatch: candidate,
-                    windowBatches: window,
-                    carbsPerBatch: &carbsPerBatch,
-                    caffeinePerBatch: &caffeinePerBatch,
-                    occupiedInstantBatch: &occupiedInstantBatch
-                )
+        for (i, _) in instants.enumerated() {
+            var bestSlot = minSlot
+            var bestScore = Double.greatestFiniteMagnitude
+            var foundValid = false
 
-                let score = globalObjective(
-                    carbsPerBatch: carbsPerBatch,
-                    target: targetCarbsPerBatch
-                )
+            for slot in minSlot ... maxSlot {
+                // Hard spacing check against previously placed items
+                var trial = placements
+                trial.append(slot)
+                if !satisfiesSpacing(index: i, slot: slot,
+                                     placements: trial,
+                                     instants: instants,
+                                     spacingSlots: spacingSlots,
+                                     cafSpacingSlots: cafSpacingSlots)
+                {
+                    continue
+                }
 
-                // revert the tentative placement
-                removeInstantContribution(
-                    item: rec.item,
-                    atBatch: candidate,
-                    windowBatches: window,
-                    carbsPerBatch: &carbsPerBatch,
-                    caffeinePerBatch: &caffeinePerBatch,
-                    occupiedInstantBatch: &occupiedInstantBatch
+                // Evaluate the sliding-window objective with items placed so far
+                let score = objective(
+                    placements: trial,
+                    instants: Array(instants.prefix(i + 1)),
+                    baseCarbsPerSlot: baseCarbsPerSlot,
+                    targetPerSlot: targetPerSlot,
+                    idealCafSlot: idealCafSlot,
+                    slotCount: slotCount
                 )
 
                 if score < bestScore {
                     bestScore = score
-                    bestBatch = candidate
+                    bestSlot = slot
+                    foundValid = true
                 }
             }
 
-            // commit best placement
-            applyInstant(
-                item: rec.item,
-                atBatch: bestBatch,
-                windowBatches: window,
-                carbsPerBatch: &carbsPerBatch,
-                caffeinePerBatch: &caffeinePerBatch,
-                occupiedInstantBatch: &occupiedInstantBatch
+            // Fallback: if no valid slot found (too many items), pick the
+            // slot with the lowest spacing violations, then best objective score.
+            if !foundValid {
+                bestSlot = minSlot
+                var minViolations = Int.max
+                var minScore = Double.greatestFiniteMagnitude
+                for slot in minSlot ... maxSlot {
+                    var trial = placements
+                    trial.append(slot)
+                    let violations = spacingViolations(
+                        index: i,
+                        slot: slot,
+                        placements: trial,
+                        instants: instants,
+                        spacingSlots: spacingSlots,
+                        cafSpacingSlots: cafSpacingSlots
+                    )
+                    let score = objective(
+                        placements: trial,
+                        instants: Array(instants.prefix(i + 1)),
+                        baseCarbsPerSlot: baseCarbsPerSlot,
+                        targetPerSlot: targetPerSlot,
+                        idealCafSlot: idealCafSlot,
+                        slotCount: slotCount
+                    )
+
+                    if violations < minViolations || (violations == minViolations && score < minScore) {
+                        minViolations = violations
+                        minScore = score
+                        bestSlot = slot
+                    }
+                }
+            }
+
+            placements.append(bestSlot)
+        }
+        return placements
+    }
+
+    func spacingViolations(
+        index: Int,
+        slot: Int,
+        placements: [Int],
+        instants: [CarbItem],
+        spacingSlots: Int,
+        cafSpacingSlots: Int
+    ) -> Int {
+        let isCaf = (instants[index].caffeine ?? 0) > 0
+        var violations = 0
+
+        for (j, other) in placements.enumerated() where j != index {
+            let dist = abs(slot - other)
+            if dist < spacingSlots {
+                violations += (spacingSlots - dist)
+            }
+
+            if isCaf, (instants[j].caffeine ?? 0) > 0, dist < cafSpacingSlots {
+                violations += (cafSpacingSlots - dist)
+            }
+        }
+
+        return violations
+    }
+
+    struct SeededRandomNumberGenerator: RandomNumberGenerator {
+        private var state: UInt64
+
+        init(seed: UInt64) {
+            state = seed == 0 ? 0x9E37_79B9_7F4A_7C15 : seed
+        }
+
+        mutating func next() -> UInt64 {
+            state &+= 0x9E37_79B9_7F4A_7C15
+            var z = state
+            z = (z ^ (z >> 30)) &* 0xBF58_476D_1CE4_E5B9
+            z = (z ^ (z >> 27)) &* 0x94D0_49BB_1331_11EB
+            return z ^ (z >> 31)
+        }
+    }
+
+    // MARK: Simulated-annealing refinement
+
+    func annealPlacements<R: RandomNumberGenerator>(
+        placements: [Int],
+        instants: [CarbItem],
+        baseCarbsPerSlot: [Double],
+        targetPerSlot: Double,
+        minSlot: Int,
+        maxSlot: Int,
+        spacingSlots: Int,
+        cafSpacingSlots: Int,
+        idealCafSlot: Int,
+        cafCount _: Int,
+        slotCount: Int,
+        rng: inout R
+    ) -> [Int] {
+        guard instants.count > 1 else { return placements }
+
+        var current = placements
+        var currentCost = objective(
+            placements: current, instants: instants,
+            baseCarbsPerSlot: baseCarbsPerSlot,
+            targetPerSlot: targetPerSlot,
+            idealCafSlot: idealCafSlot, slotCount: slotCount
+        )
+        var best = current
+        var bestCost = currentCost
+        var temperature = Constants.saInitialTemperature
+
+        for _ in 0 ..< Constants.saIterations {
+            let idx = Int.random(in: 0 ..< instants.count, using: &rng)
+            let newSlot = Int.random(in: minSlot ... maxSlot, using: &rng)
+            guard newSlot != current[idx] else { continue }
+
+            // Try the move
+            var candidate = current
+            candidate[idx] = newSlot
+
+            // Check hard constraints for the moved item
+            if !satisfiesSpacing(index: idx, slot: newSlot,
+                                 placements: candidate,
+                                 instants: instants,
+                                 spacingSlots: spacingSlots,
+                                 cafSpacingSlots: cafSpacingSlots)
+            {
+                continue
+            }
+
+            let candidateCost = objective(
+                placements: candidate, instants: instants,
+                baseCarbsPerSlot: baseCarbsPerSlot,
+                targetPerSlot: targetPerSlot,
+                idealCafSlot: idealCafSlot, slotCount: slotCount
             )
 
-            // persist the chosen batch into insts so we can rebuild events later
-            insts[i].batch = bestBatch
+            let delta = candidateCost - currentCost
+            if delta < 0 || Double.random(in: 0 ... 1, using: &rng) < exp(-delta / max(temperature, 1e-12)) {
+                current = candidate
+                currentCost = candidateCost
+                if currentCost < bestCost {
+                    best = current
+                    bestCost = currentCost
+                }
+            }
 
-            // update last placement map (use stable key)
-            lastPlacementById[rec.item.id] = bestBatch
+            temperature *= Constants.saCoolingRate
         }
 
-        // Rebuild events: remove old instant events and re-add new ones from insts (preserve intervals)
-        events.removeAll { ev in
-            if case .instant = ev.consumption { return true }
-            return false
-        }
-
-        // Append instants based on final `insts` placements
-        for rec in insts {
-            let time = Double(rec.batch) * Constants.batchSeconds + Constants.batchSeconds / 2.0
-            events.append(TriGuideDomain.FuelingEvent(consumption: .instant(time: time.roundedToNearest(minutes: 5)), carbItem: rec.item))
-        }
-    }
-
-    func removeInstantContribution(
-        item: CarbItem,
-        atBatch b: Int,
-        windowBatches: Int,
-        carbsPerBatch: inout [Double],
-        caffeinePerBatch: inout [Double],
-        occupiedInstantBatch: inout [Bool]
-    ) {
-        let win = min(windowBatches, carbsPerBatch.count - b)
-        guard win > 0 else { return }
-        let perBatchCarb = item.gramsOfCarbs / Double(win)
-        let perBatchCaf = (item.caffeine ?? 0.0) / Double(win)
-        for k in 0 ..< win {
-            carbsPerBatch[b + k] = max(0.0, carbsPerBatch[b + k] - perBatchCarb)
-            caffeinePerBatch[b + k] = max(0.0, caffeinePerBatch[b + k] - perBatchCaf)
-        }
-        occupiedInstantBatch[b] = false
-    }
-
-    func globalObjective(carbsPerBatch: [Double], target: Double) -> Double {
-        var v = 0.0
-        for c in carbsPerBatch {
-            let d = c - target
-            v += d * d
-        }
-        return v
+        return best
     }
 }

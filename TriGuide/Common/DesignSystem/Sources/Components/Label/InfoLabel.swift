@@ -8,17 +8,17 @@ import SwiftUI
 
 public struct InfoLabel<Content: View>: View {
     let title: String?
-    let content: Content
+    let content: () -> Content
 
     @State private var showPopover = false
     @State private var measuredHeight: CGFloat = 0
 
     public init(
         title: String? = nil,
-        @ViewBuilder content: () -> Content
+        content: @escaping () -> Content
     ) {
         self.title = title
-        self.content = content()
+        self.content = content
     }
 
     public var body: some View {
@@ -47,7 +47,7 @@ private extension InfoLabel {
                     Divider()
                 }
 
-                content
+                content()
                     .font(.footnote)
                     .frame(maxWidth: .infinity)
             }

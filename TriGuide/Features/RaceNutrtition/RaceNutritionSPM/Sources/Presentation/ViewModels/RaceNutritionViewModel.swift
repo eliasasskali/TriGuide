@@ -14,10 +14,12 @@ public class RaceNutritionViewModel: ObservableObject {
 
     // MARK: - Properties
 
-    @Published var sport: SupportedSport?
+    @Published var sport: SupportedSport? = .bike
     @Published var duration: TimeInterval?
     @Published var weight: Double?
     @Published var intensity: Intensity?
+    @Published var hasConsumedCaffeineBefore: Bool = false
+    @Published var startEatingAt: TimeInterval = 900.0
     @Published var fasted: Bool = false
     @Published var capped: Bool = true
     @Published var gutTrained: Bool = false
@@ -44,10 +46,11 @@ public class RaceNutritionViewModel: ObservableObject {
         // On change of any input, recalculate gramsPerHour
         Publishers.CombineLatest4($sport, $duration, $weight, $intensity)
             .combineLatest(Publishers.CombineLatest4($fasted, $capped, $gutTrained, $ambientTempC))
+            .debounce(for: .milliseconds(300), scheduler: RunLoop.main)
             .map { [weak self] first, second in
                 let (sport, duration, weight, intensity) = first
                 let (fasted, capped, gutTrained, ambientTempC) = second
-                return self?.calculateEstimatedTotalGrams(
+                let estimatedGrams = self?.calculateEstimatedTotalGrams(
                     sport: sport,
                     duration: duration,
                     weight: weight,
@@ -57,7 +60,10 @@ public class RaceNutritionViewModel: ObservableObject {
                     gutTrained: gutTrained,
                     ambientTempC: ambientTempC
                 )
+                guard let estimatedGrams, estimatedGrams > 0 else { return nil }
+                return estimatedGrams
             }
+            .compactMap { $0 }
             .assign(to: &$gramsPerHour)
     }
 
@@ -73,17 +79,32 @@ public class RaceNutritionViewModel: ObservableObject {
         didFinishCalculation = true
     }
 
-    /// Calculates the fueling result based on the selected carb items.
-    func calculateFueling(from selection: [CarbItemSelection]) -> FuelingResult? {
+    /// Calculates the fueling result on a background queue to avoid blocking UI.
+    func calculateFuelingAsync(from selection: [CarbItemSelection]) async -> FuelingResult? {
         guard let estimatedTotalGrams, let duration, let sport else { return nil }
+
+        isLoading = true
+        defer { isLoading = false }
+
         let fuelingInput = FuelingInput(
             carbItemSelection: selection,
             carbsTarget: estimatedTotalGrams,
             duration: duration,
-            sport: sport
+            sport: sport,
+            startBuffer: startEatingAt,
+            hasConsumedCaffeineBefore: hasConsumedCaffeineBefore
         )
-        fuelingResult = calculateFuelingResultUseCase.execute(fuelingInput: fuelingInput)
-        return fuelingResult
+
+        let useCase = calculateFuelingResultUseCase
+        let result = await withCheckedContinuation { continuation in
+            DispatchQueue.global(qos: .userInitiated).async {
+                let computed = useCase.execute(fuelingInput: fuelingInput)
+                continuation.resume(returning: computed)
+            }
+        }
+
+        fuelingResult = result
+        return result
     }
 }
 

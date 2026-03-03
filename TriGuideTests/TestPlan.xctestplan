@@ -39,6 +39,13 @@
         "identifier" : "StorageKitTests",
         "name" : "StorageKitTests"
       }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:TriGuide\/Features\/RaceNutrtition\/RaceNutritionSPM",
+        "identifier" : "RaceNutritionSPMTests",
+        "name" : "RaceNutritionSPMTests"
+      }
     }
   ],
   "version" : 1

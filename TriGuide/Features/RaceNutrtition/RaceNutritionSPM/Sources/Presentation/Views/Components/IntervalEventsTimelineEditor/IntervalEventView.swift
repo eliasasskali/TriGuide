@@ -24,11 +24,17 @@ struct IntervalEventView: View {
 
     // MARK: - Properties
 
+    enum ActiveHandle {
+        case start
+        case end
+    }
+
     @State private var dragStart: (start: TimeInterval, end: TimeInterval)?
     @State private var startHandleOrigin: TimeInterval? = nil
     @State private var endHandleOrigin: TimeInterval? = nil
     @State private var tempStart: TimeInterval?
     @State private var tempEnd: TimeInterval?
+    @State private var activeHandle: ActiveHandle?
 
     // MARK: - Computed properties
 
@@ -112,8 +118,10 @@ private extension IntervalEventView {
     // MARK: - Gestures
 
     var intervalDragGesture: some Gesture {
-        DragGesture(minimumDistance: 1)
+        DragGesture(minimumDistance: 1, coordinateSpace: .global)
             .onChanged { value in
+                guard activeHandle == nil else { return }
+
                 // capture origins on first movement
                 if dragStart == nil {
                     dragStart = (start, end)
@@ -141,13 +149,17 @@ private extension IntervalEventView {
                 }
             }
             .onEnded { _ in
+                guard activeHandle == nil else { return }
                 commit()
             }
     }
 
     var startHandleGesture: some Gesture {
-        DragGesture(minimumDistance: 1)
+        DragGesture(minimumDistance: 1, coordinateSpace: .global)
             .onChanged { value in
+                activeHandle = .start
+                dragStart = nil
+
                 if startHandleOrigin == nil {
                     startHandleOrigin = tempStart ?? start
                 }
@@ -167,13 +179,17 @@ private extension IntervalEventView {
             }
             .onEnded { _ in
                 startHandleOrigin = nil
+                activeHandle = nil
                 commit()
             }
     }
 
     var endHandleGesture: some Gesture {
-        DragGesture(minimumDistance: 1)
+        DragGesture(minimumDistance: 1, coordinateSpace: .global)
             .onChanged { value in
+                activeHandle = .end
+                dragStart = nil
+
                 if endHandleOrigin == nil {
                     endHandleOrigin = tempEnd ?? end
                 }
@@ -192,6 +208,7 @@ private extension IntervalEventView {
             }
             .onEnded { _ in
                 endHandleOrigin = nil
+                activeHandle = nil
                 commit()
             }
     }

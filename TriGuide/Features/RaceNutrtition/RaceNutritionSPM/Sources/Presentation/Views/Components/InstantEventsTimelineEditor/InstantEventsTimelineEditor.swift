@@ -85,14 +85,18 @@ private extension InstantEventsTimelineEditor {
             return nil
         }
 
-        return ForEach(instantEvents, id: \.0) { index, event in
+        let sortedInstantEvents = instantEvents.sorted { lhs, rhs in
+            let lhsTime = lhs.1.consumptionTimeOrZero
+            let rhsTime = rhs.1.consumptionTimeOrZero
+            if lhsTime == rhsTime { return lhs.0 < rhs.0 }
+            return lhsTime < rhsTime
+        }
+
+        let laneByIndex = buildLaneMap(events: sortedInstantEvents, handleTime: handleTime)
+
+        return ForEach(sortedInstantEvents, id: \.0) { index, event in
             let time = event.consumptionTimeOrZero
-            let textGoesAbove = events.indices.contains { otherIndex in
-                guard otherIndex < index, // only check handles to the left
-                      case let .instant(otherTime) = events[otherIndex].consumption
-                else { return false }
-                return abs(otherTime - time) <= handleTime
-            }
+            let textGoesAbove = laneByIndex[index, default: 0] == 1
 
             InstantEventHandle(
                 duration: duration,
@@ -108,6 +112,34 @@ private extension InstantEventsTimelineEditor {
             }
             .offset(y: textGoesAbove ? aboveTextHandleY : belowTextHandleY)
         }
+    }
+
+    func buildLaneMap(
+        events: [(Int, FuelingEvent)],
+        handleTime: TimeInterval
+    ) -> [Int: Int] {
+        var laneMap: [Int: Int] = [:]
+        var placed: [(index: Int, time: TimeInterval, lane: Int)] = []
+
+        for (index, event) in events {
+            let time = event.consumptionTimeOrZero
+            let colliding = placed.filter { abs($0.time - time) <= handleTime }
+            let usedLanes = Set(colliding.map(\.lane))
+
+            let lane: Int
+            if !usedLanes.contains(0) {
+                lane = 0
+            } else if !usedLanes.contains(1) {
+                lane = 1
+            } else {
+                lane = (colliding.last?.lane == 0) ? 1 : 0
+            }
+
+            laneMap[index] = lane
+            placed.append((index: index, time: time, lane: lane))
+        }
+
+        return laneMap
     }
 }
 

@@ -67,7 +67,8 @@ public struct CarbItemsView: View {
                         .padding()
                     ActionButton(
                         Localizables.Common.continueLabel,
-                        isLoading: viewModel.state == .loading
+                        isLoading: viewModel.state == .loading,
+                        isDisabled: viewModel.selectedCarbItems.isEmpty
                     ) {
                         dismiss()
                         coordinator.onCompleteSelection?(viewModel.selectedCarbItems)

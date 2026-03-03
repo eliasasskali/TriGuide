@@ -162,6 +162,11 @@ extension CarbItemsViewModel {
 
 public extension CarbItemsViewModel {
     func onSelectCarbItem(_ selection: CarbItemSelection) {
+        if selection.quantity <= 0 {
+            selectedCarbItems.removeAll(where: { $0.item.id == selection.item.id })
+            return
+        }
+
         if let index = selectedCarbItems.firstIndex(where: { $0.item.id == selection.item.id }) {
             selectedCarbItems[index] = selection
         } else {

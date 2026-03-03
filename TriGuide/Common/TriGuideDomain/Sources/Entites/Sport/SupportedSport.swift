@@ -7,7 +7,7 @@ import Localization
 
 // MARK: - SupportedSports
 
-public enum SupportedSport: CaseIterable {
+public enum SupportedSport: CaseIterable, Sendable {
     case swim
     case bike
     case run

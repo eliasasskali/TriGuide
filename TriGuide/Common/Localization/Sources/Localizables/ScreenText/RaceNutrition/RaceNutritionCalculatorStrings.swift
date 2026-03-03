@@ -106,6 +106,16 @@ public extension Localizables {
             // Ambient Temperature
         }
 
+        public static var startEatingAt: String {
+            String(localized: "race_nutrition_calculator-start-eating-at", bundle: .module)
+            // Start Eating At
+        }
+
+        public static var consumedCaffeineBefore: String {
+            String(localized: "race_nutrition_calculator-consumed-caffeine-before", bundle: .module)
+            // Consumed Caffeine before effort
+        }
+
         public static var carbsEstimationInformationTitle: String {
             String(localized: "race_nutrition_calculator-carbs-estimation-information-title", bundle: .module)
         } // Carbohydrate Intake Estimation
@@ -129,5 +139,13 @@ public extension Localizables {
         public static var ambientTemperatureInformationDescription: String {
             String(localized: "race_nutrition_calculator-ambient-temperatur-information-description", bundle: .module)
         } // Hotter conditions increase carb usage slightly. Your body relies more on carbs to maintain performance in heat.
+
+        public static var startEatingAtInformationDescription: String {
+            String(localized: "race_nutrition_calculator-start-eating-at-information-description", bundle: .module)
+        } // Set when you want to begin your carb intake during the session.
+
+        public static var consumedCaffeineBeforeInformationDescription: String {
+            String(localized: "race_nutrition_calculator-consumed-caffeine-before-information-description", bundle: .module)
+        } // Turn this on if you had caffeine before starting. This helps distribute in-session caffeine more effectively.
     }
 }

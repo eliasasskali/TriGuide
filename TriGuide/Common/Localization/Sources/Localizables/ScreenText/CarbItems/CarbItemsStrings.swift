@@ -22,10 +22,6 @@ public extension Localizables {
             String(localized: "carbItems_carbs_label", bundle: .module)
         }
 
-        public static var carbsLabelShort: String {
-            String(localized: "carbItems_carbs_label_short", bundle: .module)
-        }
-
         public static func carbsValue(grams: Double) -> String {
             String(
                 format: String(
@@ -40,10 +36,6 @@ public extension Localizables {
             String(localized: "carbItems_caffeine_label", bundle: .module)
         }
 
-        public static var caffeineLabelShort: String {
-            String(localized: "carbItems_caffeine_label_short", bundle: .module)
-        }
-
         public static func caffeineValue(caffeine: Double) -> String {
             String(
                 format: String(
@@ -56,10 +48,6 @@ public extension Localizables {
 
         public static var volumeLabel: String {
             String(localized: "carbItems_volume_label", bundle: .module)
-        }
-
-        public static var volumeLabelShort: String {
-            String(localized: "carbItems_volume_label_short", bundle: .module)
         }
 
         public static func volumeValue(miliLiters: Double) -> String {
