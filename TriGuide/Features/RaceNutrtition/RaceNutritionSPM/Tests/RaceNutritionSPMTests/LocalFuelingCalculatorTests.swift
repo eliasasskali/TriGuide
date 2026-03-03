@@ -9,7 +9,7 @@ import TriGuideDomain
 
 @Suite
 struct LocalFuelingCalculatorTests {
-    private let sut = LocalFuelingCalculator()
+    private let sut = LocalFuelingCalculator(randomSeed: 0xBEEF)
 }
 
 // MARK: - Hourly carb-smoothness tests

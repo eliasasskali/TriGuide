@@ -35,7 +35,15 @@ public final class LocalFuelingCalculator: FuelingCalculatorDataSource {
 
     // MARK: - Public initializer
 
-    public init() {}
+    private let randomSeed: UInt64?
+
+    public init() {
+        randomSeed = nil
+    }
+
+    init(randomSeed: UInt64?) {
+        self.randomSeed = randomSeed
+    }
 
     // MARK: - FuelingCalculatorDataSource
 
@@ -144,19 +152,39 @@ public final class LocalFuelingCalculator: FuelingCalculatorDataSource {
         )
 
         // Simulated-annealing refinement
-        placements = annealPlacements(
-            placements: placements,
-            instants: orderedInstants,
-            baseCarbsPerSlot: drinkCarbsPerSlot,
-            targetPerSlot: targetCarbsPerSlot,
-            minSlot: minSlot,
-            maxSlot: maxSlot,
-            spacingSlots: spacingSlots,
-            cafSpacingSlots: cafSpacingSlots,
-            idealCafSlot: idealCafSlot,
-            cafCount: cafCount,
-            slotCount: slotCount
-        )
+        if let randomSeed {
+            var rng = SeededRandomNumberGenerator(seed: randomSeed)
+            placements = annealPlacements(
+                placements: placements,
+                instants: orderedInstants,
+                baseCarbsPerSlot: drinkCarbsPerSlot,
+                targetPerSlot: targetCarbsPerSlot,
+                minSlot: minSlot,
+                maxSlot: maxSlot,
+                spacingSlots: spacingSlots,
+                cafSpacingSlots: cafSpacingSlots,
+                idealCafSlot: idealCafSlot,
+                cafCount: cafCount,
+                slotCount: slotCount,
+                rng: &rng
+            )
+        } else {
+            var rng = SystemRandomNumberGenerator()
+            placements = annealPlacements(
+                placements: placements,
+                instants: orderedInstants,
+                baseCarbsPerSlot: drinkCarbsPerSlot,
+                targetPerSlot: targetCarbsPerSlot,
+                minSlot: minSlot,
+                maxSlot: maxSlot,
+                spacingSlots: spacingSlots,
+                cafSpacingSlots: cafSpacingSlots,
+                idealCafSlot: idealCafSlot,
+                cafCount: cafCount,
+                slotCount: slotCount,
+                rng: &rng
+            )
+        }
 
         // Build output
         return buildResult(
@@ -591,9 +619,25 @@ private extension LocalFuelingCalculator {
         return violations
     }
 
+    struct SeededRandomNumberGenerator: RandomNumberGenerator {
+        private var state: UInt64
+
+        init(seed: UInt64) {
+            state = seed == 0 ? 0x9E37_79B9_7F4A_7C15 : seed
+        }
+
+        mutating func next() -> UInt64 {
+            state &+= 0x9E37_79B9_7F4A_7C15
+            var z = state
+            z = (z ^ (z >> 30)) &* 0xBF58_476D_1CE4_E5B9
+            z = (z ^ (z >> 27)) &* 0x94D0_49BB_1331_11EB
+            return z ^ (z >> 31)
+        }
+    }
+
     // MARK: Simulated-annealing refinement
 
-    func annealPlacements(
+    func annealPlacements<R: RandomNumberGenerator>(
         placements: [Int],
         instants: [CarbItem],
         baseCarbsPerSlot: [Double],
@@ -604,7 +648,8 @@ private extension LocalFuelingCalculator {
         cafSpacingSlots: Int,
         idealCafSlot: Int,
         cafCount _: Int,
-        slotCount: Int
+        slotCount: Int,
+        rng: inout R
     ) -> [Int] {
         guard instants.count > 1 else { return placements }
 
@@ -620,8 +665,8 @@ private extension LocalFuelingCalculator {
         var temperature = Constants.saInitialTemperature
 
         for _ in 0 ..< Constants.saIterations {
-            let idx = Int.random(in: 0 ..< instants.count)
-            let newSlot = Int.random(in: minSlot ... maxSlot)
+            let idx = Int.random(in: 0 ..< instants.count, using: &rng)
+            let newSlot = Int.random(in: minSlot ... maxSlot, using: &rng)
             guard newSlot != current[idx] else { continue }
 
             // Try the move
@@ -646,7 +691,7 @@ private extension LocalFuelingCalculator {
             )
 
             let delta = candidateCost - currentCost
-            if delta < 0 || Double.random(in: 0 ... 1) < exp(-delta / max(temperature, 1e-12)) {
+            if delta < 0 || Double.random(in: 0 ... 1, using: &rng) < exp(-delta / max(temperature, 1e-12)) {
                 current = candidate
                 currentCost = candidateCost
                 if currentCost < bestCost {

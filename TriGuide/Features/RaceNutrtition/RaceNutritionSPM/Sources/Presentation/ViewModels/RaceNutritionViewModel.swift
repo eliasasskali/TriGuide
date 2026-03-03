@@ -79,21 +79,6 @@ public class RaceNutritionViewModel: ObservableObject {
         didFinishCalculation = true
     }
 
-    /// Calculates the fueling result based on the selected carb items.
-    func calculateFueling(from selection: [CarbItemSelection]) -> FuelingResult? {
-        guard let estimatedTotalGrams, let duration, let sport else { return nil }
-        let fuelingInput = FuelingInput(
-            carbItemSelection: selection,
-            carbsTarget: estimatedTotalGrams,
-            duration: duration,
-            sport: sport,
-            startBuffer: startEatingAt,
-            hasConsumedCaffeineBefore: hasConsumedCaffeineBefore
-        )
-        fuelingResult = calculateFuelingResultUseCase.execute(fuelingInput: fuelingInput)
-        return fuelingResult
-    }
-
     /// Calculates the fueling result on a background queue to avoid blocking UI.
     func calculateFuelingAsync(from selection: [CarbItemSelection]) async -> FuelingResult? {
         guard let estimatedTotalGrams, let duration, let sport else { return nil }

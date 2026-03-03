@@ -508,6 +508,7 @@
       }
     },
     "carbItems_caffeine_label_short" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ca" : {
           "stringUnit" : {
@@ -574,6 +575,7 @@
       }
     },
     "carbItems_carbs_label_short" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ca" : {
           "stringUnit" : {
@@ -730,6 +732,7 @@
       }
     },
     "carbItems_volume_label_short" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ca" : {
           "stringUnit" : {

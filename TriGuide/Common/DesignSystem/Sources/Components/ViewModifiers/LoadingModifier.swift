@@ -2,7 +2,6 @@
 // TriGuide 2025
 //
 
-import Localization
 import SwiftUI
 
 /// Shows a loading spinner that blocks the screen when `isLoading` is true.
