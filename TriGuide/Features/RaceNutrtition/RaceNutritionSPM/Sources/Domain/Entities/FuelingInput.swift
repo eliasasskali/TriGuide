@@ -5,7 +5,7 @@
 import Foundation
 import TriGuideDomain
 
-public struct FuelingInput {
+public struct FuelingInput: Sendable {
     // MARK: - Dependencies
 
     public let carbItemSelection: [CarbItemSelection]

@@ -37,6 +37,7 @@ struct FuelingPlanEditView: View {
                         duration: result.duration,
                         events: $editableInstantEvents
                     )
+                    .padding(.horizontal)
                 }
 
                 if !editableIntervalEvents.isEmpty {
@@ -44,6 +45,7 @@ struct FuelingPlanEditView: View {
                         duration: result.duration,
                         events: $editableIntervalEvents
                     )
+                    .padding(.horizontal)
                 }
 
                 breakdownView

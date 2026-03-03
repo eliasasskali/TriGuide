@@ -50,7 +50,7 @@ public final class LocalFuelingCalculator: FuelingCalculatorDataSource {
         var drinkItems: [CarbItem] = []
         var instantItems: [CarbItem] = []
         for sel in input.carbItemSelection where sel.item.gramsOfCarbs > 0 {
-            let count = max(0, Int(sel.quantity))
+            let count = max(0, Int(sel.quantity.rounded()))
             for _ in 0 ..< count {
                 if sel.item.type == .drink {
                     drinkItems.append(sel.item)
@@ -528,13 +528,34 @@ private extension LocalFuelingCalculator {
             }
 
             // Fallback: if no valid slot found (too many items), pick the
-            // slot with the lowest windowed carbs ignoring spacing constraints.
+            // slot with the lowest spacing violations, then best objective score.
             if !foundValid {
                 bestSlot = minSlot
-                var minCarbs = Double.greatestFiniteMagnitude
+                var minViolations = Int.max
+                var minScore = Double.greatestFiniteMagnitude
                 for slot in minSlot ... maxSlot {
-                    if baseCarbsPerSlot[slot] < minCarbs {
-                        minCarbs = baseCarbsPerSlot[slot]
+                    var trial = placements
+                    trial.append(slot)
+                    let violations = spacingViolations(
+                        index: i,
+                        slot: slot,
+                        placements: trial,
+                        instants: instants,
+                        spacingSlots: spacingSlots,
+                        cafSpacingSlots: cafSpacingSlots
+                    )
+                    let score = objective(
+                        placements: trial,
+                        instants: Array(instants.prefix(i + 1)),
+                        baseCarbsPerSlot: baseCarbsPerSlot,
+                        targetPerSlot: targetPerSlot,
+                        idealCafSlot: idealCafSlot,
+                        slotCount: slotCount
+                    )
+
+                    if violations < minViolations || (violations == minViolations && score < minScore) {
+                        minViolations = violations
+                        minScore = score
                         bestSlot = slot
                     }
                 }
@@ -543,6 +564,31 @@ private extension LocalFuelingCalculator {
             placements.append(bestSlot)
         }
         return placements
+    }
+
+    func spacingViolations(
+        index: Int,
+        slot: Int,
+        placements: [Int],
+        instants: [CarbItem],
+        spacingSlots: Int,
+        cafSpacingSlots: Int
+    ) -> Int {
+        let isCaf = (instants[index].caffeine ?? 0) > 0
+        var violations = 0
+
+        for (j, other) in placements.enumerated() where j != index {
+            let dist = abs(slot - other)
+            if dist < spacingSlots {
+                violations += (spacingSlots - dist)
+            }
+
+            if isCaf, (instants[j].caffeine ?? 0) > 0, dist < cafSpacingSlots {
+                violations += (cafSpacingSlots - dist)
+            }
+        }
+
+        return violations
     }
 
     // MARK: Simulated-annealing refinement

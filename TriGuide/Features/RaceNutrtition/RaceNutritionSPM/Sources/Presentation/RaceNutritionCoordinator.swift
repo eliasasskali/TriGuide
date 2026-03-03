@@ -69,14 +69,18 @@ public extension RaceNutritionCoordinator {
                 carbItemsCoordinator = try factory.buildCarbItemsCoordinator(
                     totalCarbGrams: totalCarbGrams,
                     onCompleteSelection: { [weak self] carbItemsSelection in
-                        guard let self,
-                              let _ = viewModel.calculateFueling(from: carbItemsSelection)
-                        else { return }
-                        pushRaceNutritionResultView()
+                        guard let self else { return }
+                        Task { @MainActor [weak self] in
+                            guard let self,
+                                  let _ = await viewModel.calculateFuelingAsync(from: carbItemsSelection)
+                            else { return }
+                            pushRaceNutritionResultView()
+                        }
                     }
                 )
                 return carbItemsCoordinator?.start()
             }
+
             carbItemsCoordinator.viewModel.totalCarbGrams = totalCarbGrams
             return carbItemsCoordinator.start()
         } catch {

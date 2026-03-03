@@ -43,7 +43,6 @@ struct ContentView: View {
 //                    Label(Localizables.Tabs.materialList, systemImage: "checkmark.square")
 //                }
         }
-        .padding()
     }
 }
 

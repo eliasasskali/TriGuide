@@ -78,7 +78,7 @@ public struct RaceNutritionResultView: View {
                 fuelingPlan
                 hourlyBreakdown
             }
-            .padding()
+            .padding(.vertical)
         }
         .scrollIndicators(.hidden)
     }

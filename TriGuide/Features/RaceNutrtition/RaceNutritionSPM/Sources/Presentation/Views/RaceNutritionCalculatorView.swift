@@ -9,6 +9,13 @@ import SwiftUI
 import TriGuideDomain
 
 struct RaceNutritionCalculatorView: View {
+    // MARK: - Nested Types
+
+    private enum FocusedField: Hashable {
+        case gramsPerHour
+        case weight
+    }
+
     // MARK: - Dependencies
 
     @StateObject var viewModel: RaceNutritionViewModel
@@ -19,6 +26,7 @@ struct RaceNutritionCalculatorView: View {
     @State private var shouldShowPaceCalculator = false
     @State private var shouldShowAdvancedOptions = false
     @State private var shouldShowSelectSportErrorOnPaceCalculator = false
+    @FocusState private var focusedField: FocusedField?
 
     // MARK: - Computed properties
 
@@ -35,13 +43,16 @@ struct RaceNutritionCalculatorView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
                     title
+                        .padding(.horizontal)
                     sportAndDuration
                     carbInputOrEstimate
                     advancedOptionsSection
                 }
             }
+            .scrollDismissesKeyboard(.interactively)
 
             totalsSummary
+                .padding(.horizontal)
 
             ActionButton(
                 Localizables.RaceNutritionCalculator.calculateButtonTitle,
@@ -54,12 +65,22 @@ struct RaceNutritionCalculatorView: View {
                     viewModel.calculateTotalGrams()
                 }
             )
+            .padding(.horizontal)
             .padding(.bottom, 8)
         }
+        .loadingOverlay(isLoading: $viewModel.isLoading)
         .onReceive(viewModel.$didFinishCalculation) { didFinish in
             if didFinish, let totalCarbGrams = viewModel.estimatedTotalGrams {
                 coordinator.presentCarbItems(totalCarbGrams: totalCarbGrams)
                 viewModel.didFinishCalculation = false
+            }
+        }
+        .toolbar {
+            ToolbarItemGroup(placement: .keyboard) {
+                Spacer()
+                Button(Localizables.Common.done) {
+                    focusedField = nil
+                }
             }
         }
         .navigationTitle(Localizables.RaceNutritionCalculator.title)
@@ -146,6 +167,7 @@ private extension RaceNutritionCalculatorView {
                     format: .number
                 )
                 .keyboardType(.decimalPad)
+                .focused($focusedField, equals: .gramsPerHour)
                 .cardBackground(innerHorizontalPadding: 12, innerVerticalPadding: 12)
 
                 HStack {
@@ -160,6 +182,7 @@ private extension RaceNutritionCalculatorView {
                 HStack(spacing: 8) {
                     TextField(Localizables.RaceNutritionCalculator.weightKg, value: $viewModel.weight, format: .number)
                         .keyboardType(.decimalPad)
+                        .focused($focusedField, equals: .weight)
                         .cardBackground(innerHorizontalPadding: 12, innerVerticalPadding: 12)
 
                     Picker(Localizables.Common.intensity, selection: $viewModel.intensity) {
@@ -250,92 +273,104 @@ private extension RaceNutritionCalculatorView {
                 }
                 .contentShape(Rectangle())
                 .onTapGesture {
-                    shouldShowAdvancedOptions.toggle()
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        shouldShowAdvancedOptions.toggle()
+                    }
                 }
 
                 if shouldShowAdvancedOptions {
-                    Toggle(isOn: $viewModel.hasConsumedCaffeineBefore) {
-                        HStack {
-                            InfoLabel {
-                                Text(Localizables.RaceNutritionCalculator.consumedCaffeineBeforeInformationDescription)
-                            }
-                            Text(Localizables.RaceNutritionCalculator.consumedCaffeineBefore)
-                        }
-                    }
+                    toggleField(
+                        isOn: $viewModel.hasConsumedCaffeineBefore,
+                        label: Localizables.RaceNutritionCalculator.consumedCaffeineBefore,
+                        infoLabelDescription: Localizables.RaceNutritionCalculator.consumedCaffeineBeforeInformationDescription
+                    )
 
-                    Toggle(isOn: $viewModel.fasted) {
-                        HStack {
-                            InfoLabel {
-                                Text(Localizables.RaceNutritionCalculator.fastedStateInformationDescription)
-                            }
-                            Text(Localizables.RaceNutritionCalculator.fastedState)
-                        }
-                    }
+                    toggleField(
+                        isOn: $viewModel.fasted,
+                        label: Localizables.RaceNutritionCalculator.fastedState,
+                        infoLabelDescription: Localizables.RaceNutritionCalculator.fastedStateInformationDescription
+                    )
 
-                    Toggle(isOn: $viewModel.gutTrained) {
-                        HStack {
-                            InfoLabel {
-                                Text(Localizables.RaceNutritionCalculator.gutTrainedInformationDescription)
-                            }
-                            Text(Localizables.RaceNutritionCalculator.gutTrained)
-                        }
-                    }
+                    toggleField(
+                        isOn: $viewModel.gutTrained,
+                        label: Localizables.RaceNutritionCalculator.gutTrained,
+                        infoLabelDescription: Localizables.RaceNutritionCalculator.gutTrainedInformationDescription
+                    )
 
-                    Toggle(isOn: $viewModel.capped) {
-                        HStack {
-                            InfoLabel {
-                                Text(Localizables.RaceNutritionCalculator.applyAmateurLimitsInformationDescription)
-                            }
-                            Text(Localizables.RaceNutritionCalculator.applyAmateurLimits)
-                        }
-                    }
+                    toggleField(
+                        isOn: $viewModel.capped,
+                        label: Localizables.RaceNutritionCalculator.applyAmateurLimits,
+                        infoLabelDescription: Localizables.RaceNutritionCalculator.applyAmateurLimitsInformationDescription
+                    )
 
-                    VStack(alignment: .leading, spacing: 8) {
-                        HStack {
-                            HStack {
-                                InfoLabel {
-                                    VStack {
-                                        Text(Localizables.RaceNutritionCalculator.startEatingAtInformationDescription)
-                                    }
-                                }
-                                Text(Localizables.RaceNutritionCalculator.startEatingAt)
-                                Spacer()
-                                Text(viewModel.startEatingAt.formattedAsHourMin)
-                                    .monospacedDigit()
-                            }
-                        }
-                        Slider(
-                            value: $viewModel.startEatingAt,
-                            in: -0 ... (viewModel.duration ?? 0),
-                            step: 1
-                        ) { Text(Localizables.RaceNutritionCalculator.startEatingAt) }
-                    }
-                    .padding(.top, 4)
+                    sliderField(
+                        label: Localizables.RaceNutritionCalculator.startEatingAt,
+                        infoLabelDescription: Localizables.RaceNutritionCalculator.startEatingAtInformationDescription,
+                        value: viewModel.startEatingAt.formattedAsHourMin,
+                        sliderValue: $viewModel.startEatingAt,
+                        sliderLabel: Localizables.RaceNutritionCalculator.startEatingAt,
+                        range: -0 ... (viewModel.duration ?? 900),
+                        step: 300
+                    )
 
-                    VStack(alignment: .leading, spacing: 8) {
-                        HStack {
-                            HStack {
-                                InfoLabel {
-                                    VStack {
-                                        Text(Localizables.RaceNutritionCalculator.ambientTemperatureInformationDescription)
-                                    }
-                                }
-                                Text(Localizables.RaceNutritionCalculator.ambientTemperatureC)
-                                Spacer()
-                                Text("\(Int(viewModel.ambientTempC))\(Localizables.Units.celsiusSymbol)")
-                                    .monospacedDigit()
-                            }
-                        }
-                        Slider(
-                            value: $viewModel.ambientTempC,
-                            in: -10 ... 50,
-                            step: 1
-                        ) { Text(Localizables.RaceNutritionCalculator.ambientTemperature) }
-                    }
-                    .padding(.top, 4)
+                    sliderField(
+                        label: Localizables.RaceNutritionCalculator.ambientTemperatureC,
+                        infoLabelDescription: Localizables.RaceNutritionCalculator.ambientTemperatureInformationDescription,
+                        value: "\(Int(viewModel.ambientTempC))\(Localizables.Units.celsiusSymbol)",
+                        sliderValue: $viewModel.ambientTempC,
+                        sliderLabel: Localizables.RaceNutritionCalculator.ambientTemperature,
+                        range: -10 ... 50
+                    )
                 }
             }
         }
+    }
+
+    func toggleField(
+        isOn: Binding<Bool>,
+        label: String,
+        infoLabelDescription: @autoclosure @escaping () -> String
+    ) -> some View {
+        Toggle(isOn: isOn) {
+            HStack(alignment: .center, spacing: 8) {
+                InfoLabel {
+                    Text(infoLabelDescription())
+                }
+                Text(label)
+            }
+        }
+    }
+
+    func sliderField(
+        label: String,
+        infoLabelDescription: @autoclosure @escaping () -> String,
+        value: String,
+        sliderValue: Binding<Double>,
+        sliderLabel: String,
+        range: ClosedRange<Double>,
+        step: Double = 1
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                HStack {
+                    InfoLabel {
+                        Text(infoLabelDescription())
+                    }
+                    Text(label)
+                    Spacer()
+                    Text(value)
+                        .monospacedDigit()
+                }
+            }
+            Slider(
+                value: sliderValue,
+                in: range,
+                step: step
+            ) {
+                Text(sliderLabel)
+            }
+        }
+        .padding(.top, 4)
     }
 
     func togglePaceCalculator() {

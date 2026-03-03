@@ -7,7 +7,7 @@ import TriGuideDomain
 
 // MARK: - CalculateFuelingResultUseCase
 
-public protocol CalculateFuelingResultUseCase: UseCase {
+public protocol CalculateFuelingResultUseCase: UseCase, Sendable {
     func execute(fuelingInput: FuelingInput) -> FuelingResult
 }
 
