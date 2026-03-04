@@ -127,6 +127,7 @@ private extension FuelingPlanEditView {
         HStack(spacing: 12) {
             ActionButton(
                 Localizables.RaceNutritionResults.editViewResetButtonLabel,
+                isDisabled: !hasPendingChanges,
                 accessibilityHint: Localizables.AccessibilityHints.tapTo(
                     Localizables.RaceNutritionResults.editViewResetButtonLabel
                 ),
@@ -136,6 +137,7 @@ private extension FuelingPlanEditView {
 
             ActionButton(
                 Localizables.RaceNutritionResults.editViewApplyButtonLabel,
+                isDisabled: !hasPendingChanges,
                 accessibilityHint: Localizables.AccessibilityHints.tapTo(
                     Localizables.RaceNutritionResults.editViewApplyButtonLabel
                 ),
@@ -147,6 +149,22 @@ private extension FuelingPlanEditView {
             )
             .frame(maxWidth: .infinity)
         }
+    }
+
+    var hasPendingChanges: Bool {
+        let currentInstant = editableInstantEvents.sorted { $0.consumptionTimeOrZero < $1.consumptionTimeOrZero }
+        let originalInstant = result.instantEvents.sorted { $0.consumptionTimeOrZero < $1.consumptionTimeOrZero }
+
+        let currentInterval = editableIntervalEvents.sorted { $0.consumptionTimeOrZero < $1.consumptionTimeOrZero }
+        let originalInterval = result.intervalEvents.sorted { $0.consumptionTimeOrZero < $1.consumptionTimeOrZero }
+
+        let timelineChanged = currentInstant != originalInstant || currentInterval != originalInterval
+
+        guard showNameEditor else { return timelineChanged }
+
+        let currentName = planName.trimmingCharacters(in: .whitespacesAndNewlines)
+        let originalName = (result.name ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        return timelineChanged || currentName != originalName
     }
 
     // MARK: - Action methods

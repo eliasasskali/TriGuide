@@ -122,7 +122,7 @@ private extension CarbItemsView {
         }
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
-        .searchable(text: $searchText)
+        .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always))
         .refreshable {
             await refreshAll()
         }

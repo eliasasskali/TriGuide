@@ -122,7 +122,7 @@ private extension RaceNutritionCalculatorView {
 
                     Picker(Localizables.Common.sport, selection: $viewModel.sport) {
                         Text(Localizables.RaceNutritionCalculator.selectSport).tag(nil as SupportedSport?)
-                        ForEach(SupportedSport.singleSports, id: \.self) { sport in
+                        ForEach(SupportedSport.nutritionSupportedSports, id: \.self) { sport in
                             Text(sport.localized).tag(sport)
                         }
                     }

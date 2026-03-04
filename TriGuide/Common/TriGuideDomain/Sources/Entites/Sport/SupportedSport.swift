@@ -14,8 +14,8 @@ public enum SupportedSport: CaseIterable, Sendable {
     case triathlon
     case duathlon
 
-    public static var singleSports: [SupportedSport] {
-        return [.swim, .bike, .run]
+    public static var nutritionSupportedSports: [SupportedSport] {
+        return [.bike, .run]
     }
 
     public var localized: String {

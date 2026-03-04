@@ -20,6 +20,7 @@ public struct RaceNutritionResultView: View {
     @State private var shouldShowSelectedItems = false
     @State private var showSavedSuccessfullyToast = false
     @State private var showPlanNameDialog = false
+    @State private var errorAlertMessage: String?
     @State private var planName = ""
     @State private var isSavingPlan = false
     @State private var lastSavedFuelingResult: FuelingResult?
@@ -98,53 +99,63 @@ public struct RaceNutritionResultView: View {
                 bottomSaveBar
             }
         }
-        .errorAlert(
-            message: Binding(
-                get: { viewModel.errorMessage },
-                set: { viewModel.errorMessage = $0 }
-            )
-        )
         .toast(
             isPresented: $showSavedSuccessfullyToast,
             message: Localizables.RaceNutritionResults.saveSuccessToastMessage
         )
         .alert(
-            Localizables.RaceNutritionResults.savePlanButtonLabel,
-            isPresented: $showPlanNameDialog
+            alertTitle,
+            isPresented: isAlertPresented
         ) {
-            TextField(
-                Localizables.RaceNutritionResults.savePlanNamePlaceholder,
-                text: $planName
-            )
+            if errorAlertMessage == nil {
+                TextField(
+                    Localizables.RaceNutritionResults.savePlanNamePlaceholder,
+                    text: $planName
+                )
 
-            Button(Localizables.Common.cancel, role: .cancel) {
-                showPlanNameDialog = false
-            }
+                Button(Localizables.Common.cancel, role: .cancel) {
+                    showPlanNameDialog = false
+                }
 
-            Button(Localizables.Common.save) {
-                Task {
-                    let trimmedName = planName.trimmingCharacters(in: .whitespacesAndNewlines)
-                    guard !trimmedName.isEmpty else {
-                        viewModel.errorMessage = Localizables.FormErrors.requiredField
-                        return
+                Button(Localizables.Common.save) {
+                    Task {
+                        let trimmedName = planName.trimmingCharacters(in: .whitespacesAndNewlines)
+                        guard !trimmedName.isEmpty else {
+                            return
+                        }
+
+                        isSavingPlan = true
+                        defer { isSavingPlan = false }
+
+                        let savedSuccessfully =
+                            await viewModel.saveFuelingPlan(
+                                fuelingResult,
+                                planName: trimmedName
+                            )
+                        showSavedSuccessfullyToast = savedSuccessfully
+
+                        if savedSuccessfully {
+                            lastSavedFuelingResult = fuelingResult
+                            planName = ""
+                            showPlanNameDialog = false
+                        } else {
+                            errorAlertMessage = viewModel.errorMessage ?? Localizables.Errors.generic
+                            viewModel.errorMessage = nil
+                            showPlanNameDialog = false
+                        }
                     }
-
-                    isSavingPlan = true
-                    defer { isSavingPlan = false }
-
-                    let savedSuccessfully =
-                        await viewModel.saveFuelingPlan(
-                            fuelingResult,
-                            planName: trimmedName
-                        )
-                    showSavedSuccessfullyToast = savedSuccessfully
-                    if savedSuccessfully {
-                        lastSavedFuelingResult = fuelingResult
-                    }
-                    planName = ""
+                }
+                .accessibilityHint(Localizables.AccessibilityHints.tapTo(Localizables.RaceNutritionResults.savePlanButtonHint))
+                .disabled(!isPlanNameValid || isSavingPlan)
+            } else {
+                Button(Localizables.Common.ok, role: .cancel) {
+                    errorAlertMessage = nil
                 }
             }
-            .accessibilityHint(Localizables.AccessibilityHints.tapTo(Localizables.RaceNutritionResults.savePlanButtonHint))
+        } message: {
+            if let errorAlertMessage {
+                Text(errorAlertMessage)
+            }
         }
         .navigationTitle(screenTitle)
     }
@@ -153,6 +164,28 @@ public struct RaceNutritionResultView: View {
 // MARK: - Private methods
 
 private extension RaceNutritionResultView {
+    var isAlertPresented: Binding<Bool> {
+        Binding(
+            get: { showPlanNameDialog || errorAlertMessage != nil },
+            set: { isPresented in
+                if !isPresented {
+                    showPlanNameDialog = false
+                    errorAlertMessage = nil
+                }
+            }
+        )
+    }
+
+    var alertTitle: String {
+        errorAlertMessage == nil
+            ? Localizables.RaceNutritionResults.savePlanButtonLabel
+            : Localizables.Common.error
+    }
+
+    var isPlanNameValid: Bool {
+        !planName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
     var screenTitle: String {
         let trimmedName = fuelingResult.name?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
         return trimmedName.isEmpty ? Localizables.RaceNutritionResults.fuelingPlanTitle : trimmedName
@@ -358,6 +391,7 @@ private extension RaceNutritionResultView {
                 Localizables.RaceNutritionResults.savePlanButtonHint
             ),
             action: {
+                errorAlertMessage = nil
                 showPlanNameDialog = true
             }
         )
