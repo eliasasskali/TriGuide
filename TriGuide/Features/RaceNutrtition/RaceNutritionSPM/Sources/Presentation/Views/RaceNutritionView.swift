@@ -10,14 +10,18 @@ public struct RaceNutritionView: View {
     @ObservedObject private var viewModel: RaceNutritionViewModel
     @ObservedObject private var coordinator: RaceNutritionCoordinator
 
+    private let factory: RaceNutritionViewFactory
+
     // MARK: - Initializer
 
     public init(
         viewModel: RaceNutritionViewModel,
-        coordinator: RaceNutritionCoordinator
+        coordinator: RaceNutritionCoordinator,
+        factory: RaceNutritionViewFactory
     ) {
         self.viewModel = viewModel
         self.coordinator = coordinator
+        self.factory = factory
     }
 
     // MARK: - Body
@@ -39,25 +43,10 @@ public struct RaceNutritionView: View {
             .navigationDestination(for: RaceNutritionCoordinator.Path.self) { path in
                 switch path {
                 case .raceNutritionResult:
-                    if let binding = Binding(
-                        get: { viewModel.fuelingResult },
-                        set: { viewModel.fuelingResult = $0 }
-                    ).unwrap() {
-                        RaceNutritionResultView(
-                            coordinator: coordinator,
-                            fuelingResult: binding
-                        )
-                    } else {
-                        EmptyView()
-                    }
+                    coordinator.buildRaceNutritionResultDestination()
 
                 case .fuelingPlanFullView:
-                    if let binding = Binding(
-                        get: { viewModel.fuelingResult },
-                        set: { viewModel.fuelingResult = $0 }
-                    ).unwrap() {
-                        FuelingPlanEditView(result: binding)
-                    }
+                    coordinator.buildFuelingPlanEditDestination()
                 }
             }
         }

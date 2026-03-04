@@ -4,7 +4,7 @@
 
 import Foundation
 
-public struct CarbItem: Sendable, Decodable {
+public struct CarbItem: Sendable, Codable {
     public let id: String
     public let name: String
     public let gramsOfCarbs: Double

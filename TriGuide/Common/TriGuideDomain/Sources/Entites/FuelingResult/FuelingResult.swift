@@ -4,13 +4,17 @@
 
 import Foundation
 
-public struct FuelingResult: Equatable, Sendable, Hashable {
+public struct FuelingResult: Equatable, Sendable, Hashable, Codable {
+    // MARK: - Depdencies
+
     public var name: String?
     public let timeLine: [FuelingEvent]
     public let totalCarbsTarget: Double
     public let duration: TimeInterval
     public let selectedItems: [CarbItemSelection]
     public let hourlyBreakdown: [IntervalFueling]
+
+    // MARK: - Computed Properties
 
     public var totalSelectedCarbs: Double {
         selectedItems.reduce(0) { $0 + $1.item.gramsOfCarbs * $1.quantity }
@@ -42,6 +46,8 @@ public struct FuelingResult: Equatable, Sendable, Hashable {
         }
     }
 
+    // MARK: - Initializer
+
     public init(
         name: String? = nil,
         timeLine: [FuelingEvent],
@@ -56,5 +62,15 @@ public struct FuelingResult: Equatable, Sendable, Hashable {
         self.duration = duration
         self.selectedItems = selectedItems
         self.hourlyBreakdown = hourlyBreakdown
+    }
+
+    // MARK: - Equatable
+
+    public static func == (lhs: FuelingResult, rhs: FuelingResult) -> Bool {
+        lhs.timeLine == rhs.timeLine &&
+            lhs.totalCarbsTarget == rhs.totalCarbsTarget &&
+            lhs.duration == rhs.duration &&
+            lhs.selectedItems == rhs.selectedItems &&
+            lhs.hourlyBreakdown == rhs.hourlyBreakdown
     }
 }

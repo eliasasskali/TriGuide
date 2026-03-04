@@ -5,8 +5,12 @@
 import Foundation
 
 public actor LocalStorage<T: Codable> {
+    // MARK: - Dependencies
+
     private let directory: URL
     private let fileName: String
+
+    // MARK: - Initializer
 
     public init(fileName: String, directory: URL? = nil) throws {
         if let dir = directory {
@@ -19,18 +23,13 @@ public actor LocalStorage<T: Codable> {
         self.fileName = fileName
     }
 
+    // MARK: - Computed properties
+
     private var fileURL: URL {
         directory.appendingPathComponent("\(fileName).json")
     }
 
-    public func save(_ value: T) async throws {
-        do {
-            let data = try JSONEncoder().encode(value)
-            try data.write(to: fileURL, options: [.atomic])
-        } catch {
-            throw LocalStorageError.saveFailed(error)
-        }
-    }
+    // MARK: - Public Methods
 
     public func load() async throws -> T {
         guard FileManager.default.fileExists(atPath: fileURL.path) else {
@@ -43,6 +42,15 @@ public actor LocalStorage<T: Codable> {
             throw LocalStorageError.decodeFailed(decodingError)
         } catch {
             throw LocalStorageError.loadFailed(error)
+        }
+    }
+
+    public func save(_ value: T) async throws {
+        do {
+            let data = try JSONEncoder().encode(value)
+            try data.write(to: fileURL, options: [.atomic])
+        } catch {
+            throw LocalStorageError.saveFailed(error)
         }
     }
 

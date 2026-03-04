@@ -3,21 +3,49 @@
 //
 
 import CarbItemsSPM
+import SwiftUI
 import TriGuideDomain
 
 public final class RaceNutritionViewFactoryDefault {
     public struct Dependencies {
         let fuelingCalculatorDataSource: FuelingCalculatorDataSource
         let calculateFuelingResultUseCase: CalculateFuelingResultUseCase
+        let saveFuelingPlanUseCase: SaveFuelingPlanUseCase
+        let fetchStoredFuelingResultsUseCase: FetchStoredFuelingResultsUseCase
+        let deleteStoredFuelingResultUseCase: DeleteStoredFuelingResultUseCase
 
         public init(
             fuelingCalculatorDataSource: FuelingCalculatorDataSource? = nil,
-            calculateFuelingResultUseCase: CalculateFuelingResultUseCase? = nil
+            calculateFuelingResultUseCase: CalculateFuelingResultUseCase? = nil,
+            nutritionPlansRepository: NutritionPlansRepository? = nil,
+            saveFuelingPlanUseCase: SaveFuelingPlanUseCase? = nil,
+            fetchStoredFuelingResultsUseCase: FetchStoredFuelingResultsUseCase? = nil,
+            deleteStoredFuelingResultUseCase: DeleteStoredFuelingResultUseCase? = nil
         ) {
             self.fuelingCalculatorDataSource = fuelingCalculatorDataSource ?? LocalFuelingCalculator()
             self.calculateFuelingResultUseCase = calculateFuelingResultUseCase ?? CalculateFuelingResultUseCaseDefault(
                 dataSource: self.fuelingCalculatorDataSource
             )
+
+            let repository: NutritionPlansRepository
+            if let nutritionPlansRepository {
+                repository = nutritionPlansRepository
+            } else {
+                do {
+                    let dataSource = try StoredNutritionPlansDataSourceDefault()
+                    repository = NutritionPlansRepositoryDefault(
+                        nutritionPlansDataSource: dataSource
+                    )
+                } catch {
+                    fatalError("Failed to create StoredNutritionPlansDataSourceDefault: \(error)")
+                }
+            }
+
+            self.saveFuelingPlanUseCase = saveFuelingPlanUseCase ?? SaveFuelingPlanUseCaseDefault(repository: repository)
+            self.fetchStoredFuelingResultsUseCase = fetchStoredFuelingResultsUseCase
+                ?? FetchStoredFuelingResultsUseCaseDefault(repository: repository)
+            self.deleteStoredFuelingResultUseCase = deleteStoredFuelingResultUseCase
+                ?? DeleteStoredFuelingResultUseCaseDefault(repository: repository)
         }
     }
 
@@ -41,7 +69,8 @@ extension RaceNutritionViewFactoryDefault: RaceNutritionViewFactory {
     ) -> RaceNutritionView {
         RaceNutritionView(
             viewModel: viewModel,
-            coordinator: coordinator
+            coordinator: coordinator,
+            factory: self
         )
     }
 
@@ -59,6 +88,43 @@ extension RaceNutritionViewFactoryDefault: RaceNutritionViewFactory {
         return CarbItemsCoordinator(
             factory: carbItemsFactory,
             onCompleteSelection: onCompleteSelection
+        )
+    }
+
+    @MainActor public func buildRaceNutritionResultView(
+        coordinator: RaceNutritionCoordinator,
+        viewModel: RaceNutritionResultViewModel,
+        showSaveButton: Bool,
+        fuelingResult: Binding<FuelingResult>
+    ) -> RaceNutritionResultView {
+        return RaceNutritionResultView(
+            coordinator: coordinator,
+            viewModel: viewModel,
+            showSaveButton: showSaveButton,
+            fuelingResult: fuelingResult
+        )
+    }
+
+    @MainActor public func buildRaceNutritionResultViewModel() -> RaceNutritionResultViewModel {
+        RaceNutritionResultViewModel(
+            saveFuelingPlanUseCase: dependencies.saveFuelingPlanUseCase,
+            deleteStoredFuelingResultUseCase: dependencies.deleteStoredFuelingResultUseCase
+        )
+    }
+
+    @MainActor public func buildStoredNutritionPlansListViewModel() -> StoredNutritionPlansListViewModel {
+        StoredNutritionPlansListViewModel(
+            fetchStoredFuelingResultsUseCase: dependencies.fetchStoredFuelingResultsUseCase,
+            deleteStoredFuelingResultUseCase: dependencies.deleteStoredFuelingResultUseCase
+        )
+    }
+
+    @MainActor public func buildStoredNutritionPlansListView(
+        coordinator: RaceNutritionCoordinator?
+    ) -> StoredNutritionPlansListView {
+        StoredNutritionPlansListView(
+            viewModel: buildStoredNutritionPlansListViewModel(),
+            coordinator: coordinator
         )
     }
 }

@@ -55,6 +55,10 @@ public enum Localizables {
         public static var ok: String {
             String(localized: "ok", bundle: .module)
         }
+
+        public static var cancel: String {
+            String(localized: "cancel", bundle: .module)
+        }
     }
 
     // MARK: - App tabs

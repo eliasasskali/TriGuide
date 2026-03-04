@@ -13,18 +13,29 @@ struct FuelingPlanEditView: View {
     // MARK: - Dependencies
 
     @Binding var result: FuelingResult
+    let onApplyChanges: ((FuelingResult) async -> Bool)?
+    let showNameEditor: Bool
     @State private var editableInstantEvents: [FuelingEvent]
     @State private var editableIntervalEvents: [FuelingEvent]
     @State private var liveHourlyBreakdown: [IntervalFueling]
+    @State private var planName: String
+    @State private var validationErrorMessage: String?
 
     // MARK: - Initializer
 
-    init(result: Binding<TriGuideDomain.FuelingResult>) {
+    init(
+        result: Binding<TriGuideDomain.FuelingResult>,
+        showNameEditor: Bool = false,
+        onApplyChanges: ((FuelingResult) async -> Bool)? = nil
+    ) {
         _result = result
+        self.showNameEditor = showNameEditor
+        self.onApplyChanges = onApplyChanges
 
         _editableInstantEvents = State(initialValue: result.wrappedValue.instantEvents)
         _editableIntervalEvents = State(initialValue: result.wrappedValue.intervalEvents)
         _liveHourlyBreakdown = State(initialValue: result.wrappedValue.hourlyBreakdown)
+        _planName = State(initialValue: result.wrappedValue.name ?? "")
     }
 
     // MARK: - Body
@@ -32,6 +43,11 @@ struct FuelingPlanEditView: View {
     var body: some View {
         ScrollView {
             LazyVStack(spacing: 16) {
+                if showNameEditor {
+                    planNameEditor
+                        .padding(.horizontal)
+                }
+
                 if !editableInstantEvents.isEmpty {
                     InstantEventsTimelineEditor(
                         duration: result.duration,
@@ -52,8 +68,8 @@ struct FuelingPlanEditView: View {
             }
         }
         .scrollIndicators(.hidden)
-        .safeAreaInset(edge: .bottom) {
-            actionButtons
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            bottomActionBar
         }
         .onChange(of: editableInstantEvents) {
             recomputeLiveBreakdown()
@@ -65,16 +81,37 @@ struct FuelingPlanEditView: View {
             editableInstantEvents = newResult.instantEvents
             editableIntervalEvents = newResult.intervalEvents
             liveHourlyBreakdown = newResult.hourlyBreakdown
+            planName = newResult.name ?? ""
         }
         .onAppear {
             recomputeLiveBreakdown()
         }
+        .errorAlert(message: $validationErrorMessage)
     }
 }
 
 // MARK: - Private methods
 
 private extension FuelingPlanEditView {
+    var bottomActionBar: some View {
+        actionButtons
+            .padding()
+            .frame(maxWidth: .infinity)
+            .background(.bar)
+            .overlay(alignment: .top) {
+                Divider()
+            }
+    }
+
+    var planNameEditor: some View {
+        GroupBox {
+            TextField(
+                Localizables.RaceNutritionResults.savePlanNamePlaceholder,
+                text: $planName
+            )
+        }
+    }
+
     var breakdownView: some View {
         GroupBox {
             VStack(alignment: .leading, spacing: 16) {
@@ -87,29 +124,47 @@ private extension FuelingPlanEditView {
     }
 
     var actionButtons: some View {
-        VStack(spacing: 10) {
-            HStack(spacing: 12) {
-                ActionButton(
-                    Localizables.RaceNutritionResults.editViewResetButtonLabel,
-                    accessibilityHint: Localizables.AccessibilityHints.tapTo(
-                        Localizables.RaceNutritionResults.editViewResetButtonLabel
-                    ),
-                    action: resetToOriginal
-                )
-                .frame(maxWidth: .infinity)
+        HStack(spacing: 12) {
+            ActionButton(
+                Localizables.RaceNutritionResults.editViewResetButtonLabel,
+                isDisabled: !hasPendingChanges,
+                accessibilityHint: Localizables.AccessibilityHints.tapTo(
+                    Localizables.RaceNutritionResults.editViewResetButtonLabel
+                ),
+                action: resetToOriginal
+            )
+            .frame(maxWidth: .infinity)
 
-                ActionButton(
-                    Localizables.RaceNutritionResults.editViewApplyButtonLabel,
-                    accessibilityHint: Localizables.AccessibilityHints.tapTo(
-                        Localizables.RaceNutritionResults.editViewApplyButtonLabel
-                    ),
-                    action: applyChanges
-                )
-                .frame(maxWidth: .infinity)
-            }
-            .padding(8)
+            ActionButton(
+                Localizables.RaceNutritionResults.editViewApplyButtonLabel,
+                isDisabled: !hasPendingChanges,
+                accessibilityHint: Localizables.AccessibilityHints.tapTo(
+                    Localizables.RaceNutritionResults.editViewApplyButtonLabel
+                ),
+                action: {
+                    Task {
+                        await applyChanges()
+                    }
+                }
+            )
+            .frame(maxWidth: .infinity)
         }
-        .background(.ultraThinMaterial)
+    }
+
+    var hasPendingChanges: Bool {
+        let currentInstant = editableInstantEvents.sorted { $0.consumptionTimeOrZero < $1.consumptionTimeOrZero }
+        let originalInstant = result.instantEvents.sorted { $0.consumptionTimeOrZero < $1.consumptionTimeOrZero }
+
+        let currentInterval = editableIntervalEvents.sorted { $0.consumptionTimeOrZero < $1.consumptionTimeOrZero }
+        let originalInterval = result.intervalEvents.sorted { $0.consumptionTimeOrZero < $1.consumptionTimeOrZero }
+
+        let timelineChanged = currentInstant != originalInstant || currentInterval != originalInterval
+
+        guard showNameEditor else { return timelineChanged }
+
+        let currentName = planName.trimmingCharacters(in: .whitespacesAndNewlines)
+        let originalName = (result.name ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        return timelineChanged || currentName != originalName
     }
 
     // MARK: - Action methods
@@ -117,6 +172,7 @@ private extension FuelingPlanEditView {
     func resetToOriginal() {
         editableInstantEvents = result.instantEvents
         editableIntervalEvents = result.intervalEvents
+        planName = result.name ?? ""
         recomputeLiveBreakdown()
     }
 
@@ -130,8 +186,14 @@ private extension FuelingPlanEditView {
         )
     }
 
-    func applyChanges() {
+    func applyChanges() async {
         let current = result
+        let trimmedName = planName.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        if showNameEditor, trimmedName.isEmpty {
+            validationErrorMessage = Localizables.FormErrors.requiredField
+            return
+        }
 
         let sortedInstantEvents = editableInstantEvents.sorted { $0.consumptionTimeOrZero < $1.consumptionTimeOrZero }
         let sortedIntervalEvents = editableIntervalEvents.sorted { $0.consumptionTimeOrZero < $1.consumptionTimeOrZero }
@@ -141,13 +203,18 @@ private extension FuelingPlanEditView {
             events: newTimeLine
         )
         let updated = FuelingResult(
-            name: current.name,
+            name: showNameEditor ? trimmedName : current.name,
             timeLine: newTimeLine,
             totalCarbsTarget: current.totalCarbsTarget,
             duration: current.duration,
             selectedItems: current.selectedItems,
             hourlyBreakdown: newHourlyBreakdown
         )
+
+        if let onApplyChanges {
+            let success = await onApplyChanges(updated)
+            guard success else { return }
+        }
 
         result = updated
         liveHourlyBreakdown = newHourlyBreakdown

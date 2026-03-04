@@ -21,5 +21,20 @@ public extension Localizables {
         public static var carbItemsLoadingFailed: String {
             String(localized: "errors_carb-items-loading-failed", bundle: .module)
         }
+
+        // Fueling Plan
+
+        public static var fuelingPlanDuplicateItem: String {
+            String(localized: "errors_fueling-plan-duplicate-item", bundle: .module)
+        }
+
+        public static var fuelingPlanSaveFailed: String {
+            String(localized: "errors_fueling-plan-save-failed", bundle: .module)
+        }
+
+        // Couldn't delete the plan. Please try again.
+        public static var fuelingPlanDeleteFailed: String {
+            String(localized: "errors_fueling-plan-delete-failed", bundle: .module)
+        }
     }
 }

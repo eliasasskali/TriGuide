@@ -73,8 +73,8 @@ public struct CarbItemsView: View {
                         dismiss()
                         coordinator.onCompleteSelection?(viewModel.selectedCarbItems)
                     }
-                    .padding(.bottom)
                     .padding(.horizontal)
+                    .padding(.vertical, 8)
                 }
             }
             .background(Color(.systemGroupedBackground))
@@ -122,7 +122,7 @@ private extension CarbItemsView {
         }
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
-        .searchable(text: $searchText)
+        .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always))
         .refreshable {
             await refreshAll()
         }
