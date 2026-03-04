@@ -22,10 +22,16 @@ public protocol RaceNutritionViewFactory {
 
     @MainActor func buildRaceNutritionResultView(
         coordinator: RaceNutritionCoordinator,
+        viewModel: RaceNutritionResultViewModel,
+        showSaveButton: Bool,
         fuelingResult: Binding<FuelingResult>
     ) -> RaceNutritionResultView
 
+    @MainActor func buildRaceNutritionResultViewModel() -> RaceNutritionResultViewModel
+
     @MainActor func buildStoredNutritionPlansListViewModel() -> StoredNutritionPlansListViewModel
 
-    @MainActor func buildStoredNutritionPlansListView() -> StoredNutritionPlansListView
+    @MainActor func buildStoredNutritionPlansListView(
+        coordinator: RaceNutritionCoordinator?
+    ) -> StoredNutritionPlansListView
 }

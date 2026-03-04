@@ -10,12 +10,17 @@ import TriGuideDomain
 public struct StoredNutritionPlansListView: View {
     // MARK: - Dependencies
 
-    @ObservedObject private var viewModel: StoredNutritionPlansListViewModel
+    @StateObject private var viewModel: StoredNutritionPlansListViewModel
+    private let coordinator: RaceNutritionCoordinator?
 
     // MARK: - Initializer
 
-    init(viewModel: StoredNutritionPlansListViewModel) {
-        self.viewModel = viewModel
+    init(
+        viewModel: StoredNutritionPlansListViewModel,
+        coordinator: RaceNutritionCoordinator? = nil
+    ) {
+        _viewModel = StateObject(wrappedValue: viewModel)
+        self.coordinator = coordinator
     }
 
     // MARK: - Body
@@ -32,9 +37,16 @@ public struct StoredNutritionPlansListView: View {
             } else {
                 List {
                     ForEach(viewModel.plans, id: \.self) { plan in
-                        cell(plan)
-                            .contentShape(Rectangle())
-                            .onTapGesture {}
+                        Button {
+                            coordinator?.openStoredFuelingResult(plan)
+                        } label: {
+                            cell(plan)
+                                .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
+                        .listRowSeparator(.hidden)
+                        .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
+                        .listRowBackground(Color.clear)
                     }
                     .onDelete { offsets in
                         Task {
@@ -43,6 +55,8 @@ public struct StoredNutritionPlansListView: View {
                     }
                 }
                 .listStyle(.plain)
+                .scrollContentBackground(.hidden)
+                .background(Color(.systemGroupedBackground))
             }
         }
         .navigationTitle(Localizables.RaceNutritionResults.storedPlansTitle)
@@ -80,10 +94,10 @@ private extension StoredNutritionPlansListView {
                 .font(.Custom.Regular.font3)
             }
         }
-        .padding(.vertical, 6)
+        .cardBackground(innerHorizontalPadding: 12, innerVerticalPadding: 12)
     }
 }
 
 #Preview {
-    RaceNutritionViewFactoryDefault(dependencies: .init()).buildStoredNutritionPlansListView()
+    RaceNutritionViewFactoryDefault(dependencies: .init()).buildStoredNutritionPlansListView(coordinator: nil)
 }

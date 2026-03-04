@@ -93,13 +93,22 @@ extension RaceNutritionViewFactoryDefault: RaceNutritionViewFactory {
 
     @MainActor public func buildRaceNutritionResultView(
         coordinator: RaceNutritionCoordinator,
+        viewModel: RaceNutritionResultViewModel,
+        showSaveButton: Bool,
         fuelingResult: Binding<FuelingResult>
     ) -> RaceNutritionResultView {
-        let viewModel = RaceNutritionResultViewModel(saveFuelingPlanUseCase: dependencies.saveFuelingPlanUseCase)
         return RaceNutritionResultView(
             coordinator: coordinator,
             viewModel: viewModel,
+            showSaveButton: showSaveButton,
             fuelingResult: fuelingResult
+        )
+    }
+
+    @MainActor public func buildRaceNutritionResultViewModel() -> RaceNutritionResultViewModel {
+        RaceNutritionResultViewModel(
+            saveFuelingPlanUseCase: dependencies.saveFuelingPlanUseCase,
+            deleteStoredFuelingResultUseCase: dependencies.deleteStoredFuelingResultUseCase
         )
     }
 
@@ -110,7 +119,12 @@ extension RaceNutritionViewFactoryDefault: RaceNutritionViewFactory {
         )
     }
 
-    @MainActor public func buildStoredNutritionPlansListView() -> StoredNutritionPlansListView {
-        StoredNutritionPlansListView(viewModel: buildStoredNutritionPlansListViewModel())
+    @MainActor public func buildStoredNutritionPlansListView(
+        coordinator: RaceNutritionCoordinator?
+    ) -> StoredNutritionPlansListView {
+        StoredNutritionPlansListView(
+            viewModel: buildStoredNutritionPlansListViewModel(),
+            coordinator: coordinator
+        )
     }
 }

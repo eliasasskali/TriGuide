@@ -12,6 +12,7 @@ public class RaceNutritionResultViewModel: ObservableObject {
     // MARK: - Dependencies
 
     private let saveFuelingPlanUseCase: SaveFuelingPlanUseCase
+    private let deleteStoredFuelingResultUseCase: DeleteStoredFuelingResultUseCase
 
     // MARK: - Properties
 
@@ -19,8 +20,12 @@ public class RaceNutritionResultViewModel: ObservableObject {
 
     // MARK: - Initializer
 
-    public init(saveFuelingPlanUseCase: SaveFuelingPlanUseCase) {
+    public init(
+        saveFuelingPlanUseCase: SaveFuelingPlanUseCase,
+        deleteStoredFuelingResultUseCase: DeleteStoredFuelingResultUseCase
+    ) {
         self.saveFuelingPlanUseCase = saveFuelingPlanUseCase
+        self.deleteStoredFuelingResultUseCase = deleteStoredFuelingResultUseCase
     }
 
     func saveFuelingPlan(
@@ -29,6 +34,27 @@ public class RaceNutritionResultViewModel: ObservableObject {
     ) async -> Bool {
         do {
             try await saveFuelingPlanUseCase.execute(plan: plan, planName: planName)
+            return true
+        } catch {
+            handle(error)
+            return false
+        }
+    }
+
+    func replaceFuelingPlan(
+        oldPlan: FuelingResult,
+        updatedPlan: FuelingResult
+    ) async -> Bool {
+        let finalName =
+            updatedPlan.name?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false
+                ? updatedPlan.name!
+                : (oldPlan.name?.isEmpty == false
+                    ? oldPlan.name!
+                    : Localizables.RaceNutritionResults.storedPlansItemUnnamedPlan)
+
+        do {
+            try await deleteStoredFuelingResultUseCase.execute(plan: oldPlan)
+            try await saveFuelingPlanUseCase.execute(plan: updatedPlan, planName: finalName)
             return true
         } catch {
             handle(error)

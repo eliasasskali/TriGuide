@@ -39,34 +39,18 @@ struct RaceNutritionCalculatorView: View {
     // MARK: - Body
 
     var body: some View {
-        VStack(spacing: 0) {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    title
-                        .padding(.horizontal)
-                    sportAndDuration
-                    carbInputOrEstimate
-                    advancedOptionsSection
-                }
+        ScrollView {
+            VStack(alignment: .leading, spacing: 20) {
+                title
+                    .padding(.horizontal)
+                sportAndDuration
+                carbInputOrEstimate
+                advancedOptionsSection
             }
-            .scrollDismissesKeyboard(.interactively)
-
-            totalsSummary
-                .padding(.horizontal)
-
-            ActionButton(
-                Localizables.RaceNutritionCalculator.calculateButtonTitle,
-                isLoading: viewModel.isLoading,
-                isDisabled: viewModel.isButtonDisabled,
-                accessibilityHint: Localizables.AccessibilityHints.tapTo(
-                    Localizables.RaceNutritionCalculator.calculateButtonTitle
-                ),
-                action: {
-                    viewModel.calculateTotalGrams()
-                }
-            )
-            .padding(.horizontal)
-            .padding(.vertical, viewModel.estimatedTotalGrams != nil ? 8 : 16)
+        }
+        .scrollDismissesKeyboard(.interactively)
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            bottomActionBar
         }
         .loadingOverlay(isLoading: $viewModel.isLoading)
         .onReceive(viewModel.$didFinishCalculation) { didFinish in
@@ -92,6 +76,32 @@ struct RaceNutritionCalculatorView: View {
 // MARK: - Private methods
 
 private extension RaceNutritionCalculatorView {
+    var bottomActionBar: some View {
+        VStack(spacing: 0) {
+            totalsSummary
+                .padding(.horizontal)
+
+            ActionButton(
+                Localizables.RaceNutritionCalculator.calculateButtonTitle,
+                isLoading: viewModel.isLoading,
+                isDisabled: viewModel.isButtonDisabled,
+                accessibilityHint: Localizables.AccessibilityHints.tapTo(
+                    Localizables.RaceNutritionCalculator.calculateButtonTitle
+                ),
+                action: {
+                    viewModel.calculateTotalGrams()
+                }
+            )
+            .padding(.horizontal)
+            .padding(.vertical, viewModel.estimatedTotalGrams != nil ? 8 : 16)
+        }
+        .frame(maxWidth: .infinity)
+        .background(.bar)
+        .overlay(alignment: .top) {
+            Divider()
+        }
+    }
+
     var title: some View {
         Text(Localizables.RaceNutritionCalculator.subTitle)
             .font(.Custom.Regular.font3)

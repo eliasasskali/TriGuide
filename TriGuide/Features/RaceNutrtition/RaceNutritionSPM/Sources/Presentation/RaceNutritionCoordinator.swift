@@ -5,6 +5,7 @@
 import CarbItemsSPM
 import NavigationKit
 import SwiftUI
+import TriGuideDomain
 
 public class RaceNutritionCoordinator: BaseCoordinator<RaceNutritionCoordinator.Path, RaceNutritionCoordinator.Sheet, RaceNutritionView> {
     // MARK: - Nested Types
@@ -29,11 +30,14 @@ public class RaceNutritionCoordinator: BaseCoordinator<RaceNutritionCoordinator.
     @Published public var viewModel: RaceNutritionViewModel
     private let factory: RaceNutritionViewFactory
     private var carbItemsCoordinator: CarbItemsCoordinator?
+    private let raceNutritionResultViewModel: RaceNutritionResultViewModel
+    private var originalStoredPlan: FuelingResult?
 
     // MARK: - Initializer
 
     public init(factory: RaceNutritionViewFactory) {
         self.factory = factory
+        raceNutritionResultViewModel = factory.buildRaceNutritionResultViewModel()
         viewModel = factory.buildRaceNutritionViewModel()
         super.init()
     }
@@ -63,6 +67,56 @@ public extension RaceNutritionCoordinator {
         push(.fuelingPlanFullView)
     }
 
+    func openStoredFuelingResult(_ result: FuelingResult) {
+        originalStoredPlan = result
+        viewModel.fuelingResult = result
+        pushRaceNutritionResultView()
+    }
+
+    func buildRaceNutritionResultDestination() -> RaceNutritionResultView? {
+        guard viewModel.fuelingResult != nil else { return nil }
+
+        let binding = Binding<FuelingResult>(
+            get: { self.viewModel.fuelingResult! },
+            set: { self.viewModel.fuelingResult = $0 }
+        )
+
+        return factory.buildRaceNutritionResultView(
+            coordinator: self,
+            viewModel: raceNutritionResultViewModel,
+            showSaveButton: originalStoredPlan == nil,
+            fuelingResult: binding
+        )
+    }
+
+    func buildFuelingPlanEditDestination() -> AnyView {
+        guard viewModel.fuelingResult != nil else {
+            return AnyView(EmptyView())
+        }
+
+        let binding = Binding<FuelingResult>(
+            get: { self.viewModel.fuelingResult! },
+            set: { self.viewModel.fuelingResult = $0 }
+        )
+
+        return AnyView(
+            FuelingPlanEditView(
+                result: binding,
+                showNameEditor: originalStoredPlan != nil
+            ) { [weak self] updatedPlan in
+                guard let self, let originalStoredPlan else { return true }
+                let saved = await raceNutritionResultViewModel.replaceFuelingPlan(
+                    oldPlan: originalStoredPlan,
+                    updatedPlan: updatedPlan
+                )
+                if saved {
+                    self.originalStoredPlan = updatedPlan
+                }
+                return saved
+            }
+        )
+    }
+
     func buildCarbItemsView(totalCarbGrams: Double) -> CarbItemsView? {
         do {
             guard let carbItemsCoordinator else {
@@ -74,6 +128,7 @@ public extension RaceNutritionCoordinator {
                             guard let self,
                                   let _ = await viewModel.calculateFuelingAsync(from: carbItemsSelection)
                             else { return }
+                            originalStoredPlan = nil
                             pushRaceNutritionResultView()
                         }
                     }

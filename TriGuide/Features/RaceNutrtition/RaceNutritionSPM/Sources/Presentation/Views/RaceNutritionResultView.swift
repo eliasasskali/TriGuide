@@ -13,6 +13,7 @@ public struct RaceNutritionResultView: View {
     @ObservedObject private var coordinator: RaceNutritionCoordinator
     @ObservedObject private var viewModel: RaceNutritionResultViewModel
     @Binding var fuelingResult: FuelingResult
+    private let showSaveButton: Bool
 
     // MARK: - Properties
 
@@ -20,6 +21,8 @@ public struct RaceNutritionResultView: View {
     @State private var showSavedSuccessfullyToast = false
     @State private var showPlanNameDialog = false
     @State private var planName = ""
+    @State private var isSavingPlan = false
+    @State private var lastSavedFuelingResult: FuelingResult?
 
     // MARK: - Computed properties
 
@@ -67,33 +70,40 @@ public struct RaceNutritionResultView: View {
         coordinator: RaceNutritionCoordinator,
         viewModel: RaceNutritionResultViewModel,
         shouldShowSelectedItems: Bool = false,
+        showSaveButton: Bool = true,
         fuelingResult: Binding<FuelingResult>
     ) {
-        self.coordinator = coordinator
-        self.viewModel = viewModel
-        self.shouldShowSelectedItems = shouldShowSelectedItems
+        _coordinator = ObservedObject(wrappedValue: coordinator)
+        _viewModel = ObservedObject(wrappedValue: viewModel)
+        _shouldShowSelectedItems = State(initialValue: shouldShowSelectedItems)
+        self.showSaveButton = showSaveButton
         _fuelingResult = fuelingResult
     }
 
     // MARK: - Body
 
     public var body: some View {
-        VStack(spacing: 0) {
-            ScrollView {
-                VStack(spacing: 16) {
-                    planSummary
-                    selectedItems
-                    fuelingPlan
-                    hourlyBreakdown
-                }
-                .padding(.vertical)
+        ScrollView {
+            VStack(spacing: 16) {
+                planSummary
+                selectedItems
+                fuelingPlan
+                hourlyBreakdown
             }
-            .scrollIndicators(.hidden)
-
-            saveButton
-                .padding()
+            .padding(.vertical)
         }
-        .errorAlert(message: $viewModel.errorMessage)
+        .scrollIndicators(.hidden)
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            if showSaveButton {
+                bottomSaveBar
+            }
+        }
+        .errorAlert(
+            message: Binding(
+                get: { viewModel.errorMessage },
+                set: { viewModel.errorMessage = $0 }
+            )
+        )
         .toast(
             isPresented: $showSavedSuccessfullyToast,
             message: Localizables.RaceNutritionResults.saveSuccessToastMessage
@@ -113,23 +123,62 @@ public struct RaceNutritionResultView: View {
 
             Button(Localizables.Common.save) {
                 Task {
+                    let trimmedName = planName.trimmingCharacters(in: .whitespacesAndNewlines)
+                    guard !trimmedName.isEmpty else {
+                        viewModel.errorMessage = Localizables.FormErrors.requiredField
+                        return
+                    }
+
+                    isSavingPlan = true
+                    defer { isSavingPlan = false }
+
                     let savedSuccessfully =
                         await viewModel.saveFuelingPlan(
                             fuelingResult,
-                            planName: planName
+                            planName: trimmedName
                         )
                     showSavedSuccessfullyToast = savedSuccessfully
+                    if savedSuccessfully {
+                        lastSavedFuelingResult = fuelingResult
+                    }
                     planName = ""
                 }
             }
             .accessibilityHint(Localizables.AccessibilityHints.tapTo(Localizables.RaceNutritionResults.savePlanButtonHint))
         }
+        .navigationTitle(screenTitle)
     }
 }
 
 // MARK: - Private methods
 
 private extension RaceNutritionResultView {
+    var screenTitle: String {
+        let trimmedName = fuelingResult.name?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        return trimmedName.isEmpty ? Localizables.RaceNutritionResults.fuelingPlanTitle : trimmedName
+    }
+
+    var isPlanDirty: Bool {
+        guard let lastSavedFuelingResult else { return true }
+        return fuelingResult != lastSavedFuelingResult
+    }
+
+    var isSaveButtonDisabled: Bool {
+        isSavingPlan || !isPlanDirty
+    }
+
+    var saveButtonTitle: String {
+        if isSavingPlan {
+            return Localizables.AccessibilityHints.loading
+        }
+
+        if !isPlanDirty {
+            return Localizables.RaceNutritionResults.saveSuccessToastMessage
+        }
+
+        return Localizables.RaceNutritionResults.savePlanButtonLabel
+    }
+
     @ViewBuilder
     var fuelingPlan: some View {
         GroupBox {
@@ -152,70 +201,74 @@ private extension RaceNutritionResultView {
                     }
                 }
 
-                Grid {
-                    GridRow {
-                        Text(Localizables.RaceNutritionResults.fuelingPlanTimeColumnTitle)
-                        Text(Localizables.RaceNutritionResults.fuelingPlanItemColumnTitle)
-                    }
-                    .font(.Custom.Medium.font3)
-
-                    Divider()
-
-                    ForEach(itemTimeLine, id: \.self) { event in
+                if !itemTimeLine.isEmpty {
+                    Grid {
                         GridRow {
-                            switch event.consumption {
-                            case let .instant(time):
-                                Text("\(time.formattedAsHourMinSec)")
-                                    .font(.Custom.Regular.font3)
+                            Text(Localizables.RaceNutritionResults.fuelingPlanTimeColumnTitle)
+                            Text(Localizables.RaceNutritionResults.fuelingPlanItemColumnTitle)
+                        }
+                        .font(.Custom.Medium.font3)
 
-                            case let .interval(startTime, endTime):
-                                Text("\(startTime.formattedAsHourMinSec) - \(endTime.formattedAsHourMinSec)")
+                        Divider()
+
+                        ForEach(itemTimeLine, id: \.self) { event in
+                            GridRow {
+                                switch event.consumption {
+                                case let .instant(time):
+                                    Text("\(time.formattedAsHourMinSec)")
+                                        .font(.Custom.Regular.font3)
+
+                                case let .interval(startTime, endTime):
+                                    Text("\(startTime.formattedAsHourMinSec) - \(endTime.formattedAsHourMinSec)")
+                                        .font(.Custom.Regular.font3)
+                                }
+
+                                Text("\(event.carbItem.name)")
                                     .font(.Custom.Regular.font3)
                             }
+                            .padding(.vertical, 4)
 
-                            Text("\(event.carbItem.name)")
-                                .font(.Custom.Regular.font3)
+                            if event != itemTimeLine.last {
+                                Divider()
+                            }
                         }
-                        .padding(.vertical, 4)
-
-                        if event != itemTimeLine.last {
-                            Divider()
-                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
                     }
-                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
 
-                Grid {
-                    GridRow {
-                        Text(Localizables.RaceNutritionResults.fuelingPlanIntervalColumnTitle)
-                        Text(Localizables.RaceNutritionResults.fuelingPlanDrinkColumnTitle)
-                    }
-                    .font(.Custom.Medium.font3)
-
-                    Divider()
-
-                    ForEach(drinkTimeLine, id: \.self) { event in
+                if !drinkTimeLine.isEmpty {
+                    Grid {
                         GridRow {
-                            switch event.consumption {
-                            case let .instant(time):
-                                Text("\(time.formattedAsHourMinSec)")
-                                    .font(.Custom.Regular.font3)
+                            Text(Localizables.RaceNutritionResults.fuelingPlanIntervalColumnTitle)
+                            Text(Localizables.RaceNutritionResults.fuelingPlanDrinkColumnTitle)
+                        }
+                        .font(.Custom.Medium.font3)
 
-                            case let .interval(startTime, endTime):
-                                Text("\(startTime.formattedAsHourMinSec) - \(endTime.formattedAsHourMinSec)")
+                        Divider()
+
+                        ForEach(drinkTimeLine, id: \.self) { event in
+                            GridRow {
+                                switch event.consumption {
+                                case let .instant(time):
+                                    Text("\(time.formattedAsHourMinSec)")
+                                        .font(.Custom.Regular.font3)
+
+                                case let .interval(startTime, endTime):
+                                    Text("\(startTime.formattedAsHourMinSec) - \(endTime.formattedAsHourMinSec)")
+                                        .font(.Custom.Regular.font3)
+                                }
+
+                                Text("\(event.carbItem.name)")
                                     .font(.Custom.Regular.font3)
                             }
+                            .padding(.vertical, 4)
 
-                            Text("\(event.carbItem.name)")
-                                .font(.Custom.Regular.font3)
+                            if event != drinkTimeLine.last {
+                                Divider()
+                            }
                         }
-                        .padding(.vertical, 4)
-
-                        if event != drinkTimeLine.last {
-                            Divider()
-                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
                     }
-                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
         }
@@ -298,7 +351,9 @@ private extension RaceNutritionResultView {
     @ViewBuilder
     var saveButton: some View {
         ActionButton(
-            Localizables.RaceNutritionResults.savePlanButtonLabel,
+            saveButtonTitle,
+            isLoading: isSavingPlan,
+            isDisabled: isSaveButtonDisabled,
             accessibilityHint: Localizables.AccessibilityHints.tapTo(
                 Localizables.RaceNutritionResults.savePlanButtonHint
             ),
@@ -306,6 +361,16 @@ private extension RaceNutritionResultView {
                 showPlanNameDialog = true
             }
         )
+    }
+
+    var bottomSaveBar: some View {
+        saveButton
+            .padding()
+            .frame(maxWidth: .infinity)
+            .background(.bar)
+            .overlay(alignment: .top) {
+                Divider()
+            }
     }
 }
 
@@ -316,6 +381,11 @@ private extension RaceNutritionResultView {
         ),
         viewModel: RaceNutritionResultViewModel(
             saveFuelingPlanUseCase: SaveFuelingPlanUseCaseDefault(
+                repository: NutritionPlansRepositoryDefault(
+                    nutritionPlansDataSource: try! StoredNutritionPlansDataSourceDefault()
+                )
+            ),
+            deleteStoredFuelingResultUseCase: DeleteStoredFuelingResultUseCaseDefault(
                 repository: NutritionPlansRepositoryDefault(
                     nutritionPlansDataSource: try! StoredNutritionPlansDataSourceDefault()
                 )
