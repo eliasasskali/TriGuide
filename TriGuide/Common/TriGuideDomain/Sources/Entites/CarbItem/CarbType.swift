@@ -3,12 +3,26 @@
 //
 
 import Foundation
+import Localization
 
 public enum CarbType: String, Codable, Sendable, CaseIterable {
     case solid
     case drink
     case gel
     case other
+
+    public var localized: String {
+        return switch self {
+        case .solid:
+            Localizables.CarbItems.typeSolid
+        case .drink:
+            Localizables.CarbItems.typeDrink
+        case .gel:
+            Localizables.CarbItems.typeGel
+        case .other:
+            Localizables.CarbItems.typeOther
+        }
+    }
 }
 
 // MARK: - Decodable

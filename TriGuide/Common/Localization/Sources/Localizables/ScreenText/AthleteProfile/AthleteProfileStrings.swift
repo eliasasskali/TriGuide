@@ -8,7 +8,7 @@ public extension Localizables {
     enum AthleteProfile {
         // My Athlete Profile
         public static var title: String {
-            String(localized: "athlete_profile-title", bundle: .module)
+            NSLocalizedString("athlete_profile-title", bundle: .module, comment: "")
         }
     }
 }

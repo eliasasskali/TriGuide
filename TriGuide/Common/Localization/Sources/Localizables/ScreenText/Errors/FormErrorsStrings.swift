@@ -7,27 +7,24 @@ import Foundation
 public extension Localizables {
     enum FormErrors {
         public static var requiredField: String {
-            String(localized: "formErrors_required_field", bundle: .module)
+            NSLocalizedString("formErrors_required_field", bundle: .module, comment: "")
         }
 
         public static var invalidNumber: String {
-            String(localized: "formErrors_invalid_number", bundle: .module)
+            NSLocalizedString("formErrors_invalid_number", bundle: .module, comment: "")
         }
 
         public static var invalidFormat: String {
-            String(localized: "formErrors_invalid_format", bundle: .module)
+            NSLocalizedString("formErrors_invalid_format", bundle: .module, comment: "")
         }
 
         public static var outOfRange: String {
-            String(localized: "formErrors_out_of_range", bundle: .module)
+            NSLocalizedString("formErrors_out_of_range", bundle: .module, comment: "")
         }
 
         public static func betweenMinAndMax(min: Double, max: Double) -> String {
             String(
-                format: String(
-                    localized: "formErrors_between_min_and_max",
-                    bundle: .module
-                ),
+                format: NSLocalizedString("formErrors_between_min_and_max", bundle: .module, comment: ""),
                 min,
                 max
             )
@@ -35,20 +32,14 @@ public extension Localizables {
 
         public static func biggerThan(min: Double) -> String {
             String(
-                format: String(
-                    localized: "formErrors_bigger_than_min",
-                    bundle: .module
-                ),
+                format: NSLocalizedString("formErrors_bigger_than_min", bundle: .module, comment: ""),
                 min
             )
         }
 
         public static func smallerThan(max: Double) -> String {
             String(
-                format: String(
-                    localized: "formErrors_smaller_than_max",
-                    bundle: .module
-                ),
+                format: NSLocalizedString("formErrors_smaller_than_max", bundle: .module, comment: ""),
                 max
             )
         }

@@ -9,47 +9,47 @@ public extension Localizables {
         // MARK: - Running
 
         public static var halfMarathon: String {
-            String(localized: "raceDistance_half-marathon", bundle: .module)
+            NSLocalizedString("raceDistance_half-marathon", bundle: .module, comment: "")
         }
 
         public static var marathon: String {
-            String(localized: "raceDistance_marathon", bundle: .module)
+            NSLocalizedString("raceDistance_marathon", bundle: .module, comment: "")
         }
 
         // MARK: - Triathlon
 
         public static var supersprint: String {
-            String(localized: "raceDistance_supersprint", bundle: .module)
+            NSLocalizedString("raceDistance_supersprint", bundle: .module, comment: "")
         }
 
         public static var sprint: String {
-            String(localized: "raceDistance_sprint", bundle: .module)
+            NSLocalizedString("raceDistance_sprint", bundle: .module, comment: "")
         }
 
         public static var triathlonOlympic: String {
-            String(localized: "raceDistance_triathlon-olympic", bundle: .module)
+            NSLocalizedString("raceDistance_triathlon-olympic", bundle: .module, comment: "")
         }
 
         public static var triathlonMiddle: String {
-            String(localized: "raceDistance_triathlon-middle", bundle: .module)
+            NSLocalizedString("raceDistance_triathlon-middle", bundle: .module, comment: "")
         }
 
         public static var triathlonFull: String {
-            String(localized: "raceDistance_triathlon-full", bundle: .module)
+            NSLocalizedString("raceDistance_triathlon-full", bundle: .module, comment: "")
         }
 
         // MARK: - Duathlon
 
         public static var duathlonStandard: String {
-            String(localized: "raceDistance_duathlon-standard", bundle: .module)
+            NSLocalizedString("raceDistance_duathlon-standard", bundle: .module, comment: "")
         }
 
         public static var duathlonMiddle: String {
-            String(localized: "raceDistance_duathlon-middle", bundle: .module)
+            NSLocalizedString("raceDistance_duathlon-middle", bundle: .module, comment: "")
         }
 
         public static var duathlonLong: String {
-            String(localized: "raceDistance_duathlon-long", bundle: .module)
+            NSLocalizedString("raceDistance_duathlon-long", bundle: .module, comment: "")
         }
     }
 }

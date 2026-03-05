@@ -36,7 +36,7 @@ public final class CarbItemFormViewModel: ObservableObject {
                     options: CarbType.allCases.map {
                         FieldPickerOption(
                             id: $0.rawValue,
-                            label: $0.rawValue.capitalized
+                            label: $0.localized
                         )
                     }
                 ),
