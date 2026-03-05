@@ -17,6 +17,7 @@ public struct CarbItemsView: View {
 
     // MARK: - Properties
 
+    private let embedded: Bool
     @State private var searchText = ""
     @State private var quantities: [String: Int] = [:]
 
@@ -48,46 +49,56 @@ public struct CarbItemsView: View {
 
     public init(
         viewModel: CarbItemsViewModel,
-        coordinator: CarbItemsCoordinator
+        coordinator: CarbItemsCoordinator,
+        embedded: Bool = false
     ) {
         self.viewModel = viewModel
         self.coordinator = coordinator
+        self.embedded = embedded
     }
 
     // MARK: - Body
 
     public var body: some View {
-        NavigationStack(path: coordinator.pathBinding) {
-            VStack(spacing: 0) {
-                listContent
+        if embedded {
+            carbItemsContent
+        } else {
+            NavigationStack(path: coordinator.pathBinding) {
+                carbItemsContent
+            }
+        }
+    }
 
-                if inSelectionMode {
-                    Divider()
-                    selectedItemsProgressView
-                        .padding()
-                    ActionButton(
-                        Localizables.Common.continueLabel,
-                        isLoading: viewModel.state == .loading,
-                        isDisabled: viewModel.selectedCarbItems.isEmpty
-                    ) {
-                        dismiss()
-                        coordinator.onCompleteSelection?(viewModel.selectedCarbItems)
-                    }
-                    .padding(.horizontal)
-                    .padding(.vertical, 8)
+    private var carbItemsContent: some View {
+        VStack(spacing: 0) {
+            listContent
+
+            if inSelectionMode {
+                Divider()
+                selectedItemsProgressView
+                    .padding()
+                ActionButton(
+                    Localizables.Common.continueLabel,
+                    isLoading: viewModel.state == .loading,
+                    isDisabled: viewModel.selectedCarbItems.isEmpty
+                ) {
+                    dismiss()
+                    coordinator.onCompleteSelection?(viewModel.selectedCarbItems)
                 }
+                .padding(.horizontal)
+                .padding(.vertical, 8)
             }
-            .background(Color(.systemGroupedBackground))
-            .overlay {
-                if viewModel.state == .loading { ProgressView() }
-            }
-            .task { await refreshAll() }
-            .errorAlert(message: $viewModel.errorMessage)
-            .navigationDestination(for: CarbItemsCoordinator.Route.self) { route in
-                switch route {
-                case let .form(existing):
-                    coordinator.buildFormView(for: existing)
-                }
+        }
+        .background(Color(.systemGroupedBackground))
+        .overlay {
+            if viewModel.state == .loading { ProgressView() }
+        }
+        .task { await refreshAll() }
+        .errorAlert(message: $viewModel.errorMessage)
+        .navigationDestination(for: CarbItemsCoordinator.Route.self) { route in
+            switch route {
+            case let .form(existing):
+                coordinator.buildFormView(for: existing)
             }
         }
     }

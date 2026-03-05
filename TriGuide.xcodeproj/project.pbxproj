@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9DA11E142F01000100A1B2C3 /* AthleteProfile in Frameworks */ = {isa = PBXBuildFile; productRef = 9DA11E122F01000100A1B2C3 /* AthleteProfile */; };
 		9C4D1E682EA625B1000744ED /* Localization in Frameworks */ = {isa = PBXBuildFile; productRef = 9C4D1E672EA625B1000744ED /* Localization */; };
 		9C5D3D172EB8A28200E55E2E /* FormKit in Frameworks */ = {isa = PBXBuildFile; productRef = 9C5D3D162EB8A28200E55E2E /* FormKit */; };
 		9C5FAFFE2EB160AD00815332 /* CarbItemsSPM in Frameworks */ = {isa = PBXBuildFile; productRef = 9C5FAFFD2EB160AD00815332 /* CarbItemsSPM */; };
@@ -51,6 +52,7 @@
 				Common/NavigationKit,
 				Common/StorageKit,
 				Common/TriGuideDomain,
+				Features/AthleteProfile/AthleteProfile,
 				Features/RaceCalculator/RaceCalculatorSPM,
 				Features/RaceNutrtition/RaceNutritionSPM,
 			);
@@ -84,6 +86,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9DA11E142F01000100A1B2C3 /* AthleteProfile in Frameworks */,
 				9C4D1E682EA625B1000744ED /* Localization in Frameworks */,
 				9C78AC5C2EA66CF200FB5BE8 /* DesignSystem in Frameworks */,
 				9CB031BD2EBC9B3C0086D6C6 /* NavigationKit in Frameworks */,
@@ -153,6 +156,7 @@
 			);
 			name = TriGuide;
 			packageProductDependencies = (
+				9DA11E122F01000100A1B2C3 /* AthleteProfile */,
 				9C4D1E672EA625B1000744ED /* Localization */,
 				9C78AC5B2EA66CF200FB5BE8 /* DesignSystem */,
 				9CF7F4992EAA7A1200085B77 /* TriGuideDomain */,
@@ -245,6 +249,7 @@
 			mainGroup = 9CB9798E2E141AC9001CBBD8;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
+				9DA11E132F01000100A1B2C3 /* XCLocalSwiftPackageReference "TriGuide/Features/AthleteProfile/AthleteProfile" */,
 				9C4D1E662EA625B1000744ED /* XCLocalSwiftPackageReference "TriGuide/Common/Localization" */,
 				9C78AC5A2EA66CF200FB5BE8 /* XCLocalSwiftPackageReference "TriGuide/Common/DesignSystem" */,
 				9CF7F4982EAA7A1200085B77 /* XCLocalSwiftPackageReference "TriGuide/Common/TriGuideDomain" */,
@@ -622,6 +627,10 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
+		9DA11E132F01000100A1B2C3 /* XCLocalSwiftPackageReference "TriGuide/Features/AthleteProfile/AthleteProfile" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = TriGuide/Features/AthleteProfile/AthleteProfile;
+		};
 		9C4D1E662EA625B1000744ED /* XCLocalSwiftPackageReference "TriGuide/Common/Localization" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = TriGuide/Common/Localization;
@@ -657,6 +666,10 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		9DA11E122F01000100A1B2C3 /* AthleteProfile */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AthleteProfile;
+		};
 		9C4D1E672EA625B1000744ED /* Localization */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Localization;

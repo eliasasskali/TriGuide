@@ -89,6 +89,28 @@
         }
       }
     },
+    "athlete_profile-title" : {
+      "localizations" : {
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El Meu Perfil d'Atleta"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My Athlete Profile"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mi Perfil de Atleta"
+          }
+        }
+      }
+    },
     "cancel" : {
       "localizations" : {
         "ca" : {
@@ -529,29 +551,6 @@
         }
       }
     },
-    "carbItems_caffeine_label_short" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "ca" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Caf:"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Caff:"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Caf:"
-          }
-        }
-      }
-    },
     "carbItems_caffeine_value" : {
       "localizations" : {
         "ca" : {
@@ -592,29 +591,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Carbohidratos:"
-          }
-        }
-      }
-    },
-    "carbItems_carbs_label_short" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "ca" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "HC:"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "CHO:"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "CH:"
           }
         }
       }
@@ -749,29 +725,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Volumen de agua:"
-          }
-        }
-      }
-    },
-    "carbItems_volume_label_short" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "ca" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vol:"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vol:"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vol:"
           }
         }
       }
@@ -3391,6 +3344,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Inicio"
+          }
+        }
+      }
+    },
+    "tabs_my_athlete_profile" : {
+      "localizations" : {
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perfil de l'Atleta"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Athlete Profile"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perfil del Atleta"
           }
         }
       }
