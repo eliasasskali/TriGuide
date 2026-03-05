@@ -2,6 +2,7 @@
 //  TriGuide 2025
 //
 
+import AthleteProfile
 import Localization
 import RaceCalculatorSPM
 import RaceNutritionSPM
@@ -10,6 +11,7 @@ import SwiftUI
 struct ContentView: View {
     @StateObject private var raceCalculatorCoordinator: RaceCalculatorCoordinator
     @StateObject private var raceNutritionCoordinator: RaceNutritionCoordinator
+    @StateObject private var athleteProfileCoordinator: AthleteProfileCoordinator
 
     init() {
         let raceNutritionFactory = RaceNutritionViewFactoryDefault(dependencies: .init())
@@ -20,28 +22,32 @@ struct ContentView: View {
         _raceCalculatorCoordinator = StateObject(
             wrappedValue: RaceCalculatorCoordinator(factory: raceCalculatorFactory)
         )
+        _athleteProfileCoordinator = StateObject(
+            wrappedValue: AthleteProfileCoordinator()
+        )
     }
 
+    @State private var selectedTab = 0
+
     var body: some View {
-        TabView {
+        TabView(selection: $selectedTab) {
             raceNutritionCoordinator.start()
+                .tag(0)
                 .tabItem {
-                    Label(Localizables.Tabs.home, systemImage: "fork.knife")
+                    Label(Localizables.Tabs.sportNutrition, systemImage: "fork.knife")
                 }
-//            Text(Localizables.Tabs.home)
-//                .tabItem {
-//                    Label(Localizables.Tabs.home, systemImage: "home")
-//                }
 
             raceCalculatorCoordinator.start()
+                .tag(1)
                 .tabItem {
                     Label(Localizables.Tabs.calculator, systemImage: "plusminus")
                 }
 
-//            Text(Localizables.Tabs.materialList)
-//                .tabItem {
-//                    Label(Localizables.Tabs.materialList, systemImage: "checkmark.square")
-//                }
+            athleteProfileCoordinator.start()
+                .tag(2)
+                .tabItem {
+                    Label(Localizables.Tabs.myAthleteProfile, systemImage: "person.crop.circle.fill")
+                }
         }
     }
 }

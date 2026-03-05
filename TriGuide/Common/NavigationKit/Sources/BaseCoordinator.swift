@@ -29,6 +29,13 @@ open class BaseCoordinator<Route: Hashable, Sheet: Identifiable & Equatable, Con
 
     public init() {}
 
+    // MARK: - External navigation handler
+
+    /// When set, `push(_:)` delegates to this closure instead of appending to the internal path.
+    /// This allows a parent coordinator to own the NavigationStack while child coordinators
+    /// still call `push()` as usual.
+    public var externalPushHandler: ((Route) -> Void)?
+
     // MARK: - Abstract start(): Subclasses must override
 
     open func start() -> ContentView {
@@ -40,7 +47,16 @@ open class BaseCoordinator<Route: Hashable, Sheet: Identifiable & Equatable, Con
     // MARK: - Push and pop navigation
 
     public func push(_ route: Route) {
-        path.append(route)
+        if let externalPushHandler {
+            externalPushHandler(route)
+        } else {
+            path.append(route)
+        }
+    }
+
+    /// Push any Hashable value onto the internal path (useful for type-erased multi-coordinator stacks).
+    public func pushAny<T: Hashable>(_ value: T) {
+        path.append(value)
     }
 
     public func pop() {

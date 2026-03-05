@@ -75,5 +75,9 @@ public enum Localizables {
         public static var sportNutrition: String {
             String(localized: "tabs_sport_nutrition", bundle: .module)
         }
+
+        public static var myAthleteProfile: String {
+            String(localized: "tabs_my_athlete_profile", bundle: .module)
+        }
     }
 }
