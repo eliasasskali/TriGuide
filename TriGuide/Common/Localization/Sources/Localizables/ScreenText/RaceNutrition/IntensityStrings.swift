@@ -7,15 +7,15 @@ import Foundation
 public extension Localizables {
     enum Intensity {
         public static var labelLow: String {
-            String(localized: "intensity_label_low", bundle: .module)
+            NSLocalizedString("intensity_label_low", bundle: .module, comment: "")
         }
 
         public static var labelMedium: String {
-            String(localized: "intensity_label_medium", bundle: .module)
+            NSLocalizedString("intensity_label_medium", bundle: .module, comment: "")
         }
 
         public static var labelHigh: String {
-            String(localized: "intensity_label_high", bundle: .module)
+            NSLocalizedString("intensity_label_high", bundle: .module, comment: "")
         }
     }
 }

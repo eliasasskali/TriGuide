@@ -9,55 +9,55 @@ public enum Localizables {
 
     public enum Common {
         public static var done: String {
-            String(localized: "done", bundle: .module)
+            NSLocalizedString("done", bundle: .module, comment: "")
         }
 
         public static var sport: String {
-            String(localized: "sport", bundle: .module)
+            NSLocalizedString("sport", bundle: .module, comment: "")
         }
 
         public static var save: String {
-            String(localized: "save", bundle: .module)
+            NSLocalizedString("save", bundle: .module, comment: "")
         }
 
         public static var delete: String {
-            String(localized: "delete", bundle: .module)
+            NSLocalizedString("delete", bundle: .module, comment: "")
         }
 
         public static var edit: String {
-            String(localized: "edit", bundle: .module)
+            NSLocalizedString("edit", bundle: .module, comment: "")
         }
 
         public static var addToFavorites: String {
-            String(localized: "add_to_favorites", bundle: .module)
+            NSLocalizedString("add_to_favorites", bundle: .module, comment: "")
         }
 
         public static var removeFromFavorites: String {
-            String(localized: "remove_from_favorites", bundle: .module)
+            NSLocalizedString("remove_from_favorites", bundle: .module, comment: "")
         }
 
         public static var or: String {
-            String(localized: "or", bundle: .module)
+            NSLocalizedString("or", bundle: .module, comment: "")
         }
 
         public static var intensity: String {
-            String(localized: "intensity", bundle: .module)
+            NSLocalizedString("intensity", bundle: .module, comment: "")
         }
 
         public static var continueLabel: String {
-            String(localized: "continue", bundle: .module)
+            NSLocalizedString("continue", bundle: .module, comment: "")
         }
 
         public static var error: String {
-            String(localized: "error", bundle: .module)
+            NSLocalizedString("error", bundle: .module, comment: "")
         }
 
         public static var ok: String {
-            String(localized: "ok", bundle: .module)
+            NSLocalizedString("ok", bundle: .module, comment: "")
         }
 
         public static var cancel: String {
-            String(localized: "cancel", bundle: .module)
+            NSLocalizedString("cancel", bundle: .module, comment: "")
         }
     }
 
@@ -65,19 +65,19 @@ public enum Localizables {
 
     public enum Tabs {
         public static var home: String {
-            String(localized: "tabs_home", bundle: .module)
+            NSLocalizedString("tabs_home", bundle: .module, comment: "")
         }
 
         public static var calculator: String {
-            String(localized: "tabs_calculator", bundle: .module)
+            NSLocalizedString("tabs_calculator", bundle: .module, comment: "")
         }
 
         public static var sportNutrition: String {
-            String(localized: "tabs_sport_nutrition", bundle: .module)
+            NSLocalizedString("tabs_sport_nutrition", bundle: .module, comment: "")
         }
 
         public static var myAthleteProfile: String {
-            String(localized: "tabs_my_athlete_profile", bundle: .module)
+            NSLocalizedString("tabs_my_athlete_profile", bundle: .module, comment: "")
         }
     }
 }

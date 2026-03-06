@@ -7,23 +7,23 @@ import Foundation
 public extension Localizables {
     enum Sports {
         public static var swimming: String {
-            String(localized: "sports_swimming", bundle: .module)
+            NSLocalizedString("sports_swimming", bundle: .module, comment: "")
         }
 
         public static var cycling: String {
-            String(localized: "sports_cycling", bundle: .module)
+            NSLocalizedString("sports_cycling", bundle: .module, comment: "")
         }
 
         public static var running: String {
-            String(localized: "sports_running", bundle: .module)
+            NSLocalizedString("sports_running", bundle: .module, comment: "")
         }
 
         public static var triathlon: String {
-            String(localized: "sports_triathlon", bundle: .module)
+            NSLocalizedString("sports_triathlon", bundle: .module, comment: "")
         }
 
         public static var duathlon: String {
-            String(localized: "sports_duathlon", bundle: .module)
+            NSLocalizedString("sports_duathlon", bundle: .module, comment: "")
         }
     }
 }

@@ -7,47 +7,44 @@ import Foundation
 public extension Localizables {
     enum PaceCalculator {
         public static var distance: String {
-            String(localized: "paceCalculator_distance", bundle: .module)
+            NSLocalizedString("paceCalculator_distance", bundle: .module, comment: "")
         }
 
         public static var time: String {
-            String(localized: "paceCalculator_time", bundle: .module)
+            NSLocalizedString("paceCalculator_time", bundle: .module, comment: "")
         }
 
         public static var speed: String {
-            String(localized: "paceCalculator_speed", bundle: .module)
+            NSLocalizedString("paceCalculator_speed", bundle: .module, comment: "")
         }
 
         public static var pace: String {
-            String(localized: "paceCalculator_pace", bundle: .module)
+            NSLocalizedString("paceCalculator_pace", bundle: .module, comment: "")
         }
 
         public static var unit: String {
-            String(localized: "paceCalculator_unit", bundle: .module)
+            NSLocalizedString("paceCalculator_unit", bundle: .module, comment: "")
         }
 
         public static var triathlonDistance: String {
-            String(localized: "paceCalculator_triathlon-distance", bundle: .module)
+            NSLocalizedString("paceCalculator_triathlon-distance", bundle: .module, comment: "")
         }
 
         public static var duathlonDistance: String {
-            String(localized: "paceCalculator_duathlon-distance", bundle: .module)
+            NSLocalizedString("paceCalculator_duathlon-distance", bundle: .module, comment: "")
         }
 
         public static var race: String {
-            String(localized: "paceCalculator_race", bundle: .module)
+            NSLocalizedString("paceCalculator_race", bundle: .module, comment: "")
         }
 
         public static var totalTime: String {
-            String(localized: "paceCalculator_total-time", bundle: .module)
+            NSLocalizedString("paceCalculator_total-time", bundle: .module, comment: "")
         }
 
         public static func transitionTime(transitionNumber: Int) -> String {
             String(
-                format: String(
-                    localized: "paceCalculator_transitionX-time",
-                    bundle: .module
-                ),
+                format: NSLocalizedString("paceCalculator_transitionX-time", bundle: .module, comment: ""),
                 transitionNumber
             )
         }
