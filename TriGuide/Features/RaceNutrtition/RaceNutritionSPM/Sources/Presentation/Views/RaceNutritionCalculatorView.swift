@@ -16,60 +16,94 @@ struct RaceNutritionCalculatorView: View {
         case weight
     }
 
+    private enum ScrollTarget: Hashable {
+        case advancedOptions
+        case advancedOptionsExpandedEnd
+    }
+
+    private enum CarbInputMode: String, CaseIterable {
+        case manual
+        case estimate
+
+        var title: String {
+            switch self {
+            case .manual: Localizables.RaceNutritionCalculator.gramsPerHour
+            case .estimate: Localizables.RaceNutritionCalculator.estimateFromWeight
+            }
+        }
+    }
+
     // MARK: - Dependencies
 
     @StateObject var viewModel: RaceNutritionViewModel
     let coordinator: RaceNutritionCoordinator
 
+    // MARK: - Pace calculator view models
+
+    @StateObject private var runPaceViewModel = PaceCalculatorViewModel(
+        paceCalculator: RunningPaceCalculator(),
+        paceUnit: .minPerKm
+    )
+    @StateObject private var bikePaceViewModel = PaceCalculatorViewModel(
+        paceCalculator: CyclingPaceCalculator(),
+        paceUnit: .kmPerHour
+    )
+    @StateObject private var swimPaceViewModel = PaceCalculatorViewModel(
+        paceCalculator: SwimmingPaceCalculator(),
+        paceUnit: .minPer100m
+    )
+
     // MARK: - Properties
 
-    @State private var shouldShowPaceCalculator = false
+    @State private var showPaceCalculatorSheet = false
     @State private var shouldShowAdvancedOptions = false
-    @State private var shouldShowSelectSportErrorOnPaceCalculator = false
+    @State private var carbInputMode: CarbInputMode = .manual
     @FocusState private var focusedField: FocusedField?
-
-    // MARK: - Computed properties
-
-    var shouldShowSelectSportErrorOnGramsPerHour: Bool {
-        viewModel.sport == nil &&
-            viewModel.intensity != nil &&
-            viewModel.weight != nil
-    }
 
     // MARK: - Body
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
-                title
-                    .padding(.horizontal)
-                sportAndDuration
-                carbInputOrEstimate
-                advancedOptionsSection
-            }
-        }
-        .scrollDismissesKeyboard(.interactively)
-        .safeAreaInset(edge: .bottom, spacing: 0) {
-            bottomActionBar
-        }
-        .loadingOverlay(isLoading: $viewModel.isLoading)
-        .onReceive(viewModel.$didFinishCalculation) { didFinish in
-            if didFinish, let totalCarbGrams = viewModel.estimatedTotalGrams {
-                coordinator.presentCarbItems(totalCarbGrams: totalCarbGrams)
-                viewModel.didFinishCalculation = false
-            }
-        }
-        .toolbar {
-            ToolbarItemGroup(placement: .keyboard) {
-                Spacer()
-                Button(Localizables.Common.done) {
-                    focusedField = nil
+        ScrollViewReader { proxy in
+            ScrollView {
+                VStack(alignment: .leading, spacing: 20) {
+                    title
+                        .padding(.horizontal)
+                    sportAndDuration
+                    carbInputSection
+                    advancedOptionsSection
+                        .id(ScrollTarget.advancedOptions)
+                    Color.clear
+                        .frame(height: 1)
+                        .id(ScrollTarget.advancedOptionsExpandedEnd)
                 }
             }
+            .scrollDismissesKeyboard(.interactively)
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                bottomActionBar
+            }
+            .loadingOverlay(isLoading: $viewModel.isLoading)
+            .onReceive(viewModel.$didFinishCalculation) { didFinish in
+                if didFinish, let totalCarbGrams = viewModel.estimatedTotalGrams {
+                    coordinator.presentCarbItems(totalCarbGrams: totalCarbGrams)
+                    viewModel.didFinishCalculation = false
+                }
+            }
+            .onChange(of: shouldShowAdvancedOptions) { _, isExpanded in
+                guard isExpanded else { return }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        proxy.scrollTo(ScrollTarget.advancedOptionsExpandedEnd, anchor: .bottom)
+                    }
+                }
+            }
+            .navigationTitle(Localizables.RaceNutritionCalculator.title)
+            .navigationBarTitleDisplayMode(.inline)
+            .scrollIndicators(.hidden)
+            .hideKeyboardOnTap()
+            .sheet(isPresented: $showPaceCalculatorSheet) {
+                paceCalculatorSheet
+            }
         }
-        .navigationTitle(Localizables.RaceNutritionCalculator.title)
-        .navigationBarTitleDisplayMode(.inline)
-        .scrollIndicators(.hidden)
     }
 }
 
@@ -130,28 +164,20 @@ private extension RaceNutritionCalculatorView {
                 }
 
                 Button {
-                    togglePaceCalculator()
+                    guard viewModel.sport != nil else { return }
+                    showPaceCalculatorSheet = true
                 } label: {
                     Label(Localizables.RaceNutritionCalculator.useTimeCalculator, systemImage: "clock")
                         .font(.Custom.Regular.font3)
                 }
                 .buttonStyle(.borderless)
                 .padding(.top, 4)
-
-                if shouldShowSelectSportErrorOnPaceCalculator {
-                    Text(Localizables.RaceNutritionCalculator.paceCalculatorSelectSportError)
-                        .font(.Custom.Regular.font2)
-                        .foregroundColor(.red)
-                }
-
-                if shouldShowPaceCalculator {
-                    paceCalculatorSection
-                }
+                .disabled(viewModel.sport == nil)
             }
         }
     }
 
-    var carbInputOrEstimate: some View {
+    var carbInputSection: some View {
         GroupBox {
             VStack(alignment: .leading, spacing: 12) {
                 HStack {
@@ -167,47 +193,68 @@ private extension RaceNutritionCalculatorView {
                         }
                     )
                 }
-                Text(Localizables.RaceNutritionCalculator.secondSectionDescription)
-                    .font(.Custom.Regular.font3)
-                    .foregroundColor(.gray)
 
-                TextField(
-                    Localizables.RaceNutritionCalculator.gramsPerHour,
-                    value: $viewModel.gramsPerHour,
-                    format: .number
-                )
-                .keyboardType(.decimalPad)
-                .focused($focusedField, equals: .gramsPerHour)
-                .cardBackground(innerHorizontalPadding: 12, innerVerticalPadding: 12)
-
-                HStack {
-                    Divider().overlay(Color.gray.opacity(0.3))
-                    Text(Localizables.Common.or.uppercased())
-                        .font(.Custom.Regular.font3)
-                        .foregroundColor(.gray)
-                    Divider().overlay(Color.gray.opacity(0.3))
+                Picker(Localizables.RaceNutritionCalculator.secondSectionTitle, selection: $carbInputMode) {
+                    ForEach(CarbInputMode.allCases, id: \.self) { mode in
+                        Text(mode.title).tag(mode)
+                    }
                 }
-                .frame(maxWidth: .infinity, alignment: .center)
+                .pickerStyle(.segmented)
 
-                HStack(spacing: 8) {
-                    TextField(Localizables.RaceNutritionCalculator.weightKg, value: $viewModel.weight, format: .number)
-                        .keyboardType(.decimalPad)
-                        .focused($focusedField, equals: .weight)
-                        .cardBackground(innerHorizontalPadding: 12, innerVerticalPadding: 12)
+                switch carbInputMode {
+                case .manual:
+                    TextField(
+                        Localizables.RaceNutritionCalculator.gramsPerHour,
+                        value: $viewModel.gramsPerHour,
+                        format: .number
+                    )
+                    .keyboardType(.decimalPad)
+                    .focused($focusedField, equals: .gramsPerHour)
+                    .cardBackground(innerHorizontalPadding: 12, innerVerticalPadding: 12)
 
-                    Picker(Localizables.Common.intensity, selection: $viewModel.intensity) {
-                        Text(Localizables.Common.intensity).tag(nil as Intensity?)
-                        ForEach(Intensity.allCases, id: \.self) { intensity in
-                            Text(intensity.localized).tag(intensity)
+                case .estimate:
+                    HStack(spacing: 8) {
+                        TextField(Localizables.RaceNutritionCalculator.weightKg, value: $viewModel.weight, format: .number)
+                            .keyboardType(.decimalPad)
+                            .focused($focusedField, equals: .weight)
+                            .cardBackground(innerHorizontalPadding: 12, innerVerticalPadding: 12)
+
+                        Picker(Localizables.Common.intensity, selection: $viewModel.intensity) {
+                            Text(Localizables.Common.intensity).tag(nil as Intensity?)
+                            ForEach(Intensity.allCases, id: \.self) { intensity in
+                                Text(intensity.localized).tag(intensity)
+                            }
+                        }
+                        .tint(.blue)
+                    }
+
+                    if let gramsPerHour = viewModel.gramsPerHour, viewModel.weight != nil, viewModel.intensity != nil, viewModel.sport != nil {
+                        if gramsPerHour > 0 {
+                            HStack(spacing: 4) {
+                                Image(systemName: "sparkles")
+                                    .font(.Custom.Medium.font2)
+                                Text(String(format: Localizables.RaceNutritionCalculator.estimatedCarbsPerHour, "\(Int(gramsPerHour))"))
+                                    .font(.Custom.Medium.font3)
+                            }
+                            .foregroundStyle(.blue)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        } else {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(Localizables.RaceNutritionCalculator.noCarbsNeededTitle)
+                                    .font(.Custom.Bold.font3)
+                                Text(Localizables.RaceNutritionCalculator.noCarbsNeededDescription)
+                                    .font(.Custom.Regular.font2)
+                            }
+                            .foregroundStyle(.red)
+                            .frame(maxWidth: .infinity, alignment: .leading)
                         }
                     }
-                    .tint(.blue)
-                }
 
-                if shouldShowSelectSportErrorOnGramsPerHour {
-                    Text(Localizables.RaceNutritionCalculator.gramsPerHourEstimateSelectSportError)
-                        .font(.Custom.Regular.font2)
-                        .foregroundColor(.red)
+                    if viewModel.sport == nil && viewModel.intensity != nil && viewModel.weight != nil {
+                        Text(Localizables.RaceNutritionCalculator.gramsPerHourEstimateSelectSportError)
+                            .font(.Custom.Regular.font2)
+                            .foregroundColor(.red)
+                    }
                 }
             }
         }
@@ -231,41 +278,47 @@ private extension RaceNutritionCalculatorView {
     }
 
     @ViewBuilder
-    var paceCalculatorSection: some View {
-        switch viewModel.sport {
-        case .run:
-            PaceTimeCalculatorView<RunningDistance>(
-                sport: .run,
-                viewModel: PaceCalculatorViewModel(
-                    paceCalculator: RunningPaceCalculator(),
-                    paceUnit: .minPerKm
-                ),
-                duration: $viewModel.duration
-            )
+    var paceCalculatorSheet: some View {
+        NavigationStack {
+            Group {
+                switch viewModel.sport {
+                case .run:
+                    PaceTimeCalculatorView<RunningDistance>(
+                        sport: .run,
+                        viewModel: runPaceViewModel,
+                        duration: $viewModel.duration
+                    )
 
-        case .bike:
-            PaceTimeCalculatorView<CyclingDistance>(
-                sport: .bike,
-                viewModel: PaceCalculatorViewModel(
-                    paceCalculator: CyclingPaceCalculator(),
-                    paceUnit: .kmPerHour
-                ),
-                duration: $viewModel.duration
-            )
+                case .bike:
+                    PaceTimeCalculatorView<CyclingDistance>(
+                        sport: .bike,
+                        viewModel: bikePaceViewModel,
+                        duration: $viewModel.duration
+                    )
 
-        case .swim:
-            PaceTimeCalculatorView<SwimmingDistance>(
-                sport: .swim,
-                viewModel: PaceCalculatorViewModel(
-                    paceCalculator: SwimmingPaceCalculator(),
-                    paceUnit: .minPer100m
-                ),
-                duration: $viewModel.duration
-            )
+                case .swim:
+                    PaceTimeCalculatorView<SwimmingDistance>(
+                        sport: .swim,
+                        viewModel: swimPaceViewModel,
+                        duration: $viewModel.duration
+                    )
 
-        default:
-            EmptyView()
+                default:
+                    EmptyView()
+                }
+            }
+            .padding()
+            .navigationTitle(Localizables.RaceNutritionCalculator.useTimeCalculator)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button(Localizables.Common.done) {
+                        showPaceCalculatorSheet = false
+                    }
+                }
+            }
         }
+        .presentationDetents([.height(280)])
     }
 
     var advancedOptionsSection: some View {
@@ -301,17 +354,21 @@ private extension RaceNutritionCalculatorView {
                         infoLabelDescription: Localizables.RaceNutritionCalculator.fastedStateInformationDescription
                     )
 
-                    toggleField(
-                        isOn: $viewModel.gutTrained,
-                        label: Localizables.RaceNutritionCalculator.gutTrained,
-                        infoLabelDescription: Localizables.RaceNutritionCalculator.gutTrainedInformationDescription
-                    )
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack(alignment: .center, spacing: 8) {
+                            InfoLabel {
+                                Text(Localizables.FuelingProfile.informationDescription)
+                            }
+                            Text(Localizables.FuelingProfile.title)
+                        }
 
-                    toggleField(
-                        isOn: $viewModel.capped,
-                        label: Localizables.RaceNutritionCalculator.applyAmateurLimits,
-                        infoLabelDescription: Localizables.RaceNutritionCalculator.applyAmateurLimitsInformationDescription
-                    )
+                        Picker(Localizables.FuelingProfile.title, selection: $viewModel.fuelingProfile) {
+                            ForEach(FuelingProfile.allCases, id: \.self) { profile in
+                                Text(profile.localized).tag(profile)
+                            }
+                        }
+                        .pickerStyle(.segmented)
+                    }
 
                     sliderField(
                         label: Localizables.RaceNutritionCalculator.startEatingAt,
@@ -381,15 +438,6 @@ private extension RaceNutritionCalculatorView {
             }
         }
         .padding(.top, 4)
-    }
-
-    func togglePaceCalculator() {
-        guard viewModel.sport != nil else {
-            shouldShowSelectSportErrorOnPaceCalculator = true
-            return
-        }
-        shouldShowSelectSportErrorOnPaceCalculator = false
-        shouldShowPaceCalculator.toggle()
     }
 }
 

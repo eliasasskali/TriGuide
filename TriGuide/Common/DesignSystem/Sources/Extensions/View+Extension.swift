@@ -16,4 +16,17 @@ public extension View {
             self
         }
     }
+
+    @ViewBuilder
+    func hideKeyboardOnTap() -> some View {
+        #if canImport(UIKit)
+            simultaneousGesture(
+                TapGesture().onEnded {
+                    UIApplication.resignFirstResponder()
+                }
+            )
+        #else
+            self
+        #endif
+    }
 }

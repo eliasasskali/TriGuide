@@ -87,6 +87,7 @@ struct FuelingPlanEditView: View {
             recomputeLiveBreakdown()
         }
         .errorAlert(message: $validationErrorMessage)
+        .hideKeyboardOnTap()
     }
 }
 

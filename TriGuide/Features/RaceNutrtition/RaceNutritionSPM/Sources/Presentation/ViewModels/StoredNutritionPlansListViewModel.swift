@@ -32,7 +32,7 @@ public class StoredNutritionPlansListViewModel: ObservableObject {
 
     // MARK: - Methods
 
-    func fetchStoredPlans() async {
+    public func fetchStoredPlans() async {
         isLoading = true
         defer { isLoading = false }
 

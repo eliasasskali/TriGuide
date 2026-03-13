@@ -20,9 +20,12 @@ public struct IntervalBreakdownView: View {
     // MARK: - Body
 
     public var body: some View {
-        VStack(alignment: .leading, spacing: 24) {
+        VStack(alignment: .leading, spacing: 0) {
+            compactHeader
+                .padding(.bottom, 8)
+
             ForEach(breakdown, id: \.index) { interval in
-                intervalInfo(interval: interval)
+                compactRow(interval: interval)
             }
         }
     }
@@ -31,62 +34,63 @@ public struct IntervalBreakdownView: View {
 // MARK: - Private methods
 
 private extension IntervalBreakdownView {
-    func intervalHeader(title: String) -> some View {
-        Text(Localizables.RaceNutritionResults.interval(title))
-            .font(.Custom.Medium.font4)
+    var compactHeader: some View {
+        HStack(spacing: 0) {
+            Text("")
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            Text(Localizables.RaceNutritionResults.intervalCarbsLabel)
+                .frame(maxWidth: .infinity, alignment: .trailing)
+
+            Text(Localizables.RaceNutritionResults.intervalCaffeineLabel)
+                .frame(maxWidth: .infinity, alignment: .trailing)
+
+            Text(Localizables.RaceNutritionResults.intervalLiquidLabel)
+                .frame(maxWidth: .infinity, alignment: .trailing)
+        }
+        .font(.Custom.Medium.font2)
+        .foregroundStyle(.secondary)
     }
 
-    func intervalInfo(interval: IntervalFueling) -> some View {
-        VStack(alignment: .leading, spacing: 16) {
-            intervalHeader(title: interval.formatted)
-            Grid {
-                infoRow(
-                    label: Localizables.RaceNutritionResults.intervalCarbsLabel,
-                    value: interval.carbGrams,
-                    unit: Localizables.Units.gSymbol
+    func compactRow(interval: IntervalFueling) -> some View {
+        VStack(spacing: 0) {
+            HStack(spacing: 0) {
+                Text(interval.formatted)
+                    .font(.Custom.Medium.font3)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                Text(
+                    String(
+                        format: "%.0f %@",
+                        interval.carbGrams,
+                        Localizables.Units.gSymbol
+                    )
                 )
+                .frame(maxWidth: .infinity, alignment: .trailing)
 
-                Divider()
-
-                infoRow(
-                    label: Localizables.RaceNutritionResults.intervalCaffeineLabel,
-                    value: interval.caffeine,
-                    unit: Localizables.Units.mgSymbol
+                Text(
+                    String(
+                        format: "%.0f %@",
+                        interval.caffeine,
+                        Localizables.Units.mgSymbol
+                    )
                 )
+                .frame(maxWidth: .infinity, alignment: .trailing)
 
-                Divider()
-
-                infoRow(
-                    label: Localizables.RaceNutritionResults.intervalLiquidLabel,
-                    value: interval.waterVolumeML,
-                    unit: Localizables.Units.mlSymbol
+                Text(
+                    String(
+                        format: "%.0f %@",
+                        interval.waterVolumeML,
+                        Localizables.Units.mlSymbol
+                    )
                 )
-
-                Divider()
+                .frame(maxWidth: .infinity, alignment: .trailing)
             }
-        }
-    }
-
-    func infoRow(
-        label: String,
-        value: Double,
-        unit: String
-    ) -> some View {
-        GridRow {
-            Text(label)
-                .font(.Custom.Medium.font3)
-
-            Text(
-                String(
-                    format: "%.0f %@",
-                    value,
-                    unit
-                )
-            )
             .font(.Custom.Regular.font3)
+            .padding(.vertical, 8)
+
+            Divider()
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.vertical, 4)
     }
 }
 
@@ -129,7 +133,7 @@ private struct PreviewWrapper: View {
     }
 }
 
-#Preview {
+#Preview("Compact & Expanded") {
     PreviewWrapper()
         .padding()
 }

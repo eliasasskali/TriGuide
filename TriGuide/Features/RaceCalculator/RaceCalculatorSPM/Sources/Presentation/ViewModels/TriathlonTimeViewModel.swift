@@ -6,9 +6,9 @@ import Foundation
 
 class TriathlonTimeViewModel: ObservableObject {
     @Published var swimTime: TimeInterval?
-    @Published var t1Time: TimeInterval?
+    @Published var t1Time: TimeInterval? = 60
     @Published var cyclingTime: TimeInterval?
-    @Published var t2Time: TimeInterval?
+    @Published var t2Time: TimeInterval? = 60
     @Published var runningTime: TimeInterval?
 
     private var totalTime: TimeInterval? {
@@ -23,5 +23,13 @@ class TriathlonTimeViewModel: ObservableObject {
 
     var formattedTotalTime: String {
         (totalTime ?? 0).formattedAsHourMinSec
+    }
+
+    func reset() {
+        swimTime = nil
+        t1Time = 60
+        cyclingTime = nil
+        t2Time = 60
+        runningTime = nil
     }
 }

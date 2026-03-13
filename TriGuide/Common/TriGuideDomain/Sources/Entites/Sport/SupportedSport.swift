@@ -91,22 +91,16 @@ public extension SupportedSport {
         }
     }
 
-    /// - Parameters:
-    ///   - intensity: intensity zone
-    ///   - fasted: true if athlete is fasted (reduces carb fraction)
-    ///   - duration: session duration in seconds
-    ///   - ambientTempC: ambient temperature in °C (heat increases CHO utilisation slightly)
-    /// - Returns: fraction (0..1) of energy expected from carbs (physiological / amateur-oriented)
+    /// Returns the fraction of energy expected from carbs (metabolic truth, sport-agnostic).
+    /// NOTE: This reflects what the body *burns*, not what an athlete can *ingest*.
+    /// Sport-specific GI tolerance is applied separately in recommendedCarbsPerHour.
     func ratioOfCarbsUsed(
         for intensity: Intensity,
         fasted: Bool = false,
-        duration: TimeInterval = 0,
         ambientTempC: Double = 20.0
     ) -> Double {
-        // Start with base (fed)
         var ratio = baseCarbRatio(for: intensity)
 
-        // Fasted reduction (bigger at low/moderate)
         if fasted {
             switch intensity {
             case .low: ratio -= 0.15
@@ -115,96 +109,91 @@ public extension SupportedSport {
             }
         }
 
-        // Duration effect:
-        // - scale-up from 0 -> 1 h (sessions < 1h use less exogenous CHO)
-        // - small downshift after 1h (body shifts slightly towards fat over many hours)
-        let hours = duration / 3600.0
-        if hours < 1.0 {
-            // linear ramp: 0h => 0% of base, 1h => 100% of base
-            ratio *= hours
-        } else {
-            // after first hour: modest reduction up to -0.10 by ~6h
-            let durReduction = min(0.10, 0.02 * max(0.0, hours - 1.0)) // 0 at 1h, 0.10 at 6h
-            ratio -= durReduction
-        }
-
-        // Temperature modifier (very small effect)
+        // Temperature modifier
         if ambientTempC >= 28.0 {
-            ratio += 0.05 // hotter conditions increase CHO reliance
+            ratio += 0.05
         } else if ambientTempC >= 22.0 {
             ratio += 0.02
         }
 
-        // Sanity-clamp
-        ratio = max(0.05, min(ratio, 0.95))
-        return ratio
+        return max(0.05, min(ratio, 0.95))
     }
 
-    /// - Parameters:
-    ///   - intensity: intensity zone
-    ///   - weightKg: athlete body mass (kg)
-    ///   - duration: duration in seconds
-    ///   - fasted: whether athlete is fasted
-    ///   - capped: if true, apply amateur-safe caps (avoids recommending >90 g/h to untrained guts)
-    ///   - gutTrained: if true, raise caps (gut-trained athletes can tolerate higher exogenous rates)
-    ///   - ambientTempC: ambient temp in °C
-    /// - Returns: recommended grams carbohydrate per hour
     func recommendedCarbsPerHour(
         for intensity: Intensity,
         weightKg: Double,
-        duration: TimeInterval? = nil, // optional duration
+        duration: TimeInterval? = nil,
         fasted: Bool = false,
-        capped: Bool = true,
-        gutTrained: Bool = false,
+        fuelingProfile: FuelingProfile = .amateur,
         ambientTempC: Double = 20.0
     ) -> Double {
-        // Determine kcal/hr
+        guard let duration else { return 0 }
+        let hours = duration / 3600.0
+
+        // Metabolic carb burn (what the body uses, sport-independent)
         let (lowK, highK) = energyExpenditurePerKgHour(for: intensity)
         let kcalPerKg = (Double(lowK) + Double(highK)) / 2.0
         let kcalPerHour = kcalPerKg * weightKg
 
-        // Determine ratio based on intensity, fed/fasted, optional duration, temp
-        let ratio = ratioOfCarbsUsed(
+        let metabolicRatio = ratioOfCarbsUsed(
             for: intensity,
             fasted: fasted,
-            duration: duration ?? 3600,
             ambientTempC: ambientTempC
         )
-        let gramsPerHour = (kcalPerHour * ratio) / UnitTransformationConstants.kCalInGramOfCarbs
+        let metabolicGramsPerHour = (kcalPerHour * metabolicRatio) / UnitTransformationConstants.kCalInGramOfCarbs
 
-        // Amateur-friendly caps
-        let capMultiplier = gutTrained ? 1.4 : 1.0
-        let cap = intensity.amateurGramsPerHourCap * capMultiplier
+        // Sport specific GI intake tolerance factor.
+        // Running: mechanical impact causes gastric jostling → lower absorption.
+        // Cycling: seated, no impact → best GI tolerance.
+        var gramsPerHour = metabolicGramsPerHour * giIntakeFactor()
 
-        var recommended = gramsPerHour
-        if capped {
-            if intensity == .low { recommended *= 1.10 } // boost low intensity
-            if intensity == .moderate { recommended *= 1.05 } // mild boost
-            recommended = min(recommended, cap)
+        // Duration ramp - linear from 30min to 1.5h.
+        // Short efforts don't warrant the same intake as longer ones.
+        let rampFloor = 0.5
+        let rampCeiling = 1.5
+        if hours < rampCeiling {
+            let rampProgress = (hours - rampFloor) / (rampCeiling - rampFloor)
+            gramsPerHour *= max(0, min(1, rampProgress))
         }
 
-        // Duration-based scaling for short sessions (<1h) only if a duration was provided
-        if let actualDuration = duration {
-            let hours = actualDuration / 3600.0
-            if hours < 1.0 {
-                recommended *= max(0.0, hours)
-            }
+        // Long-duration downshift.
+        // Past 2h the body shifts slightly toward fat oxidation.
+        if hours > 2.0 {
+            let durReduction = min(0.10, 0.02 * (hours - 2.0))
+            gramsPerHour *= (1.0 - durReduction)
         }
 
-        // Final safety clamp
-        recommended = max(0.0, recommended)
-        return recommended.rounded(.down)
+        // Intensity micro adjustments (always applied)
+        if intensity == .low { gramsPerHour *= 1.10 }
+        if intensity == .moderate { gramsPerHour *= 1.05 }
+
+        // Apply fueling profile caps
+        switch fuelingProfile {
+        case .amateur:
+            gramsPerHour = min(gramsPerHour, sportSpecificCap(for: intensity))
+        case .trained:
+            gramsPerHour = min(gramsPerHour, sportSpecificCap(for: intensity) * 1.4)
+        case .uncapped:
+            break
+        }
+
+        let result = max(0, gramsPerHour).rounded(.down)
+
+        // Below 15 g/h the intake is negligible — glycogen covers the effort.
+        return result >= 15 ? result : 0
     }
 }
 
 // MARK: - Private Helpers
 
 private extension SupportedSport {
-    private func baseCarbRatio(for intensity: Intensity) -> Double {
+    /// Metabolic carb burn fraction. Running burns more carbs per kg, hence slightly
+    /// higher ratios, but this reflects combustion, not what the athlete should eat.
+    func baseCarbRatio(for intensity: Intensity) -> Double {
         switch (self, intensity) {
-        case (.run, .low): return 0.55
-        case (.run, .moderate): return 0.65
-        case (.run, .high): return 0.75
+        case (.run, .low): return 0.50
+        case (.run, .moderate): return 0.60
+        case (.run, .high): return 0.72
         case (.bike, .low): return 0.50
         case (.bike, .moderate): return 0.60
         case (.bike, .high): return 0.70
@@ -212,6 +201,35 @@ private extension SupportedSport {
         case (.swim, .moderate): return 0.60
         case (.swim, .high): return 0.75
         default: return 0.0
+        }
+    }
+
+    /// GI tolerance factor: scales metabolic carb burn down to what can realistically
+    /// be ingested and absorbed, per sport. Running is the most restrictive due to
+    /// repetitive impact stress on the gut.
+    func giIntakeFactor() -> Double {
+        switch self {
+        case .run: return 0.55
+        case .bike: return 1.0
+        case .swim: return 0.65
+        default: return 1.0
+        }
+    }
+
+    /// Sport specific hard caps on grams/hr for amateur athletes.
+    /// Running caps are lower than cycling due to GI stress.
+    func sportSpecificCap(for intensity: Intensity) -> Double {
+        switch (self, intensity) {
+        case (.run, .low): return 30
+        case (.run, .moderate): return 50
+        case (.run, .high): return 70
+        case (.bike, .low): return 50
+        case (.bike, .moderate): return 70
+        case (.bike, .high): return 90
+        case (.swim, .low): return 35
+        case (.swim, .moderate): return 55
+        case (.swim, .high): return 75
+        default: return 60
         }
     }
 }

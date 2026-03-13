@@ -42,14 +42,12 @@ public final class RaceCalculatorViewFactoryDefault {
 
 extension RaceCalculatorViewFactoryDefault: RaceCalculatorViewFactory {
     @MainActor
-    public func buildRaceCalculatorView() -> RaceCalculatorView {
-        RaceCalculatorView(
-            runViewModel: dependencies.running.paceCalculatorViewModel,
-            swimViewModel: dependencies.swimming.paceCalculatorViewModel,
-            bikeViewModel: dependencies.cycling.paceCalculatorViewModel,
-            runSplitsViewModel: dependencies.running.splitsViewModel,
-            swimSplitsViewModel: dependencies.swimming.splitsViewModel,
-            bikeSplitsViewModel: dependencies.cycling.splitsViewModel
+    public func buildRaceCalculatorCoordinator() -> RaceCalculatorCoordinator {
+        RaceCalculatorCoordinator(
+            factory: self,
+            running: dependencies.running,
+            swimming: dependencies.swimming,
+            cycling: dependencies.cycling
         )
     }
 }

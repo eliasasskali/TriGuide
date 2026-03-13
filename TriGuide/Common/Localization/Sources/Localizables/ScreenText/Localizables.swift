@@ -36,10 +36,6 @@ public enum Localizables {
             NSLocalizedString("remove_from_favorites", bundle: .module, comment: "")
         }
 
-        public static var or: String {
-            NSLocalizedString("or", bundle: .module, comment: "")
-        }
-
         public static var intensity: String {
             NSLocalizedString("intensity", bundle: .module, comment: "")
         }
@@ -59,15 +55,15 @@ public enum Localizables {
         public static var cancel: String {
             NSLocalizedString("cancel", bundle: .module, comment: "")
         }
+
+        public static var reset: String {
+            NSLocalizedString("reset", bundle: .module, comment: "")
+        }
     }
 
     // MARK: - App tabs
 
     public enum Tabs {
-        public static var home: String {
-            NSLocalizedString("tabs_home", bundle: .module, comment: "")
-        }
-
         public static var calculator: String {
             NSLocalizedString("tabs_calculator", bundle: .module, comment: "")
         }

@@ -10,6 +10,7 @@ public class StoredNutritionPlansCoordinator: BaseCoordinator<Never, Never, Stor
 
     private let factory: RaceNutritionViewFactory
     private let raceNutritionCoordinator: RaceNutritionCoordinator?
+    public let viewModel: StoredNutritionPlansListViewModel
 
     // MARK: - Initializer
 
@@ -19,12 +20,16 @@ public class StoredNutritionPlansCoordinator: BaseCoordinator<Never, Never, Stor
     ) {
         self.factory = factory
         self.raceNutritionCoordinator = raceNutritionCoordinator
+        viewModel = factory.buildStoredNutritionPlansListViewModel()
         super.init()
     }
 
     // MARK: - BaseCoordinator
 
     override public func start() -> StoredNutritionPlansListView {
-        factory.buildStoredNutritionPlansListView(coordinator: raceNutritionCoordinator)
+        StoredNutritionPlansListView(
+            viewModel: viewModel,
+            coordinator: raceNutritionCoordinator
+        )
     }
 }

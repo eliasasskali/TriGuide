@@ -32,6 +32,7 @@ public class RaceNutritionCoordinator: BaseCoordinator<RaceNutritionCoordinator.
     private var carbItemsCoordinator: CarbItemsCoordinator?
     private let raceNutritionResultViewModel: RaceNutritionResultViewModel
     private var originalStoredPlan: FuelingResult?
+    public var onPlanUpdated: (() -> Void)?
 
     // MARK: - Initializer
 
@@ -111,6 +112,7 @@ public extension RaceNutritionCoordinator {
                 )
                 if saved {
                     self.originalStoredPlan = updatedPlan
+                    self.onPlanUpdated?()
                 }
                 return saved
             }

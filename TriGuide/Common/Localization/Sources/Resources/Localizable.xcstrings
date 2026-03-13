@@ -1235,6 +1235,116 @@
         }
       }
     },
+    "fueling_profile_amateur" : {
+      "localizations" : {
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Amateur"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Amateur"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Amateur"
+          }
+        }
+      }
+    },
+    "fueling_profile_information_description" : {
+      "localizations" : {
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Amateur aplica límits conservadors. Estómac entrenat augmenta el límit per a atletes que han adaptat la digestió. Sense límits elimina totes les restriccions."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Amateur applies conservative caps. Trained gut raises the cap for athletes who've adapted their digestion. No limits removes all caps."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Amateur aplica límites conservadores. Estómago entrenado sube el límite para atletas que han adaptado su digestión. Sin límites elimina todas las restricciones."
+          }
+        }
+      }
+    },
+    "fueling_profile_title" : {
+      "localizations" : {
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perfil de nutrició"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fueling profile"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perfil de nutrición"
+          }
+        }
+      }
+    },
+    "fueling_profile_trained" : {
+      "localizations" : {
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estómac entrenat"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trained gut"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estómago entrenado"
+          }
+        }
+      }
+    },
+    "fueling_profile_uncapped" : {
+      "localizations" : {
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sense límits"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No limits"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sin límites"
+          }
+        }
+      }
+    },
     "intensity" : {
       "localizations" : {
         "ca" : {
@@ -1341,28 +1451,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aceptar"
-          }
-        }
-      }
-    },
-    "or" : {
-      "localizations" : {
-        "ca" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "o"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "or"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "o"
           }
         }
       }
@@ -1675,50 +1763,6 @@
         }
       }
     },
-    "race_nutrition_calculator-apply-amateur-limits" : {
-      "localizations" : {
-        "ca" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aplica límits d’aficionat"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Apply amateur limits"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aplicar límites de aficionado"
-          }
-        }
-      }
-    },
-    "race_nutrition_calculator-apply-amateur-limits-information-description" : {
-      "localizations" : {
-        "ca" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La recomanació de carbohidrats està limitada per seguretat, ideal per a esportistes sense un estómac entrenat. Desactivar-la donarà nombres més alts però pot ser més difícil de tolerar."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The carb recommendation is capped for safety, ideal for athletes without gut training. Disabling it will give higher numbers but may be harder to tolerate."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La recomendación de carbohidratos está limitada por seguridad, ideal para deportistas sin un estómago entrenado. Desactivarla dará valores más altos pero puede ser más difícil de tolerar."
-          }
-        }
-      }
-    },
     "race_nutrition_calculator-calculate-button-title" : {
       "localizations" : {
         "ca" : {
@@ -1847,6 +1891,50 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Duración"
+          }
+        }
+      }
+    },
+    "race_nutrition_calculator-estimate-from-weight" : {
+      "localizations" : {
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estimar"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estimate"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estimar"
+          }
+        }
+      }
+    },
+    "race_nutrition_calculator-estimated-carbs-per-hour" : {
+      "localizations" : {
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estimat: %@ g/h"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estimated: %@ g/h"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estimado: %@ g/h"
           }
         }
       }
@@ -1983,46 +2071,46 @@
         }
       }
     },
-    "race_nutrition_calculator-gut-trained" : {
+    "race_nutrition_calculator-no-carbs-needed-description" : {
       "localizations" : {
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Estómac entrenat"
+            "value" : "Les teves reserves de glucogen són suficients per a aquesta sessió. Si tot i així ho vols, introdueix una quantitat manualment."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gut trained"
+            "value" : "Your glycogen stores are enough for this session. If you still want to fuel, set a custom amount manually."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Estómago entrenado"
+            "value" : "Tus reservas de glucógeno son suficientes para esta sesión. Si aun así quieres, introduce una cantidad manualmente."
           }
         }
       }
     },
-    "race_nutrition_calculator-gut-trained-information-description" : {
+    "race_nutrition_calculator-no-carbs-needed-title" : {
       "localizations" : {
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pots entrenar el teu estómac per tolerar més carbohidrats durant sessions llargues. Si no l’has entrenat, és millor deixar aquesta opció desactivada."
+            "value" : "No calen carbohidrats per a aquesta durada"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "You can train your gut to tolerate more carbs during long sessions. If you haven’t trained your gut, it’s better to leave this option unchecked."
+            "value" : "No carbs needed for this duration"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Puedes entrenar tu estómago para tolerar más carbohidratos durante sesiones largas. Si no lo has entrenado, es mejor dejar esta opción desactivada."
+            "value" : "No necesitas carbohidratos para esta duración"
           }
         }
       }
@@ -2049,46 +2137,24 @@
         }
       }
     },
-    "race_nutrition_calculator-second-section-description" : {
-      "localizations" : {
-        "ca" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Introdueix la teva ingesta objectiu d’hidrats (g/h) o calcula-la segons el teu pes i nivell d’esforç."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enter your target carb intake (g/h), or estimate it from your weight and effort level."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Introduce tu ingesta objetivo de carbohidratos (g/h) o cálculala según tu peso y nivel de esfuerzo."
-          }
-        }
-      }
-    },
     "race_nutrition_calculator-second-section-title" : {
       "localizations" : {
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "2. Tria com estimar els carbohidrats per hora"
+            "value" : "2. Introdueix la teva ingesta objectiu d’hidrats (g/h) o calcula-la segons el teu pes i nivell d’esforç."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "2. Choose how to estimate carbs per hour"
+            "value" : "2. Enter your target carb intake (g/h), or estimate it from your weight and effort level."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "2. Elige cómo estimar los carbohidratos por hora"
+            "value" : "2. Introduce tu ingesta objetivo de carbohidratos (g/h) o cálculala según tu peso y nivel de esfuerzo."
           }
         }
       }
@@ -3127,6 +3193,28 @@
         }
       }
     },
+    "reset" : {
+      "localizations" : {
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restableix"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reset"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restablecer"
+          }
+        }
+      }
+    },
     "save" : {
       "localizations" : {
         "ca" : {
@@ -3410,28 +3498,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Calculadora de Ritmo"
-          }
-        }
-      }
-    },
-    "tabs_home" : {
-      "localizations" : {
-        "ca" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Inici"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Home"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Inicio"
           }
         }
       }

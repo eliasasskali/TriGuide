@@ -10,7 +10,7 @@ import TriGuideDomain
 public struct StoredNutritionPlansListView: View {
     // MARK: - Dependencies
 
-    @StateObject private var viewModel: StoredNutritionPlansListViewModel
+    @ObservedObject private var viewModel: StoredNutritionPlansListViewModel
     private let coordinator: RaceNutritionCoordinator?
 
     // MARK: - Initializer
@@ -19,7 +19,7 @@ public struct StoredNutritionPlansListView: View {
         viewModel: StoredNutritionPlansListViewModel,
         coordinator: RaceNutritionCoordinator? = nil
     ) {
-        _viewModel = StateObject(wrappedValue: viewModel)
+        _viewModel = ObservedObject(wrappedValue: viewModel)
         self.coordinator = coordinator
     }
 

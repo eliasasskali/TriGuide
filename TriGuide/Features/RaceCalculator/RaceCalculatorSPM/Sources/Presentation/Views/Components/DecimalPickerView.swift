@@ -37,6 +37,7 @@ struct DecimalPickerView: View {
         } label: {
             pickerLabel
         }
+        .buttonStyle(.plain)
         .sheet(isPresented: $showPicker) {
             pickerSheet
         }
@@ -93,7 +94,11 @@ private extension DecimalPickerView {
     }
 
     func updateStateFromValue() {
-        guard let value else { return }
+        guard let value else {
+            whole = 0
+            decimal = 0
+            return
+        }
         whole = Int(floor(value))
         decimal = Int(((value - Double(whole)) * 10).rounded())
     }

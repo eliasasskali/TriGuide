@@ -6,9 +6,9 @@ import Foundation
 
 class DuathlonTimeViewModel: ObservableObject {
     @Published var firstRunTime: TimeInterval?
-    @Published var t1Time: TimeInterval?
+    @Published var t1Time: TimeInterval? = 60
     @Published var cyclingTime: TimeInterval?
-    @Published var t2Time: TimeInterval?
+    @Published var t2Time: TimeInterval? = 60
     @Published var secondRunTime: TimeInterval?
 
     private var totalTime: TimeInterval? {
@@ -23,5 +23,13 @@ class DuathlonTimeViewModel: ObservableObject {
 
     var formattedTotalTime: String {
         (totalTime ?? 0).formattedAsHourMinSec
+    }
+
+    func reset() {
+        firstRunTime = nil
+        t1Time = 60
+        cyclingTime = nil
+        t2Time = 60
+        secondRunTime = nil
     }
 }

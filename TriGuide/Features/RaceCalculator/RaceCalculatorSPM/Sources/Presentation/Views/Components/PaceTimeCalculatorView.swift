@@ -31,7 +31,7 @@ public struct PaceTimeCalculatorView<Distance: RaceDistance & CaseIterable>: Vie
             HStack {
                 Image(systemName: sport.representativeIcon)
                     .font(.Custom.Regular.font5)
-                    .foregroundColor(.black)
+                    .foregroundStyle(.primary)
 
                 distancePicker
                 raceDistancePicker
@@ -121,8 +121,11 @@ private extension PaceTimeCalculatorView {
                 Text(viewModel.paceUnit?.localized ?? Localizables.PaceCalculator.unit)
                 Image(systemName: "chevron.up.chevron.down")
             }
+            .foregroundStyle(.primary)
             .font(.Custom.Regular.font3)
         }
+        .buttonStyle(.plain)
+        .tint(.primary)
     }
 
     @ViewBuilder
@@ -142,8 +145,11 @@ private extension PaceTimeCalculatorView {
                 Text(Localizables.PaceCalculator.race)
                 Image(systemName: "chevron.up.chevron.down")
             }
+            .foregroundStyle(.primary)
             .font(.Custom.Regular.font3)
         }
+        .buttonStyle(.plain)
+        .tint(.primary)
     }
 }
 

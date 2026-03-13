@@ -26,11 +26,6 @@ public extension Localizables {
             // 2. Choose how to estimate carbs per hour
         }
 
-        public static var secondSectionDescription: String {
-            NSLocalizedString("race_nutrition_calculator-second-section-description", bundle: .module, comment: "")
-            // Enter your target carb intake (g/h), or estimate it from your weight and effort level.
-        }
-
         public static var duration: String {
             NSLocalizedString("race_nutrition_calculator-duration", bundle: .module, comment: "")
             // Duration
@@ -81,19 +76,29 @@ public extension Localizables {
             // Advanced Options
         }
 
+        public static var estimateFromWeight: String {
+            NSLocalizedString("race_nutrition_calculator-estimate-from-weight", bundle: .module, comment: "")
+            // Estimate
+        }
+
+        public static var estimatedCarbsPerHour: String {
+            NSLocalizedString("race_nutrition_calculator-estimated-carbs-per-hour", bundle: .module, comment: "")
+            // Estimated: %@ g/h
+        }
+
+        public static var noCarbsNeededTitle: String {
+            NSLocalizedString("race_nutrition_calculator-no-carbs-needed-title", bundle: .module, comment: "")
+            // No carbs needed for this duration
+        }
+
+        public static var noCarbsNeededDescription: String {
+            NSLocalizedString("race_nutrition_calculator-no-carbs-needed-description", bundle: .module, comment: "")
+            // Your glycogen stores are enough for this session. If you still want to fuel, set a custom amount manually.
+        }
+
         public static var fastedState: String {
             NSLocalizedString("race_nutrition_calculator-fasted-state", bundle: .module, comment: "")
             // Fasted State
-        }
-
-        public static var gutTrained: String {
-            NSLocalizedString("race_nutrition_calculator-gut-trained", bundle: .module, comment: "")
-            // Gut trained
-        }
-
-        public static var applyAmateurLimits: String {
-            NSLocalizedString("race_nutrition_calculator-apply-amateur-limits", bundle: .module, comment: "")
-            // Apply amateur limits
         }
 
         public static var ambientTemperatureC: String {
@@ -127,14 +132,6 @@ public extension Localizables {
         public static var fastedStateInformationDescription: String {
             NSLocalizedString("race_nutrition_calculator-fasted-state-information-description", bundle: .module, comment: "")
         } // Training or racing in a fasted state shifts your body toward burning more fat, so your carb needs are lower. Use this if you haven’t eaten recently.
-
-        public static var gutTrainedInformationDescription: String {
-            NSLocalizedString("race_nutrition_calculator-gut-trained-information-description", bundle: .module, comment: "")
-        } // You can train your gut to tolerate more carbs during long sessions. Start gradually with small amounts and increase over time to avoid discomfort.
-
-        public static var applyAmateurLimitsInformationDescription: String {
-            NSLocalizedString("race_nutrition_calculator-apply-amateur-limits-information-description", bundle: .module, comment: "")
-        } // The carb recommendation is capped for safety, ideal for athletes without gut training. Advanced users can disable this in settings.
 
         public static var ambientTemperatureInformationDescription: String {
             NSLocalizedString("race_nutrition_calculator-ambient-temperatur-information-description", bundle: .module, comment: "")

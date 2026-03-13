@@ -20,7 +20,7 @@ struct ContentView: View {
         )
         let raceCalculatorFactory = RaceCalculatorViewFactoryDefault(dependencies: .init())
         _raceCalculatorCoordinator = StateObject(
-            wrappedValue: RaceCalculatorCoordinator(factory: raceCalculatorFactory)
+            wrappedValue: raceCalculatorFactory.buildRaceCalculatorCoordinator()
         )
         _athleteProfileCoordinator = StateObject(
             wrappedValue: AthleteProfileCoordinator()

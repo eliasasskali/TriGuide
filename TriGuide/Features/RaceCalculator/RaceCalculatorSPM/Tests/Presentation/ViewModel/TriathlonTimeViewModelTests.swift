@@ -6,10 +6,13 @@
 import XCTest
 
 final class TriathlonTimeViewModelTests: XCTestCase {
+    // Default t1 and t2 are 60 seconds each
+
     func testTriathlonTimeViewModel_whenUpdateSwimTime_thenTotalTimeIsUpdated() {
         // Arrange
         let sut = TriathlonTimeViewModel()
-        let expected = 100.0.formattedAsHourMinSec
+        let defaultTransitions = 120.0 // t1(60) + t2(60)
+        let expected = (100.0 + defaultTransitions).formattedAsHourMinSec
 
         // Act
         sut.swimTime = 100.0
@@ -21,7 +24,7 @@ final class TriathlonTimeViewModelTests: XCTestCase {
     func testTriathlonTimeViewModel_whenUpdateT1Time_thenTotalTimeIsUpdated() {
         // Arrange
         let sut = TriathlonTimeViewModel()
-        let expected = 200.0.formattedAsHourMinSec
+        let expected = (100.0 + 100.0 + 60.0).formattedAsHourMinSec // swim + t1 + default t2
 
         // Act
         sut.swimTime = 100.0
@@ -34,7 +37,7 @@ final class TriathlonTimeViewModelTests: XCTestCase {
     func testTriathlonTimeViewModel_whenUpdateCyclingTime_thenTotalTimeIsUpdated() {
         // Arrange
         let sut = TriathlonTimeViewModel()
-        let expected = 300.0.formattedAsHourMinSec
+        let expected = (100.0 + 100.0 + 100.0 + 60.0).formattedAsHourMinSec // swim + t1 + cycling + default t2
 
         // Act
         sut.swimTime = 100.0

@@ -59,6 +59,7 @@ public struct DynamicFormView: View {
             .padding()
         }
         .background(Color(uiColor: .systemGroupedBackground))
+        .hideKeyboardOnTap()
     }
 }
 
