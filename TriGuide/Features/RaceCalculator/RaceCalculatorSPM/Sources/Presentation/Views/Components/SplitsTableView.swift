@@ -11,8 +11,8 @@ struct SplitsTableView: View {
     @Binding var totalDistance: Double
     @Binding var pace: TimeInterval
     @Binding var paceUnit: SpeedUnit
+    @Binding var splitsDistance: Double
 
-    @State var splitsDistance: Double
     @State private var pickerDistanceUnit: DistanceUnit
 
     @ObservedObject private var viewModel: SplitsTableViewModel
@@ -21,13 +21,13 @@ struct SplitsTableView: View {
         totalDistance: Binding<Double>,
         pace: Binding<TimeInterval>,
         paceUnit: Binding<SpeedUnit>,
-        splitsDistance: Double? = nil,
+        splitsDistance: Binding<Double>,
         viewModel: SplitsTableViewModel
     ) {
         _totalDistance = totalDistance
         _pace = pace
         _paceUnit = paceUnit
-        self.splitsDistance = splitsDistance ?? paceUnit.wrappedValue.defaultSplitsDistance
+        _splitsDistance = splitsDistance
         pickerDistanceUnit = paceUnit.wrappedValue.distanceUnit
         self.viewModel = viewModel
     }
@@ -43,7 +43,10 @@ struct SplitsTableView: View {
         .onAppear { updateSplits() }
         .onChange(of: totalDistance) { updateSplits() }
         .onChange(of: pace) { updateSplits() }
-        .onChange(of: paceUnit) { updateSplits() }
+        .onChange(of: paceUnit) {
+            pickerDistanceUnit = paceUnit.distanceUnit
+            updateSplits()
+        }
     }
 }
 
@@ -130,7 +133,7 @@ private extension SplitsTableView {
         totalDistance: .constant(21000),
         pace: .constant(270),
         paceUnit: .constant(.minPerKm),
-        splitsDistance: 5000,
+        splitsDistance: .constant(5000),
         viewModel: SplitsTableViewModel(paceCalculator: RunningPaceCalculator())
     )
 }

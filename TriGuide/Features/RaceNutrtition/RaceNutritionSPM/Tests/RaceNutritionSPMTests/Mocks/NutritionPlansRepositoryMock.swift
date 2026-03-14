@@ -59,4 +59,10 @@ actor NutritionPlansRepositoryMock: NutritionPlansRepository {
         }
         deletedPlans.append(plan)
     }
+
+    func replaceNutritionPlan(_: FuelingResult, with _: FuelingResult, name _: String) async throws {
+        if shouldThrowOnAdd {
+            throw MockError.addFailed
+        }
+    }
 }

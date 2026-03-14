@@ -5,5 +5,5 @@
 import Foundation
 
 public protocol RaceCalculatorViewFactory {
-    @MainActor func buildRaceCalculatorView() -> RaceCalculatorView
+    @MainActor func buildRaceCalculatorCoordinator() -> RaceCalculatorCoordinator
 }

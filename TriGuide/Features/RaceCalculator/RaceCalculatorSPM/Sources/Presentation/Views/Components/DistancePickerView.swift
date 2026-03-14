@@ -23,6 +23,7 @@ struct DistancePickerView: View {
         } label: {
             pickerLabel
         }
+        .buttonStyle(.plain)
         .sheet(isPresented: $showPicker) {
             pickerSheet
         }
@@ -109,7 +110,11 @@ private extension DistancePickerView {
     // MARK: - State management
 
     func updateStateFromDistance() {
-        guard let distance else { return }
+        guard let distance else {
+            whole = 0
+            decimal = 0
+            return
+        }
 
         let value = distance / unit.factorToMeters
         whole = Int(floor(value))

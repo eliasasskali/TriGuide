@@ -13,6 +13,7 @@ public class RaceNutritionResultViewModel: ObservableObject {
 
     private let saveFuelingPlanUseCase: SaveFuelingPlanUseCase
     private let deleteStoredFuelingResultUseCase: DeleteStoredFuelingResultUseCase
+    private let replaceFuelingPlanUseCase: ReplaceFuelingPlanUseCase
 
     // MARK: - Properties
 
@@ -22,10 +23,12 @@ public class RaceNutritionResultViewModel: ObservableObject {
 
     public init(
         saveFuelingPlanUseCase: SaveFuelingPlanUseCase,
-        deleteStoredFuelingResultUseCase: DeleteStoredFuelingResultUseCase
+        deleteStoredFuelingResultUseCase: DeleteStoredFuelingResultUseCase,
+        replaceFuelingPlanUseCase: ReplaceFuelingPlanUseCase
     ) {
         self.saveFuelingPlanUseCase = saveFuelingPlanUseCase
         self.deleteStoredFuelingResultUseCase = deleteStoredFuelingResultUseCase
+        self.replaceFuelingPlanUseCase = replaceFuelingPlanUseCase
     }
 
     func saveFuelingPlan(
@@ -53,8 +56,11 @@ public class RaceNutritionResultViewModel: ObservableObject {
                     : Localizables.RaceNutritionResults.storedPlansItemUnnamedPlan)
 
         do {
-            try await deleteStoredFuelingResultUseCase.execute(plan: oldPlan)
-            try await saveFuelingPlanUseCase.execute(plan: updatedPlan, planName: finalName)
+            try await replaceFuelingPlanUseCase.execute(
+                oldPlan: oldPlan,
+                updatedPlan: updatedPlan,
+                planName: finalName
+            )
             return true
         } catch {
             handle(error)

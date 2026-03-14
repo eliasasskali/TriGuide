@@ -41,14 +41,16 @@ private extension PickerLabel {
     var horizontalPickerLabel: some View {
         HStack(alignment: .center) {
             Text(title)
-                .foregroundStyle(.black)
+                .foregroundStyle(.primary)
                 .font(.Custom.Medium.font3)
                 .lineLimit(1)
             Text(value)
+                .foregroundStyle(.primary)
                 .font(.Custom.Regular.font3)
                 .layoutPriority(1)
             Spacer()
             icon()
+                .foregroundStyle(.secondary)
                 .fixedSize()
         }
         .cardBackground(
@@ -62,13 +64,15 @@ private extension PickerLabel {
         HStack(alignment: .center) {
             VStack(alignment: .leading) {
                 Text(title)
-                    .foregroundStyle(.black)
+                    .foregroundStyle(.primary)
                     .font(.Custom.Medium.font3)
                 Text(value)
+                    .foregroundStyle(.primary)
                     .font(.Custom.Regular.font3)
             }
             Spacer()
             icon()
+                .foregroundStyle(.secondary)
         }
         .cardBackground(
             backgroundColor: Color(UIColor.lightGray).opacity(0.2),

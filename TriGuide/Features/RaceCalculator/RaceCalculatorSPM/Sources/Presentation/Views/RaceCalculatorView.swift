@@ -8,53 +8,43 @@ import TriGuideDomain
 
 public struct RaceCalculatorView: View {
     @State private var selectedSport: SupportedSport = .run
+    @State private var selectedTriDistance: TriathlonDistance?
+    @State private var selectedDuathlonDistance: DuathlonDistance?
 
-    @StateObject private var runViewModel: PaceCalculatorViewModel
-    @StateObject private var swimViewModel: PaceCalculatorViewModel
-    @StateObject private var bikeViewModel: PaceCalculatorViewModel
+    @ObservedObject private var coordinator: RaceCalculatorCoordinator
 
-    @StateObject private var runSplitsViewModel: SplitsTableViewModel
-    @StateObject private var swimSplitsViewModel: SplitsTableViewModel
-    @StateObject private var bikeSplitsViewModel: SplitsTableViewModel
-
-    public init(
-        runViewModel: PaceCalculatorViewModel,
-        swimViewModel: PaceCalculatorViewModel,
-        bikeViewModel: PaceCalculatorViewModel,
-        runSplitsViewModel: SplitsTableViewModel,
-        swimSplitsViewModel: SplitsTableViewModel,
-        bikeSplitsViewModel: SplitsTableViewModel
-    ) {
-        _runViewModel = StateObject(wrappedValue: runViewModel)
-        _swimViewModel = StateObject(wrappedValue: swimViewModel)
-        _bikeViewModel = StateObject(wrappedValue: bikeViewModel)
-        _runSplitsViewModel = StateObject(wrappedValue: runSplitsViewModel)
-        _swimSplitsViewModel = StateObject(wrappedValue: swimSplitsViewModel)
-        _bikeSplitsViewModel = StateObject(wrappedValue: bikeSplitsViewModel)
+    public init(coordinator: RaceCalculatorCoordinator) {
+        _coordinator = ObservedObject(wrappedValue: coordinator)
     }
 
     public var body: some View {
-        VStack(spacing: 0) {
-            Picker(Localizables.Common.sport, selection: $selectedSport) {
-                ForEach(SupportedSport.allCases, id: \.self) { sport in
-                    Text(sport.localized)
+        ZStack(alignment: .bottomTrailing) {
+            VStack(spacing: 0) {
+                Picker(Localizables.Common.sport, selection: $selectedSport) {
+                    ForEach(SupportedSport.allCases, id: \.self) { sport in
+                        Text(sport.localized)
+                    }
                 }
-            }
-            .pickerStyle(.palette)
-            .padding()
-            .background(Color(UIColor.systemBackground))
-            .zIndex(1)
+                .pickerStyle(.palette)
+                .padding()
+                .background(Color(UIColor.systemBackground))
+                .zIndex(1)
 
-            Divider()
+                Divider()
 
-            ScrollView {
-                selectedSportView
-                    .padding()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                ScrollView {
+                    selectedSportView
+                        .padding()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                }
+                .scrollIndicators(.hidden)
             }
-            .scrollIndicators(.hidden)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+            resetButton
+                .padding(.trailing, 20)
+                .padding(.bottom, 20)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 
@@ -74,29 +64,33 @@ private extension RaceCalculatorView {
         VStack {
             PaceTimeCalculatorView<SwimmingDistance>(
                 sport: .swim,
-                viewModel: swimViewModel
+                viewModel: coordinator.swimViewModel
             )
 
-            if let distance = swimViewModel.distance,
+            if let distance = coordinator.swimViewModel.distance,
                distance > 0,
-               let pace = swimViewModel.pace,
+               let pace = coordinator.swimViewModel.pace,
                pace > 0,
-               let paceUnit = swimViewModel.paceUnit
+               let paceUnit = coordinator.swimViewModel.paceUnit
             {
                 SplitsTableView(
                     totalDistance: Binding(
                         get: { distance },
-                        set: { swimViewModel.distance = $0 }
+                        set: { coordinator.swimViewModel.distance = $0 }
                     ),
                     pace: Binding(
                         get: { pace },
-                        set: { swimViewModel.pace = $0 }
+                        set: { coordinator.swimViewModel.pace = $0 }
                     ),
                     paceUnit: Binding(
                         get: { paceUnit },
-                        set: { swimViewModel.paceUnit = $0 }
+                        set: { coordinator.swimViewModel.paceUnit = $0 }
                     ),
-                    viewModel: swimSplitsViewModel
+                    splitsDistance: Binding(
+                        get: { coordinator.swimViewModel.splitsDistance ?? paceUnit.defaultSplitsDistance },
+                        set: { coordinator.swimViewModel.splitsDistance = $0 }
+                    ),
+                    viewModel: coordinator.swimSplitsViewModel
                 )
             }
         }
@@ -106,29 +100,33 @@ private extension RaceCalculatorView {
         VStack {
             PaceTimeCalculatorView<CyclingDistance>(
                 sport: .bike,
-                viewModel: bikeViewModel
+                viewModel: coordinator.bikeViewModel
             )
 
-            if let distance = bikeViewModel.distance,
+            if let distance = coordinator.bikeViewModel.distance,
                distance > 0,
-               let speed = bikeViewModel.speed,
+               let speed = coordinator.bikeViewModel.speed,
                speed > 0,
-               let paceUnit = bikeViewModel.paceUnit
+               let paceUnit = coordinator.bikeViewModel.paceUnit
             {
                 SplitsTableView(
                     totalDistance: Binding(
                         get: { distance },
-                        set: { bikeViewModel.distance = $0 }
+                        set: { coordinator.bikeViewModel.distance = $0 }
                     ),
                     pace: Binding(
                         get: { speed },
-                        set: { bikeViewModel.speed = $0 }
+                        set: { coordinator.bikeViewModel.speed = $0 }
                     ),
                     paceUnit: Binding(
                         get: { paceUnit },
-                        set: { bikeViewModel.paceUnit = $0 }
+                        set: { coordinator.bikeViewModel.paceUnit = $0 }
                     ),
-                    viewModel: bikeSplitsViewModel
+                    splitsDistance: Binding(
+                        get: { coordinator.bikeViewModel.splitsDistance ?? paceUnit.defaultSplitsDistance },
+                        set: { coordinator.bikeViewModel.splitsDistance = $0 }
+                    ),
+                    viewModel: coordinator.bikeSplitsViewModel
                 )
             }
         }
@@ -138,29 +136,33 @@ private extension RaceCalculatorView {
         VStack {
             PaceTimeCalculatorView<RunningDistance>(
                 sport: .run,
-                viewModel: runViewModel
+                viewModel: coordinator.runViewModel
             )
 
-            if let distance = runViewModel.distance,
+            if let distance = coordinator.runViewModel.distance,
                distance > 0,
-               let pace = runViewModel.pace,
+               let pace = coordinator.runViewModel.pace,
                pace > 0,
-               let paceUnit = runViewModel.paceUnit
+               let paceUnit = coordinator.runViewModel.paceUnit
             {
                 SplitsTableView(
                     totalDistance: Binding(
                         get: { distance },
-                        set: { runViewModel.distance = $0 }
+                        set: { coordinator.runViewModel.distance = $0 }
                     ),
                     pace: Binding(
                         get: { pace },
-                        set: { runViewModel.pace = $0 }
+                        set: { coordinator.runViewModel.pace = $0 }
                     ),
                     paceUnit: Binding(
                         get: { paceUnit },
-                        set: { runViewModel.paceUnit = $0 }
+                        set: { coordinator.runViewModel.paceUnit = $0 }
                     ),
-                    viewModel: runSplitsViewModel
+                    splitsDistance: Binding(
+                        get: { coordinator.runViewModel.splitsDistance ?? paceUnit.defaultSplitsDistance },
+                        set: { coordinator.runViewModel.splitsDistance = $0 }
+                    ),
+                    viewModel: coordinator.runSplitsViewModel
                 )
             }
         }
@@ -168,39 +170,53 @@ private extension RaceCalculatorView {
 
     var triathlonTimeView: some View {
         TriathlonTimeView(
-            viewModel: TriathlonTimeViewModel()
+            viewModel: coordinator.triathlonViewModel,
+            swimViewModel: coordinator.triathlonSwimViewModel,
+            bikeViewModel: coordinator.triathlonBikeViewModel,
+            runViewModel: coordinator.triathlonRunViewModel,
+            selectedTriDistance: $selectedTriDistance
         )
     }
 
     var duathlonTimeView: some View {
         DuathlonTimeView(
-            viewModel: DuathlonTimeViewModel()
+            viewModel: coordinator.duathlonViewModel,
+            firstRunViewModel: coordinator.duathlonFirstRunViewModel,
+            bikeViewModel: coordinator.duathlonBikeViewModel,
+            secondRunViewModel: coordinator.duathlonSecondRunViewModel,
+            selectedDuathlonDistance: $selectedDuathlonDistance
         )
+    }
+
+    var resetButton: some View {
+        Button {
+            coordinator.resetSport(selectedSport)
+            if selectedSport == .triathlon {
+                selectedTriDistance = nil
+            } else if selectedSport == .duathlon {
+                selectedDuathlonDistance = nil
+            }
+        } label: {
+            Label(Localizables.Common.reset, systemImage: "arrow.counterclockwise")
+        }
+        .buttonStyle(.borderedProminent)
     }
 }
 
 #Preview {
-    RaceCalculatorView(
-        runViewModel: PaceCalculatorViewModel(
+    RaceCalculatorCoordinator(
+        factory: RaceCalculatorViewFactoryDefault(dependencies: .init()),
+        running: SportCalculationBundle(
             paceCalculator: RunningPaceCalculator(),
             paceUnit: .minPerKm
         ),
-        swimViewModel: PaceCalculatorViewModel(
+        swimming: SportCalculationBundle(
             paceCalculator: SwimmingPaceCalculator(),
             paceUnit: .minPer100m
         ),
-        bikeViewModel: PaceCalculatorViewModel(
+        cycling: SportCalculationBundle(
             paceCalculator: CyclingPaceCalculator(),
             paceUnit: .kmPerHour
-        ),
-        runSplitsViewModel: SplitsTableViewModel(
-            paceCalculator: RunningPaceCalculator()
-        ),
-        swimSplitsViewModel: SplitsTableViewModel(
-            paceCalculator: SwimmingPaceCalculator()
-        ),
-        bikeSplitsViewModel: SplitsTableViewModel(
-            paceCalculator: CyclingPaceCalculator()
         )
-    )
+    ).start()
 }

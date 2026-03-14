@@ -13,6 +13,7 @@ public final class RaceNutritionViewFactoryDefault {
         let saveFuelingPlanUseCase: SaveFuelingPlanUseCase
         let fetchStoredFuelingResultsUseCase: FetchStoredFuelingResultsUseCase
         let deleteStoredFuelingResultUseCase: DeleteStoredFuelingResultUseCase
+        let replaceFuelingPlanUseCase: ReplaceFuelingPlanUseCase
 
         public init(
             fuelingCalculatorDataSource: FuelingCalculatorDataSource? = nil,
@@ -46,6 +47,7 @@ public final class RaceNutritionViewFactoryDefault {
                 ?? FetchStoredFuelingResultsUseCaseDefault(repository: repository)
             self.deleteStoredFuelingResultUseCase = deleteStoredFuelingResultUseCase
                 ?? DeleteStoredFuelingResultUseCaseDefault(repository: repository)
+            replaceFuelingPlanUseCase = ReplaceFuelingPlanUseCaseDefault(repository: repository)
         }
     }
 
@@ -108,7 +110,8 @@ extension RaceNutritionViewFactoryDefault: RaceNutritionViewFactory {
     @MainActor public func buildRaceNutritionResultViewModel() -> RaceNutritionResultViewModel {
         RaceNutritionResultViewModel(
             saveFuelingPlanUseCase: dependencies.saveFuelingPlanUseCase,
-            deleteStoredFuelingResultUseCase: dependencies.deleteStoredFuelingResultUseCase
+            deleteStoredFuelingResultUseCase: dependencies.deleteStoredFuelingResultUseCase,
+            replaceFuelingPlanUseCase: dependencies.replaceFuelingPlanUseCase
         )
     }
 

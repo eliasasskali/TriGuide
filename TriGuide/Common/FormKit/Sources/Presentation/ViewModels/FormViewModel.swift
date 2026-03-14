@@ -30,6 +30,8 @@ public final class FormViewModel: ObservableObject {
         for field in fields {
             if let initial, let value = initial[field.id] {
                 initialValues[field.id] = value.stringValue
+            } else if field.type == .picker, let firstOption = field.pickerOptions?.first {
+                initialValues[field.id] = firstOption.id
             } else {
                 initialValues[field.id] = ""
             }

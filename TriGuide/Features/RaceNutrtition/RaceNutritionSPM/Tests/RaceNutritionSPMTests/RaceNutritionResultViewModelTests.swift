@@ -14,11 +14,13 @@ struct RaceNutritionResultViewModelTests {}
 private extension RaceNutritionResultViewModelTests {
     func givenSut(
         saveUseCase: SaveFuelingPlanUseCase = SaveFuelingPlanUseCaseMock(),
-        deleteUseCase: DeleteStoredFuelingResultUseCase = DeleteStoredFuelingResultUseCaseMock()
+        deleteUseCase: DeleteStoredFuelingResultUseCase = DeleteStoredFuelingResultUseCaseMock(),
+        replaceUseCase: ReplaceFuelingPlanUseCase = ReplaceFuelingPlanUseCaseMock()
     ) -> RaceNutritionResultViewModel {
         RaceNutritionResultViewModel(
             saveFuelingPlanUseCase: saveUseCase,
-            deleteStoredFuelingResultUseCase: deleteUseCase
+            deleteStoredFuelingResultUseCase: deleteUseCase,
+            replaceFuelingPlanUseCase: replaceUseCase
         )
     }
 }
@@ -39,11 +41,10 @@ extension RaceNutritionResultViewModelTests {
         #expect(calls[0].planName == "Plan A")
     }
 
-    @Test("Replace deletes old and saves updated with updated name")
-    func raceNutritionResultViewModel_whenReplaceWithUpdatedName_thenDeletesAndSavesWithUpdatedName() async {
-        let saveUseCase = SaveFuelingPlanUseCaseMock()
-        let deleteUseCase = DeleteStoredFuelingResultUseCaseMock()
-        let sut = givenSut(saveUseCase: saveUseCase, deleteUseCase: deleteUseCase)
+    @Test("Replace delegates to replace use case with updated name")
+    func raceNutritionResultViewModel_whenReplaceWithUpdatedName_thenDelegatesToReplaceUseCase() async {
+        let replaceUseCase = ReplaceFuelingPlanUseCaseMock()
+        let sut = givenSut(replaceUseCase: replaceUseCase)
 
         let oldPlan = FuelingResult.buildMock(name: "Old Name", itemId: "old")
         let updatedPlan = FuelingResult.buildMock(name: "New Name", itemId: "updated")
@@ -51,17 +52,17 @@ extension RaceNutritionResultViewModelTests {
         let replaced = await sut.replaceFuelingPlan(oldPlan: oldPlan, updatedPlan: updatedPlan)
 
         #expect(replaced)
-        #expect(await deleteUseCase.deletedPlans == [oldPlan])
-        let calls = await saveUseCase.savedCalls
+        let calls = await replaceUseCase.replacedCalls
         #expect(calls.count == 1)
-        #expect(calls[0].plan == updatedPlan)
+        #expect(calls[0].oldPlan == oldPlan)
+        #expect(calls[0].updatedPlan == updatedPlan)
         #expect(calls[0].planName == "New Name")
     }
 
     @Test("Replace uses old plan name when updated name is missing")
     func raceNutritionResultViewModel_whenReplaceWithoutUpdatedName_thenUsesOldPlanName() async {
-        let saveUseCase = SaveFuelingPlanUseCaseMock()
-        let sut = givenSut(saveUseCase: saveUseCase)
+        let replaceUseCase = ReplaceFuelingPlanUseCaseMock()
+        let sut = givenSut(replaceUseCase: replaceUseCase)
 
         let oldPlan = FuelingResult.buildMock(name: "Stored Name", itemId: "old")
         let updatedPlan = FuelingResult.buildMock(name: nil, itemId: "updated")
@@ -69,15 +70,15 @@ extension RaceNutritionResultViewModelTests {
         let replaced = await sut.replaceFuelingPlan(oldPlan: oldPlan, updatedPlan: updatedPlan)
 
         #expect(replaced)
-        let calls = await saveUseCase.savedCalls
+        let calls = await replaceUseCase.replacedCalls
         #expect(calls.count == 1)
         #expect(calls[0].planName == "Stored Name")
     }
 
     @Test("Replace uses unnamed fallback when both names are missing")
     func raceNutritionResultViewModel_whenReplaceWithoutAnyName_thenUsesUnnamedFallback() async {
-        let saveUseCase = SaveFuelingPlanUseCaseMock()
-        let sut = givenSut(saveUseCase: saveUseCase)
+        let replaceUseCase = ReplaceFuelingPlanUseCaseMock()
+        let sut = givenSut(replaceUseCase: replaceUseCase)
 
         let oldPlan = FuelingResult.buildMock(name: nil, itemId: "old")
         let updatedPlan = FuelingResult.buildMock(name: nil, itemId: "updated")
@@ -85,36 +86,17 @@ extension RaceNutritionResultViewModelTests {
         let replaced = await sut.replaceFuelingPlan(oldPlan: oldPlan, updatedPlan: updatedPlan)
 
         #expect(replaced)
-        let calls = await saveUseCase.savedCalls
+        let calls = await replaceUseCase.replacedCalls
         #expect(calls.count == 1)
         #expect(calls[0].planName == Localizables.RaceNutritionResults.storedPlansItemUnnamedPlan)
     }
 
-    @Test("Replace returns false and does not save when delete fails")
-    func raceNutritionResultViewModel_whenReplaceDeleteFails_thenReturnsFalseAndSkipsSave() async {
-        let saveUseCase = SaveFuelingPlanUseCaseMock()
-        let deleteUseCase = DeleteStoredFuelingResultUseCaseMock(
-            executeError: NutritionPlansRepositoryDefault.RepositoryError.deleteFailed
-        )
-        let sut = givenSut(saveUseCase: saveUseCase, deleteUseCase: deleteUseCase)
-
-        let replaced = await sut.replaceFuelingPlan(
-            oldPlan: FuelingResult.buildMock(name: "Old", itemId: "old"),
-            updatedPlan: FuelingResult.buildMock(name: "New", itemId: "new")
-        )
-
-        #expect(!replaced)
-        #expect(await saveUseCase.savedCalls.isEmpty)
-        #expect(sut.errorMessage == Localizables.Errors.generic)
-    }
-
-    @Test("Replace returns false and maps save failure")
-    func raceNutritionResultViewModel_whenReplaceSaveFails_thenReturnsFalseAndSetsSaveError() async {
-        let saveUseCase = SaveFuelingPlanUseCaseMock(
+    @Test("Replace returns false when replace use case fails")
+    func raceNutritionResultViewModel_whenReplaceFails_thenReturnsFalse() async {
+        let replaceUseCase = ReplaceFuelingPlanUseCaseMock(
             executeError: NutritionPlansRepositoryDefault.RepositoryError.saveFailed
         )
-        let deleteUseCase = DeleteStoredFuelingResultUseCaseMock()
-        let sut = givenSut(saveUseCase: saveUseCase, deleteUseCase: deleteUseCase)
+        let sut = givenSut(replaceUseCase: replaceUseCase)
 
         let replaced = await sut.replaceFuelingPlan(
             oldPlan: FuelingResult.buildMock(name: "Old", itemId: "old"),
@@ -122,7 +104,6 @@ extension RaceNutritionResultViewModelTests {
         )
 
         #expect(!replaced)
-        #expect(await deleteUseCase.deletedPlans.count == 1)
         #expect(sut.errorMessage == Localizables.Errors.fuelingPlanSaveFailed)
     }
 }
@@ -158,5 +139,21 @@ private actor DeleteStoredFuelingResultUseCaseMock: DeleteStoredFuelingResultUse
             throw executeError
         }
         deletedPlans.append(plan)
+    }
+}
+
+private actor ReplaceFuelingPlanUseCaseMock: ReplaceFuelingPlanUseCase {
+    private(set) var replacedCalls: [(oldPlan: FuelingResult, updatedPlan: FuelingResult, planName: String)] = []
+    private let executeError: Error?
+
+    init(executeError: Error? = nil) {
+        self.executeError = executeError
+    }
+
+    func execute(oldPlan: FuelingResult, updatedPlan: FuelingResult, planName: String) async throws {
+        if let executeError {
+            throw executeError
+        }
+        replacedCalls.append((oldPlan, updatedPlan, planName))
     }
 }

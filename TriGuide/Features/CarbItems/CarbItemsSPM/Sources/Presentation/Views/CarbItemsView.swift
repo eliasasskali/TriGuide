@@ -207,7 +207,7 @@ private extension CarbItemsView {
                 systemImage: carbItem.isFavorite ? "star.fill" : "star"
             )
         }
-        .tint(carbItem.isFavorite ? .red : .yellow)
+        .tint(carbItem.isFavorite ? .red : Color(red: 1.0, green: 0.84, blue: 0.0))
     }
 
     // MARK: - Toolbar

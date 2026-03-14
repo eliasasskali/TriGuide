@@ -45,6 +45,12 @@ public final class AthleteProfileCoordinator: BaseCoordinator<AthleteProfileCoor
         raceNutritionCoordinator.externalPushHandler = { [weak self] path in
             self?.pushAny(path)
         }
+        raceNutritionCoordinator.onPlanUpdated = { [weak self] in
+            guard let self else { return }
+            Task {
+                await self.storedPlansCoordinator.viewModel.fetchStoredPlans()
+            }
+        }
         carbItemsCoordinator?.externalPushHandler = { [weak self] route in
             self?.pushAny(route)
         }

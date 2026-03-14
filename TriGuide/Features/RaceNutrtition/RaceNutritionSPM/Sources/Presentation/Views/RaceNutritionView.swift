@@ -2,6 +2,8 @@
 // TriGuide 2025
 //
 
+import DesignSystem
+import Localization
 import SwiftUI
 
 public struct RaceNutritionView: View {
@@ -34,6 +36,10 @@ public struct RaceNutritionView: View {
                     coordinator: coordinator
                 )
             }
+            .toast(
+                isPresented: $coordinator.showSavedPlanToast,
+                message: Localizables.RaceNutritionResults.saveSuccessToastMessage
+            )
             .sheet(item: coordinator.sheetBinding) { sheet in
                 switch sheet {
                 case let .carbItems(totalGrams):

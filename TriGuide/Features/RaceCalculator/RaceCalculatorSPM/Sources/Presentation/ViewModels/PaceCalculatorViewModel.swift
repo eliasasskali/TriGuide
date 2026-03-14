@@ -9,6 +9,7 @@ import TriGuideDomain
 @MainActor
 public class PaceCalculatorViewModel: ObservableObject {
     let paceCalculator: PaceCalculator
+    private let defaultPaceUnit: SpeedUnit?
 
     @Published var distance: Double? {
         didSet {
@@ -45,6 +46,7 @@ public class PaceCalculatorViewModel: ObservableObject {
     @Published var paceUnit: SpeedUnit? {
         didSet {
             guard !isUpdating else { return }
+            splitsDistance = paceUnit?.defaultSplitsDistance
             updatePaceOrSpeedFromDuration()
         }
     }
@@ -55,6 +57,8 @@ public class PaceCalculatorViewModel: ObservableObject {
             updateDurationFromPaceOrSpeed()
         }
     }
+
+    @Published var splitsDistance: Double?
 
     private var isUpdating = false
     private var paceOrSpeed: Double? {
@@ -67,15 +71,31 @@ public class PaceCalculatorViewModel: ObservableObject {
         duration: TimeInterval? = nil,
         pace: TimeInterval? = nil,
         speed: Double? = nil,
-        paceUnit: SpeedUnit? = nil
+        paceUnit: SpeedUnit? = nil,
+        splitsDistance: Double? = nil
     ) {
         self.paceCalculator = paceCalculator
+        defaultPaceUnit = paceUnit
         self.distance = distance
         self.duration = duration
         self.pace = pace
         self.speed = speed
         self.paceUnit = paceUnit
         distanceUnit = paceUnit?.distanceUnit ?? .kilometers
+        self.splitsDistance = splitsDistance ?? paceUnit?.defaultSplitsDistance
+    }
+
+    func reset() {
+        isUpdating = true
+        defer { isUpdating = false }
+
+        distance = nil
+        duration = nil
+        pace = nil
+        speed = nil
+        paceUnit = defaultPaceUnit
+        distanceUnit = defaultPaceUnit?.distanceUnit ?? .kilometers
+        splitsDistance = defaultPaceUnit?.defaultSplitsDistance
     }
 }
 

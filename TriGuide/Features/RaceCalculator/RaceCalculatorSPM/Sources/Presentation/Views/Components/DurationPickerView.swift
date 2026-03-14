@@ -47,6 +47,7 @@ public struct DurationPickerView: View {
         } label: {
             pickerLabel
         }
+        .buttonStyle(.plain)
         .sheet(isPresented: $showPicker) {
             timePicker
         }
@@ -107,7 +108,12 @@ private extension DurationPickerView {
     // MARK: - State management
 
     func updateStateFromDuration() {
-        guard let duration else { return }
+        guard let duration else {
+            hours = 0
+            minutes = 0
+            seconds = 0
+            return
+        }
         let totalSeconds = Int(duration)
         hours = totalSeconds / 3600
         minutes = (totalSeconds % 3600) / 60

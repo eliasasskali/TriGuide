@@ -43,25 +43,8 @@ public struct RaceNutritionResultView: View {
         }
     }
 
-    var itemTimeLine: [FuelingEvent] {
-        roundedTimeLine.filter { event in
-            switch event.carbItem.type {
-            case .drink:
-                return false
-            default:
-                return true
-            }
-        }
-    }
-
-    var drinkTimeLine: [FuelingEvent] {
-        roundedTimeLine.filter { event in
-            switch event.carbItem.type {
-            case .drink:
-                return true
-            default:
-                return false
-            }
+    var sortedTimeLine: [FuelingEvent] {
+        roundedTimeLine.sorted { $0.consumptionTimeOrZero < $1.consumptionTimeOrZero
         }
     }
 
@@ -84,20 +67,34 @@ public struct RaceNutritionResultView: View {
     // MARK: - Body
 
     public var body: some View {
-        ScrollView {
-            VStack(spacing: 16) {
-                planSummary
-                selectedItems
-                fuelingPlan
-                hourlyBreakdown
+        ZStack(alignment: .bottomTrailing) {
+            ScrollViewReader { scrollProxy in
+                ScrollView {
+                    VStack(spacing: 16) {
+                        fuelingPlan
+                        hourlyBreakdown
+                        selectedItems
+                            .id("selectedItems")
+                    }
+                    .padding(.vertical)
+                }
+                .scrollIndicators(.hidden)
+                .onChange(of: shouldShowSelectedItems) { _, isExpanded in
+                    guard isExpanded else { return }
+                    withAnimation {
+                        scrollProxy.scrollTo("selectedItems", anchor: .top)
+                    }
+                }
+                .safeAreaInset(edge: .bottom, spacing: 0) {
+                    if showSaveButton {
+                        bottomSaveBar
+                    }
+                }
             }
-            .padding(.vertical)
-        }
-        .scrollIndicators(.hidden)
-        .safeAreaInset(edge: .bottom, spacing: 0) {
-            if showSaveButton {
-                bottomSaveBar
-            }
+
+            editFloatingButton
+                .padding(.trailing, 20)
+                .padding(.bottom, showSaveButton ? 100 : 20)
         }
         .toast(
             isPresented: $showSavedSuccessfullyToast,
@@ -138,6 +135,7 @@ public struct RaceNutritionResultView: View {
                             lastSavedFuelingResult = fuelingResult
                             planName = ""
                             showPlanNameDialog = false
+                            coordinator.resetAndPopToRoot()
                         } else {
                             errorAlertMessage = viewModel.errorMessage ?? Localizables.Errors.generic
                             viewModel.errorMessage = nil
@@ -215,116 +213,55 @@ private extension RaceNutritionResultView {
     @ViewBuilder
     var fuelingPlan: some View {
         GroupBox {
-            VStack(spacing: 16) {
-                HStack {
-                    Text(Localizables.RaceNutritionResults.fuelingPlanTitle)
-                        .font(.Custom.Medium.font5)
+            VStack(spacing: 12) {
+                Text(Localizables.RaceNutritionResults.fuelingPlanTitle)
+                    .font(.Custom.Medium.font5)
+                    .frame(maxWidth: .infinity, alignment: .leading)
 
-                    Spacer()
+                VStack(spacing: 0) {
+                    HStack(spacing: 0) {
+                        Text(Localizables.RaceNutritionResults.fuelingPlanTimeColumnTitle)
+                            .frame(maxWidth: .infinity, alignment: .leading)
 
-                    HStack(alignment: .center) {
-                        Text(Localizables.RaceNutritionResults.fuelingPlanEditButtonLabel)
-                            .font(.Custom.Regular.font3)
-                        Image(systemName: "pencil")
-                            .fixedSize()
-                            .bold()
+                        Text(Localizables.RaceNutritionResults.fuelingPlanItemColumnTitle)
+                            .frame(maxWidth: .infinity, alignment: .leading)
                     }
-                    .onTapGesture {
-                        coordinator.pushFuelingPlanFullView()
-                    }
-                }
+                    .font(.Custom.Medium.font2)
+                    .foregroundStyle(.secondary)
+                    .padding(.bottom, 4)
 
-                if !itemTimeLine.isEmpty {
-                    Grid {
-                        GridRow {
-                            Text(Localizables.RaceNutritionResults.fuelingPlanTimeColumnTitle)
-                            Text(Localizables.RaceNutritionResults.fuelingPlanItemColumnTitle)
-                        }
-                        .font(.Custom.Medium.font3)
+                    ForEach(sortedTimeLine, id: \.self) { event in
+                        VStack(spacing: 0) {
+                            HStack(spacing: 0) {
+                                HStack(spacing: 4) {
+                                    if event.carbItem.type == .drink {
+                                        Image(systemName: "drop.fill")
+                                            .font(.Custom.Regular.font1)
+                                            .foregroundStyle(.blue)
+                                    }
 
-                        Divider()
+                                    Group {
+                                        switch event.consumption {
+                                        case let .instant(time):
+                                            Text(time.formattedAsHourMinSec)
 
-                        ForEach(itemTimeLine, id: \.self) { event in
-                            GridRow {
-                                switch event.consumption {
-                                case let .instant(time):
-                                    Text("\(time.formattedAsHourMinSec)")
-                                        .font(.Custom.Regular.font3)
-
-                                case let .interval(startTime, endTime):
-                                    Text("\(startTime.formattedAsHourMinSec) - \(endTime.formattedAsHourMinSec)")
-                                        .font(.Custom.Regular.font3)
+                                        case let .interval(startTime, endTime):
+                                            Text("\(startTime.formattedAsHourMinSec) - \(endTime.formattedAsHourMinSec)")
+                                        }
+                                    }
+                                    .font(.Custom.Medium.font3)
                                 }
+                                .frame(maxWidth: .infinity, alignment: .leading)
 
-                                Text("\(event.carbItem.name)")
+                                Text(event.carbItem.name)
                                     .font(.Custom.Regular.font3)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
                             }
-                            .padding(.vertical, 4)
+                            .padding(.vertical, 6)
 
-                            if event != itemTimeLine.last {
-                                Divider()
-                            }
+                            Divider()
                         }
-                        .frame(maxWidth: .infinity, alignment: .leading)
                     }
-                }
-
-                if !drinkTimeLine.isEmpty {
-                    Grid {
-                        GridRow {
-                            Text(Localizables.RaceNutritionResults.fuelingPlanIntervalColumnTitle)
-                            Text(Localizables.RaceNutritionResults.fuelingPlanDrinkColumnTitle)
-                        }
-                        .font(.Custom.Medium.font3)
-
-                        Divider()
-
-                        ForEach(drinkTimeLine, id: \.self) { event in
-                            GridRow {
-                                switch event.consumption {
-                                case let .instant(time):
-                                    Text("\(time.formattedAsHourMinSec)")
-                                        .font(.Custom.Regular.font3)
-
-                                case let .interval(startTime, endTime):
-                                    Text("\(startTime.formattedAsHourMinSec) - \(endTime.formattedAsHourMinSec)")
-                                        .font(.Custom.Regular.font3)
-                                }
-
-                                Text("\(event.carbItem.name)")
-                                    .font(.Custom.Regular.font3)
-                            }
-                            .padding(.vertical, 4)
-
-                            if event != drinkTimeLine.last {
-                                Divider()
-                            }
-                        }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    }
-                }
-            }
-        }
-    }
-
-    @ViewBuilder
-    var planSummary: some View {
-        GroupBox {
-            VStack(alignment: .leading, spacing: 12) {
-                HStack {
-                    Text(Localizables.RaceNutritionResults.fuelingPlanSelectedCarbsTargetLabel)
-                        .font(.Custom.Medium.font3)
-                    Spacer()
-                    Text("\(Int(fuelingResult.totalSelectedCarbs))/\(Int(fuelingResult.totalCarbsTarget)) g")
-                        .font(.Custom.Regular.font3)
-                }
-
-                HStack {
-                    Text(Localizables.RaceNutritionResults.fuelingPlanSelectedCarbsHourTargetLabel)
-                        .font(.Custom.Medium.font3)
-                    Spacer()
-                    Text("\(Int(fuelingResult.actualCarbsPerHour))/\(Int(fuelingResult.carbTargetPerHour)) g")
-                        .font(.Custom.Regular.font3)
                 }
             }
         }
@@ -334,14 +271,38 @@ private extension RaceNutritionResultView {
     var selectedItems: some View {
         if shouldShowSelectedItems {
             GroupBox {
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: 0) {
                     selectedItemsHeader
+                        .padding(.bottom, 8)
 
                     ForEach(fuelingResult.selectedItems) { selection in
-                        Text("\(Int(selection.quantity))x \(selection.item.name) (\(Int(selection.item.gramsOfCarbs)) g)")
-                            .font(.Custom.Regular.font3)
-                            .lineLimit(1)
-                            .padding(.top, 4)
+                        VStack(spacing: 0) {
+                            HStack(spacing: 8) {
+                                Image(systemName: selection.item.type.systemIconName)
+                                    .font(.Custom.Regular.font2)
+                                    .foregroundStyle(selection.item.type.tintColor)
+                                    .frame(width: 24)
+
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(selection.item.name)
+                                        .font(.Custom.Medium.font3)
+                                    Text("\(selection.item.type.localized) · \(Int(selection.item.gramsOfCarbs)) \(Localizables.Units.gSymbol)")
+                                        .font(.Custom.Regular.font2)
+                                        .foregroundStyle(.secondary)
+                                }
+
+                                Spacer()
+
+                                Text("\(Int(selection.quantity))×")
+                                    .font(.Custom.Medium.font3)
+                                    .foregroundStyle(.secondary)
+                            }
+                            .padding(.vertical, 8)
+
+                            if selection.id != fuelingResult.selectedItems.last?.id {
+                                Divider()
+                            }
+                        }
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -406,6 +367,37 @@ private extension RaceNutritionResultView {
                 Divider()
             }
     }
+
+    var editFloatingButton: some View {
+        Button {
+            coordinator.pushFuelingPlanFullView()
+        } label: {
+            Label(Localizables.RaceNutritionResults.fuelingPlanEditButtonLabel, systemImage: "pencil")
+        }
+        .buttonStyle(.borderedProminent)
+    }
+}
+
+// MARK: - CarbType UI Helpers
+
+private extension CarbType {
+    var systemIconName: String {
+        switch self {
+        case .gel: "flame.fill"
+        case .drink: "drop.fill"
+        case .solid: "fork.knife"
+        case .other: "circle.fill"
+        }
+    }
+
+    var tintColor: Color {
+        switch self {
+        case .gel: .orange
+        case .drink: .blue
+        case .solid: .green
+        case .other: .gray
+        }
+    }
 }
 
 #Preview {
@@ -420,6 +412,11 @@ private extension RaceNutritionResultView {
                 )
             ),
             deleteStoredFuelingResultUseCase: DeleteStoredFuelingResultUseCaseDefault(
+                repository: NutritionPlansRepositoryDefault(
+                    nutritionPlansDataSource: try! StoredNutritionPlansDataSourceDefault()
+                )
+            ),
+            replaceFuelingPlanUseCase: ReplaceFuelingPlanUseCaseDefault(
                 repository: NutritionPlansRepositoryDefault(
                     nutritionPlansDataSource: try! StoredNutritionPlansDataSourceDefault()
                 )

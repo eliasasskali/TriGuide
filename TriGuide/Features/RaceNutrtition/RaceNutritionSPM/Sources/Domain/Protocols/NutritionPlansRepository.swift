@@ -8,5 +8,6 @@ import TriGuideDomain
 public protocol NutritionPlansRepository: Sendable {
     func fetchNutritionPlans() async throws -> [FuelingResult]
     func addNutritionPlan(_ plan: FuelingResult, name: String) async throws
+    func replaceNutritionPlan(_ oldPlan: FuelingResult, with newPlan: FuelingResult, name: String) async throws
     func deleteNutritionPlan(_ plan: FuelingResult) async throws
 }
