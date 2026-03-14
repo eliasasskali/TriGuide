@@ -46,6 +46,7 @@ public class PaceCalculatorViewModel: ObservableObject {
     @Published var paceUnit: SpeedUnit? {
         didSet {
             guard !isUpdating else { return }
+            splitsDistance = paceUnit?.defaultSplitsDistance
             updatePaceOrSpeedFromDuration()
         }
     }

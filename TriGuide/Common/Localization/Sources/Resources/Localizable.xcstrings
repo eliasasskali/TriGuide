@@ -1372,19 +1372,19 @@
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alta (Z5+)"
+            "value" : "Alta"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "High (Z5+)"
+            "value" : "High"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alta (Z5+)"
+            "value" : "Alta"
           }
         }
       }
@@ -1394,19 +1394,19 @@
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Baixa (Z1–Z2)"
+            "value" : "Baixa"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Low (Z1-Z2)"
+            "value" : "Low"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Baja (Z1–Z2)"
+            "value" : "Baja"
           }
         }
       }
@@ -1416,19 +1416,19 @@
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Moderada (Z3–Z4)"
+            "value" : "Moderada"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Moderate (Z3-Z4)"
+            "value" : "Moderate"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Moderada (Z3–Z4)"
+            "value" : "Moderada"
           }
         }
       }
@@ -2111,28 +2111,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "No necesitas carbohidratos para esta duración"
-          }
-        }
-      }
-    },
-    "race_nutrition_calculator-pace-calculator-select-sport-error" : {
-      "localizations" : {
-        "ca" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Si us plau, selecciona un esport abans d’utilitzar el calculador de temps."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Please select a sport before using the time calculator."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Por favor, selecciona un deporte antes de usar la calculadora de tiempo."
           }
         }
       }

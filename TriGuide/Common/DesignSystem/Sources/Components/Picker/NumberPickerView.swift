@@ -38,7 +38,7 @@ public struct NumberPickerView<Label: View>: View {
 
     public var body: some View {
         VStack(spacing: 8) {
-            HStack(spacing: 0) {
+            HStack(spacing: 8) {
                 NumberWheelPicker(
                     selection: $whole,
                     minValue: 0,
@@ -56,7 +56,6 @@ public struct NumberPickerView<Label: View>: View {
                 }
                 label()
             }
-            .frame(height: 100)
 
             HStack {
                 Spacer()
@@ -67,9 +66,9 @@ public struct NumberPickerView<Label: View>: View {
             }
         }
         .padding(12)
-        .presentationDetents([.height(200)])
+        .presentationDetents([.height(300)])
         .presentationDragIndicator(.hidden)
-        .background(Color(UIColor.systemBackground))
+        .presentationBackground(Color(UIColor.systemBackground))
     }
 }
 

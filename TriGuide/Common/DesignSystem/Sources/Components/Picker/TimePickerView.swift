@@ -29,7 +29,7 @@ public struct TimePickerView: View {
 
     public var body: some View {
         VStack(spacing: 8) {
-            HStack(spacing: 0) {
+            HStack(spacing: 8) {
                 if let hours {
                     NumberWheelPicker(
                         selection: hours,
@@ -52,7 +52,6 @@ public struct TimePickerView: View {
                     )
                 }
             }
-            .frame(height: 100)
 
             HStack {
                 Spacer()
@@ -63,9 +62,9 @@ public struct TimePickerView: View {
             }
         }
         .padding(12)
-        .presentationDetents([.height(200)])
+        .presentationDetents([.height(300)])
         .presentationDragIndicator(.hidden)
-        .background(Color(UIColor.systemBackground))
+        .presentationBackground(Color(UIColor.systemBackground))
     }
 }
 

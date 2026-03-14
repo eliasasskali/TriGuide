@@ -30,8 +30,10 @@ public enum SpeedUnit {
 
     public var defaultSplitsDistance: Double {
         return switch self {
-        case .minPerKm, .kmPerHour, .minPerMile, .milesPerHour: 1000
-        case .minPer100m, .minPer100yds: 100
+        case .minPerKm, .kmPerHour: UnitTransformationConstants.metersInKm
+        case .minPerMile, .milesPerHour: UnitTransformationConstants.metersInMile
+        case .minPer100m: 100
+        case .minPer100yds: UnitTransformationConstants.metersInYard * 100
         }
     }
 

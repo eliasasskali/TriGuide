@@ -43,7 +43,10 @@ struct SplitsTableView: View {
         .onAppear { updateSplits() }
         .onChange(of: totalDistance) { updateSplits() }
         .onChange(of: pace) { updateSplits() }
-        .onChange(of: paceUnit) { updateSplits() }
+        .onChange(of: paceUnit) {
+            pickerDistanceUnit = paceUnit.distanceUnit
+            updateSplits()
+        }
     }
 }
 

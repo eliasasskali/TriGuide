@@ -4,14 +4,11 @@
 
 import SwiftUI
 
-// TODO: Solve contrast issue with .ultraThinMaterial background in popover
-
 public struct InfoLabel<Content: View>: View {
     let title: String?
     let content: () -> Content
 
     @State private var showPopover = false
-    @State private var measuredHeight: CGFloat = 0
 
     public init(
         title: String? = nil,
@@ -38,9 +35,7 @@ public struct InfoLabel<Content: View>: View {
 
 private extension InfoLabel {
     var popoverView: some View {
-        let finalHeight = min(max(measuredHeight, 80), 240)
-
-        return ScrollView {
+        ScrollView {
             VStack(alignment: .leading, spacing: 12) {
                 if let title {
                     Text(title).font(.headline)
@@ -49,25 +44,15 @@ private extension InfoLabel {
 
                 content()
                     .font(.footnote)
-                    .frame(maxWidth: .infinity)
+                    .frame(maxWidth: .infinity, alignment: .leading)
             }
             .padding(12)
-            .background(.ultraThinMaterial)
-            .background(
-                GeometryReader { geo in
-                    Color.clear
-                        .onAppear { measuredHeight = geo.size.height }
-                        .onChange(of: geo.size.height) { _, newHeight in
-                            measuredHeight = newHeight
-                        }
-                }
-            )
         }
-        .frame(height: finalHeight)
+        .scrollBounceBehavior(.basedOnSize)
         .scrollIndicators(.hidden)
-        .background(.ultraThinMaterial)
+        .frame(idealWidth: 280, maxHeight: 300)
+        .fixedSize(horizontal: false, vertical: true)
         .presentationCompactAdaptation(.popover)
-        .presentationBackground(.clear)
     }
 }
 

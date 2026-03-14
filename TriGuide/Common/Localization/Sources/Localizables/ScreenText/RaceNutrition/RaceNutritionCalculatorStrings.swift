@@ -41,11 +41,6 @@ public extension Localizables {
             // Use Time Calculator
         }
 
-        public static var paceCalculatorSelectSportError: String {
-            NSLocalizedString("race_nutrition_calculator-pace-calculator-select-sport-error", bundle: .module, comment: "")
-            // Please select a sport before using the time calculator.
-        }
-
         public static var gramsPerHourEstimateSelectSportError: String {
             NSLocalizedString("race_nutrition_calculator-grams-per-hour-estimate-select-sport-error", bundle: .module, comment: "")
             // Please select a sport before estimating carbs per hour.

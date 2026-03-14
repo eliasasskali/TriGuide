@@ -10,6 +10,7 @@ import TriGuideDomain
 public struct PaceTimeCalculatorView<Distance: RaceDistance & CaseIterable>: View where Distance.AllCases: RandomAccessCollection {
     let sport: SupportedSport
     @StateObject var viewModel: PaceCalculatorViewModel
+    @State private var localSelectedRace: Distance?
 
     var selectedRaceDistance: Binding<Distance?>?
     var duration: Binding<TimeInterval?>?
@@ -58,7 +59,13 @@ public struct PaceTimeCalculatorView<Distance: RaceDistance & CaseIterable>: Vie
         .onChange(of: viewModel.duration) { _, newValue in
             duration?.wrappedValue = newValue
         }
+        .onChange(of: viewModel.distance) { _, newValue in
+            if newValue == nil {
+                localSelectedRace = nil
+            }
+        }
         .onChange(of: selectedRaceDistance?.wrappedValue) { _, newValue in
+            localSelectedRace = newValue
             guard let newValue else { return }
             viewModel.distance = newValue.meters
         }
@@ -79,6 +86,7 @@ private extension PaceTimeCalculatorView {
                 set: { viewModel.distanceUnit = $0 }
             )
         ) {
+            localSelectedRace = nil
             selectedRaceDistance?.wrappedValue = nil
         }
     }
@@ -117,15 +125,21 @@ private extension PaceTimeCalculatorView {
                 }
             }
         } label: {
-            HStack {
+            HStack(spacing: 4) {
                 Text(viewModel.paceUnit?.localized ?? Localizables.PaceCalculator.unit)
                 Image(systemName: "chevron.up.chevron.down")
+                    .imageScale(.small)
             }
+            .font(.Custom.Regular.font2)
             .foregroundStyle(.primary)
-            .font(.Custom.Regular.font3)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 6)
+            .background(
+                Capsule()
+                    .fill(Color(UIColor.lightGray).opacity(0.2))
+            )
         }
         .buttonStyle(.plain)
-        .tint(.primary)
     }
 
     @ViewBuilder
@@ -133,6 +147,7 @@ private extension PaceTimeCalculatorView {
         Menu {
             ForEach(Distance.allCases, id: \.self) { distance in
                 Button {
+                    localSelectedRace = distance
                     selectedRaceDistance?.wrappedValue = distance
                     viewModel.distance = distance.meters
                 } label: {
@@ -141,15 +156,21 @@ private extension PaceTimeCalculatorView {
                 }
             }
         } label: {
-            HStack {
-                Text(Localizables.PaceCalculator.race)
+            HStack(spacing: 4) {
+                Text(localSelectedRace?.displayName ?? Localizables.PaceCalculator.race)
                 Image(systemName: "chevron.up.chevron.down")
+                    .imageScale(.small)
             }
+            .font(.Custom.Regular.font2)
             .foregroundStyle(.primary)
-            .font(.Custom.Regular.font3)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 6)
+            .background(
+                Capsule()
+                    .fill(Color(UIColor.lightGray).opacity(0.2))
+            )
         }
         .buttonStyle(.plain)
-        .tint(.primary)
     }
 }
 

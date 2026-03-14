@@ -154,13 +154,39 @@ private extension RaceNutritionCalculatorView {
                         duration: $viewModel.duration
                     )
 
-                    Picker(Localizables.Common.sport, selection: $viewModel.sport) {
-                        Text(Localizables.RaceNutritionCalculator.selectSport).tag(nil as SupportedSport?)
+                    Menu {
                         ForEach(SupportedSport.nutritionSupportedSports, id: \.self) { sport in
-                            Text(sport.localized).tag(sport)
+                            Button {
+                                viewModel.sport = sport
+                            } label: {
+                                Text(sport.localized)
+                            }
                         }
+                    } label: {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(Localizables.Common.sport)
+                                .font(.Custom.Medium.font1)
+                                .foregroundStyle(.secondary)
+                            HStack(spacing: 4) {
+                                ZStack(alignment: .leading) {
+                                    ForEach(SupportedSport.nutritionSupportedSports, id: \.self) { sport in
+                                        Text(sport.localized).hidden()
+                                    }
+                                    Text(viewModel.sport?.localized ?? Localizables.RaceNutritionCalculator.selectSport)
+                                }
+                                Image(systemName: "chevron.up.chevron.down")
+                                    .imageScale(.small)
+                            }
+                            .font(.Custom.Regular.font2)
+                            .foregroundStyle(.primary)
+                        }
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 6)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(Color(UIColor.lightGray).opacity(0.2))
+                        )
                     }
-                    .tint(.blue)
                 }
 
                 Button {
@@ -218,14 +244,46 @@ private extension RaceNutritionCalculatorView {
                             .keyboardType(.decimalPad)
                             .focused($focusedField, equals: .weight)
                             .cardBackground(innerHorizontalPadding: 12, innerVerticalPadding: 12)
-
-                        Picker(Localizables.Common.intensity, selection: $viewModel.intensity) {
-                            Text(Localizables.Common.intensity).tag(nil as Intensity?)
-                            ForEach(Intensity.allCases, id: \.self) { intensity in
-                                Text(intensity.localized).tag(intensity)
+                            .onChange(of: viewModel.weight) { _, newValue in
+                                if let val = newValue, val > 999 {
+                                    viewModel.weight = 999
+                                }
                             }
+
+                        Menu {
+                            ForEach(Intensity.allCases, id: \.self) { intensity in
+                                Button {
+                                    viewModel.intensity = intensity
+                                } label: {
+                                    Text(intensity.localized)
+                                }
+                            }
+                        } label: {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(Localizables.Common.intensity)
+                                    .font(.Custom.Medium.font1)
+                                    .foregroundStyle(.secondary)
+                                HStack(spacing: 4) {
+                                    ZStack(alignment: .leading) {
+                                        // Hidden sizing text for the widest label to prevent layout jumps
+                                        ForEach(Intensity.allCases, id: \.self) { intensity in
+                                            Text(intensity.localized).hidden()
+                                        }
+                                        Text(viewModel.intensity?.localized ?? Localizables.Common.intensity)
+                                    }
+                                    Image(systemName: "chevron.up.chevron.down")
+                                        .imageScale(.small)
+                                }
+                                .font(.Custom.Regular.font2)
+                                .foregroundStyle(.primary)
+                            }
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 6)
+                            .background(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(Color(UIColor.lightGray).opacity(0.2))
+                            )
                         }
-                        .tint(.blue)
                     }
 
                     if let gramsPerHour = viewModel.gramsPerHour, viewModel.weight != nil, viewModel.intensity != nil, viewModel.sport != nil {

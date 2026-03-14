@@ -11,7 +11,9 @@ public struct NumberWheelPicker: View {
     let step: Int
     let label: String?
 
-    @State private var pickerWidth: CGFloat = 70
+    @State private var scrolledID: Int?
+
+    private let itemHeight: CGFloat = 36
 
     public init(
         selection: Binding<Int>,
@@ -32,38 +34,66 @@ public struct NumberWheelPicker: View {
     }
 
     public var body: some View {
-        VStack(spacing: 4) {
-            Picker(selection: $selection, label: Text(label ?? "")) {
-                ForEach(values, id: \.self) { value in
-                    Text(String(value))
-                        .tag(value)
+        VStack(spacing: 2) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(Color(UIColor.tertiarySystemFill))
+                    .frame(height: itemHeight)
+
+                ScrollView(.vertical, showsIndicators: false) {
+                    LazyVStack(spacing: 0) {
+                        ForEach(values, id: \.self) { value in
+                            Text(String(value))
+                                .font(.title3.monospacedDigit())
+                                .fontWeight(value == (scrolledID ?? selection) ? .medium : .regular)
+                                .foregroundStyle(value == (scrolledID ?? selection) ? .primary : .secondary)
+                                .frame(height: itemHeight)
+                                .frame(maxWidth: .infinity)
+                                .id(value)
+                        }
+                    }
+                    .scrollTargetLayout()
                 }
+                .scrollTargetBehavior(.viewAligned)
+                .scrollPosition(id: $scrolledID)
+                .contentMargins(.vertical, itemHeight * 2, for: .scrollContent)
+                .mask(
+                    LinearGradient(
+                        stops: [
+                            .init(color: .clear, location: 0),
+                            .init(color: .black, location: 0.3),
+                            .init(color: .black, location: 0.7),
+                            .init(color: .clear, location: 1),
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
             }
-            .pickerStyle(.wheel)
-            .frame(width: pickerWidth, height: 80)
-            .clipped()
-            .fixedSize(horizontal: true, vertical: false)
-            .onChange(of: selection) { _, newValue in
-                updatePickerWidth(for: newValue)
-            }
+            .frame(width: pickerWidth, height: itemHeight * 5)
 
             if let label {
                 Text(label)
                     .font(.caption2)
-                    .lineLimit(1)
-                    .frame(width: pickerWidth)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .sensoryFeedback(.selection, trigger: scrolledID)
+        .onAppear { scrolledID = selection }
+        .onChange(of: scrolledID) { _, newValue in
+            guard let newValue, newValue != selection else { return }
+            selection = newValue
+        }
+        .onChange(of: selection) { _, newValue in
+            guard newValue != scrolledID else { return }
+            withAnimation(.snappy(duration: 0.2)) {
+                scrolledID = newValue
             }
         }
     }
-}
 
-private extension NumberWheelPicker {
-    func updatePickerWidth(for value: Int) {
-        if value < 1000 {
-            pickerWidth = 70
-        } else {
-            pickerWidth = 100
-        }
+    private var pickerWidth: CGFloat {
+        maxValue >= 1000 ? 100 : 70
     }
 }
 
