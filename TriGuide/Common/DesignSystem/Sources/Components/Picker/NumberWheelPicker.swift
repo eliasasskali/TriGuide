@@ -56,13 +56,13 @@ public struct NumberWheelPicker: View {
                 }
                 .scrollTargetBehavior(.viewAligned)
                 .scrollPosition(id: $scrolledID)
-                .contentMargins(.vertical, itemHeight * 2, for: .scrollContent)
+                .contentMargins(.vertical, itemHeight, for: .scrollContent)
                 .mask(
                     LinearGradient(
                         stops: [
                             .init(color: .clear, location: 0),
-                            .init(color: .black, location: 0.3),
-                            .init(color: .black, location: 0.7),
+                            .init(color: .black, location: 0.35),
+                            .init(color: .black, location: 0.65),
                             .init(color: .clear, location: 1),
                         ],
                         startPoint: .top,
@@ -70,7 +70,7 @@ public struct NumberWheelPicker: View {
                     )
                 )
             }
-            .frame(width: pickerWidth, height: itemHeight * 5)
+            .frame(width: pickerWidth, height: itemHeight * 3)
 
             if let label {
                 Text(label)

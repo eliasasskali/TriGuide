@@ -62,12 +62,17 @@ private extension CarbItemView {
     var collapsedItemView: some View {
         HStack {
             HStack {
+                Image(systemName: item.type.systemIconName)
+                    .font(.Custom.Regular.font2)
+                    .foregroundStyle(item.type.tintColor)
+                    .frame(width: 20)
+
                 Text(Localizables.CarbItems.carbsValue(grams: item.gramsOfCarbs))
                     .font(.Custom.Regular.font2)
 
                 if item.isFavorite {
                     Image(systemName: "star.fill")
-                        .foregroundColor(.yellow)
+                        .foregroundStyle(Color(red: 1.0, green: 0.84, blue: 0.0))
                 }
 
                 Divider()
@@ -108,7 +113,7 @@ private extension CarbItemView {
                 HStack {
                     if item.isFavorite {
                         Image(systemName: "star.fill")
-                            .foregroundColor(.yellow)
+                            .foregroundStyle(Color(red: 1.0, green: 0.84, blue: 0.0))
                     }
 
                     VStack(spacing: 0) {
@@ -258,4 +263,26 @@ private extension CarbItemView {
         quantity: .constant(0),
         selectable: true
     )
+}
+
+// MARK: - CarbType Appearance
+
+private extension CarbType {
+    var systemIconName: String {
+        switch self {
+        case .gel: "flame.fill"
+        case .drink: "drop.fill"
+        case .solid: "fork.knife"
+        case .other: "circle.fill"
+        }
+    }
+
+    var tintColor: Color {
+        switch self {
+        case .gel: .orange
+        case .drink: .blue
+        case .solid: .green
+        case .other: .gray
+        }
+    }
 }

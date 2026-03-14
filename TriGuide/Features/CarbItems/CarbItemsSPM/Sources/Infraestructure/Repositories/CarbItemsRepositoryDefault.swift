@@ -112,9 +112,7 @@ extension CarbItemsRepositoryDefault {
 
 private extension CarbItemsRepositoryDefault {
     func mapWithFavourites(_ items: [CarbItem]) async -> [CarbItem] {
-        if favoriteIds.isEmpty {
-            favoriteIds = await favoriteCarbItemsDataSource.getFavoriteIds()
-        }
+        favoriteIds = await favoriteCarbItemsDataSource.getFavoriteIds()
         return items.map { item in
             var newItem = item
             newItem.isFavorite = favoriteIds.contains(item.id)

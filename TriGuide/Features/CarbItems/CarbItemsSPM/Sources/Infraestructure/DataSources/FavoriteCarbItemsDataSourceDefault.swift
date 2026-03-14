@@ -29,7 +29,8 @@ actor FavoriteCarbItemsDataSourceDefault: FavoriteCarbItemsDataSource {
     // MARK: - FavoriteCarbItemsDataSource
 
     func getFavoriteIds() async -> [String] {
-        Array(cachedIds)
+        cachedIds = Set(defaults.stringArray(forKey: key) ?? [])
+        return Array(cachedIds)
     }
 
     func addFavoriteId(_ id: String) async {

@@ -102,6 +102,22 @@ public class RaceNutritionViewModel: ObservableObject {
         fuelingResult = result
         return result
     }
+
+    func reset() {
+        sport = .bike
+        duration = nil
+        weight = nil
+        intensity = .moderate
+        hasConsumedCaffeineBefore = false
+        startEatingAt = 900.0
+        fasted = false
+        fuelingProfile = .amateur
+        ambientTempC = 20.0
+        gramsPerHour = nil
+        estimatedTotalGrams = nil
+        didFinishCalculation = false
+        fuelingResult = nil
+    }
 }
 
 // MARK: - Private methods

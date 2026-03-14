@@ -14,11 +14,11 @@ struct ContentView: View {
     @StateObject private var athleteProfileCoordinator: AthleteProfileCoordinator
 
     init() {
-        let raceNutritionFactory = RaceNutritionViewFactoryDefault(dependencies: .init())
+        let raceNutritionFactory: RaceNutritionViewFactory = RaceNutritionViewFactoryDefault(dependencies: .init())
         _raceNutritionCoordinator = StateObject(
             wrappedValue: RaceNutritionCoordinator(factory: raceNutritionFactory)
         )
-        let raceCalculatorFactory = RaceCalculatorViewFactoryDefault(dependencies: .init())
+        let raceCalculatorFactory: RaceCalculatorViewFactory = RaceCalculatorViewFactoryDefault(dependencies: .init())
         _raceCalculatorCoordinator = StateObject(
             wrappedValue: raceCalculatorFactory.buildRaceCalculatorCoordinator()
         )

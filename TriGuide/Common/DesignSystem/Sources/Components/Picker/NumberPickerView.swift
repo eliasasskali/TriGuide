@@ -66,7 +66,7 @@ public struct NumberPickerView<Label: View>: View {
             }
         }
         .padding(12)
-        .presentationDetents([.height(300)])
+        .presentationDetents([.height(220)])
         .presentationDragIndicator(.hidden)
         .presentationBackground(Color(UIColor.systemBackground))
     }

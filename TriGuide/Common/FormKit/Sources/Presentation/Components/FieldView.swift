@@ -59,6 +59,7 @@ struct FieldView: View {
                             }
                         }
                     }
+                    .pickerStyle(.menu)
                     validationText(for: field)
                 }
 

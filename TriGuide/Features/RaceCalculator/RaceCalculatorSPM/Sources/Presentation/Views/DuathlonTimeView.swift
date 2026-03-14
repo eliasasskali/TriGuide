@@ -16,16 +16,17 @@ struct DuathlonTimeView: View {
     @Binding var selectedDuathlonDistance: DuathlonDistance?
 
     var body: some View {
-        VStack(spacing: 16) {
-            VStack {
-                ScrollView {
-                    calculatorViews
-                        .padding(.bottom)
-                }
-                .scrollIndicators(.hidden)
-
-                TotalTimeLabel(time: viewModel.formattedTotalTime)
+        VStack(spacing: 0) {
+            ScrollView {
+                calculatorViews
+                    .padding(.bottom)
             }
+            .scrollIndicators(.hidden)
+
+            Divider()
+            TotalTimeLabel(time: viewModel.formattedTotalTime)
+                .padding(.horizontal)
+                .padding(.vertical, 8)
         }
     }
 }
@@ -61,31 +62,41 @@ private extension DuathlonTimeView {
 
     var duathlonDistancePicker: some View {
         Menu {
-            Picker(Localizables.PaceCalculator.duathlonDistance, selection: $selectedDuathlonDistance) {
-                Text(Localizables.PaceCalculator.race).tag(nil as DuathlonDistance?)
-                ForEach(DuathlonDistance.allCases, id: \.self) { distance in
-                    Text(distance.displayName).tag(Optional(distance))
+            Button {
+                selectedDuathlonDistance = nil
+            } label: {
+                Text(Localizables.PaceCalculator.race)
+            }
+            ForEach(DuathlonDistance.allCases, id: \.self) { distance in
+                Button {
+                    selectedDuathlonDistance = distance
+                } label: {
+                    Text(distance.displayName)
                 }
             }
         } label: {
             HStack {
-                Text(Localizables.PaceCalculator.duathlonDistance)
-                    .font(.Custom.Medium.font4)
-                    .foregroundStyle(.primary)
-                Text(selectedDuathlonDistance?.displayName ?? Localizables.PaceCalculator.race)
-                    .font(.Custom.Regular.font4)
-                    .foregroundStyle(.primary)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(Localizables.PaceCalculator.duathlonDistance)
+                        .font(.Custom.Medium.font2)
+                        .foregroundStyle(.secondary)
+                    Text(selectedDuathlonDistance?.displayName ?? Localizables.PaceCalculator.race)
+                        .font(.Custom.Regular.font3)
+                }
                 Spacer()
-                Image(systemName: "chevron.down")
+                Image(systemName: "chevron.up.chevron.down")
+                    .imageScale(.small)
                     .foregroundStyle(.secondary)
             }
+            .foregroundStyle(.primary)
             .padding(.horizontal, 8)
             .padding(.vertical, 8)
-            .background(Color.gray.opacity(0.2))
-            .cornerRadius(8)
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(Color.gray.opacity(0.2))
+            )
         }
         .buttonStyle(.plain)
-        .tint(.primary)
     }
 
     var firstRunCalculatorView: some View {

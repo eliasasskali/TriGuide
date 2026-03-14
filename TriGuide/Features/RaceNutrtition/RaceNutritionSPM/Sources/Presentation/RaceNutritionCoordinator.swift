@@ -28,6 +28,7 @@ public class RaceNutritionCoordinator: BaseCoordinator<RaceNutritionCoordinator.
     // MARK: - Dependencies
 
     @Published public var viewModel: RaceNutritionViewModel
+    @Published var showSavedPlanToast = false
     private let factory: RaceNutritionViewFactory
     private var carbItemsCoordinator: CarbItemsCoordinator?
     private let raceNutritionResultViewModel: RaceNutritionResultViewModel
@@ -64,6 +65,14 @@ public extension RaceNutritionCoordinator {
         push(.raceNutritionResult)
     }
 
+    func resetAndPopToRoot() {
+        popToRoot()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+            self?.viewModel.reset()
+            self?.showSavedPlanToast = true
+        }
+    }
+
     func pushFuelingPlanFullView() {
         push(.fuelingPlanFullView)
     }
@@ -75,10 +84,10 @@ public extension RaceNutritionCoordinator {
     }
 
     func buildRaceNutritionResultDestination() -> RaceNutritionResultView? {
-        guard viewModel.fuelingResult != nil else { return nil }
+        guard let fuelingResult = viewModel.fuelingResult else { return nil }
 
         let binding = Binding<FuelingResult>(
-            get: { self.viewModel.fuelingResult! },
+            get: { self.viewModel.fuelingResult ?? fuelingResult },
             set: { self.viewModel.fuelingResult = $0 }
         )
 
@@ -91,12 +100,12 @@ public extension RaceNutritionCoordinator {
     }
 
     func buildFuelingPlanEditDestination() -> AnyView {
-        guard viewModel.fuelingResult != nil else {
+        guard let fuelingResult = viewModel.fuelingResult else {
             return AnyView(EmptyView())
         }
 
         let binding = Binding<FuelingResult>(
-            get: { self.viewModel.fuelingResult! },
+            get: { self.viewModel.fuelingResult ?? fuelingResult },
             set: { self.viewModel.fuelingResult = $0 }
         )
 

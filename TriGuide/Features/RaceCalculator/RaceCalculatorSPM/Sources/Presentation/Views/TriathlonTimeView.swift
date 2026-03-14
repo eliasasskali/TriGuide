@@ -16,14 +16,17 @@ struct TriathlonTimeView: View {
     @Binding var selectedTriDistance: TriathlonDistance?
 
     var body: some View {
-        VStack {
+        VStack(spacing: 0) {
             ScrollView {
                 calculatorViews
                     .padding(.bottom)
             }
             .scrollIndicators(.hidden)
 
+            Divider()
             TotalTimeLabel(time: viewModel.formattedTotalTime)
+                .padding(.horizontal)
+                .padding(.vertical, 8)
         }
     }
 }
@@ -59,31 +62,41 @@ private extension TriathlonTimeView {
 
     var triDistancePicker: some View {
         Menu {
-            Picker(Localizables.PaceCalculator.triathlonDistance, selection: $selectedTriDistance) {
-                Text(Localizables.PaceCalculator.race).tag(nil as TriathlonDistance?)
-                ForEach(TriathlonDistance.allCases, id: \.self) { distance in
-                    Text(distance.displayName).tag(Optional(distance))
+            Button {
+                selectedTriDistance = nil
+            } label: {
+                Text(Localizables.PaceCalculator.race)
+            }
+            ForEach(TriathlonDistance.allCases, id: \.self) { distance in
+                Button {
+                    selectedTriDistance = distance
+                } label: {
+                    Text(distance.displayName)
                 }
             }
         } label: {
             HStack {
-                Text(Localizables.PaceCalculator.triathlonDistance)
-                    .font(.Custom.Medium.font4)
-                    .foregroundStyle(.primary)
-                Text(selectedTriDistance?.displayName ?? Localizables.PaceCalculator.race)
-                    .font(.Custom.Regular.font4)
-                    .foregroundStyle(.primary)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(Localizables.PaceCalculator.triathlonDistance)
+                        .font(.Custom.Medium.font2)
+                        .foregroundStyle(.secondary)
+                    Text(selectedTriDistance?.displayName ?? Localizables.PaceCalculator.race)
+                        .font(.Custom.Regular.font3)
+                }
                 Spacer()
-                Image(systemName: "chevron.down")
+                Image(systemName: "chevron.up.chevron.down")
+                    .imageScale(.small)
                     .foregroundStyle(.secondary)
             }
+            .foregroundStyle(.primary)
             .padding(.horizontal, 8)
             .padding(.vertical, 8)
-            .background(Color.gray.opacity(0.2))
-            .cornerRadius(8)
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(Color.gray.opacity(0.2))
+            )
         }
         .buttonStyle(.plain)
-        .tint(.primary)
     }
 
     var swimCalculatorView: some View {

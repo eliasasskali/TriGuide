@@ -96,6 +96,12 @@ struct RaceNutritionCalculatorView: View {
                     }
                 }
             }
+            .onChange(of: coordinator.showSavedPlanToast) { _, showToast in
+                if showToast {
+                    shouldShowAdvancedOptions = false
+                    carbInputMode = .manual
+                }
+            }
             .navigationTitle(Localizables.RaceNutritionCalculator.title)
             .navigationBarTitleDisplayMode(.inline)
             .scrollIndicators(.hidden)
@@ -434,8 +440,7 @@ private extension RaceNutritionCalculatorView {
                         value: viewModel.startEatingAt.formattedAsHourMin,
                         sliderValue: $viewModel.startEatingAt,
                         sliderLabel: Localizables.RaceNutritionCalculator.startEatingAt,
-                        range: -0 ... (viewModel.duration ?? 900),
-                        step: 300
+                        range: 0 ... max(viewModel.duration ?? 900, 900)
                     )
 
                     sliderField(
@@ -466,6 +471,7 @@ private extension RaceNutritionCalculatorView {
         }
     }
 
+    @ViewBuilder
     func sliderField(
         label: String,
         infoLabelDescription: @autoclosure @escaping () -> String,
@@ -473,7 +479,7 @@ private extension RaceNutritionCalculatorView {
         sliderValue: Binding<Double>,
         sliderLabel: String,
         range: ClosedRange<Double>,
-        step: Double = 1
+        step: Double? = nil
     ) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
@@ -487,12 +493,21 @@ private extension RaceNutritionCalculatorView {
                         .monospacedDigit()
                 }
             }
-            Slider(
-                value: sliderValue,
-                in: range,
-                step: step
-            ) {
-                Text(sliderLabel)
+            if let step {
+                Slider(
+                    value: sliderValue,
+                    in: range,
+                    step: step
+                ) {
+                    Text(sliderLabel)
+                }
+            } else {
+                Slider(
+                    value: sliderValue,
+                    in: range
+                ) {
+                    Text(sliderLabel)
+                }
             }
         }
         .padding(.top, 4)

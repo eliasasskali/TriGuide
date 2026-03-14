@@ -74,25 +74,33 @@ private extension StoredNutritionPlansListView {
                 .font(.Custom.Medium.font4)
                 .lineLimit(1)
 
-            HStack {
-                Text(Localizables.RaceNutritionResults.storedPlansItemDurationLabel)
-                    .font(.Custom.Medium.font3)
-                Spacer()
-                Text(plan.duration.formattedAsHourMinSec)
-                    .font(.Custom.Regular.font3)
-            }
+            HStack(spacing: 0) {
+                HStack(spacing: 4) {
+                    Image(systemName: "clock")
+                        .foregroundStyle(.secondary)
+                    Text(plan.duration.formattedAsHourMinSec)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
 
-            HStack {
-                Text(Localizables.RaceNutritionResults.storedPlansItemGramsHourLabel)
-                    .font(.Custom.Medium.font3)
-                Spacer()
-                Text(
-                    Localizables.RaceNutritionResults.storedPlansItemGramsHourValue(
-                        Int(plan.actualCarbsPerHour.rounded())
+                HStack(spacing: 4) {
+                    Image(systemName: "flame.fill")
+                        .foregroundStyle(.orange)
+                    Text(
+                        Localizables.RaceNutritionResults.storedPlansItemGramsHourValue(
+                            Int(plan.actualCarbsPerHour.rounded())
+                        )
                     )
-                )
-                .font(.Custom.Regular.font3)
+                }
+                .frame(maxWidth: .infinity)
+
+                HStack(spacing: 4) {
+                    Image(systemName: "fork.knife")
+                        .foregroundStyle(.secondary)
+                    Text("\(plan.selectedItems.count)")
+                }
+                .frame(maxWidth: .infinity)
             }
+            .font(.Custom.Regular.font2)
         }
         .cardBackground(innerHorizontalPadding: 12, innerVerticalPadding: 12)
     }
