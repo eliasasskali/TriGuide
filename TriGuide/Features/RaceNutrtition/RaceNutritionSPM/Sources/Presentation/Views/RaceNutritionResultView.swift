@@ -67,34 +67,35 @@ public struct RaceNutritionResultView: View {
     // MARK: - Body
 
     public var body: some View {
-        ZStack(alignment: .bottomTrailing) {
-            ScrollViewReader { scrollProxy in
-                ScrollView {
-                    VStack(spacing: 16) {
-                        fuelingPlan
-                        hourlyBreakdown
-                        selectedItems
-                            .id("selectedItems")
-                    }
-                    .padding(.vertical)
+        ScrollViewReader { scrollProxy in
+            ScrollView {
+                VStack(spacing: 16) {
+                    fuelingPlan
+                    hourlyBreakdown
+                    selectedItems
+                        .id("selectedItems")
                 }
-                .scrollIndicators(.hidden)
-                .onChange(of: shouldShowSelectedItems) { _, isExpanded in
-                    guard isExpanded else { return }
-                    withAnimation {
-                        scrollProxy.scrollTo("selectedItems", anchor: .top)
-                    }
-                }
-                .safeAreaInset(edge: .bottom, spacing: 0) {
-                    if showSaveButton {
-                        bottomSaveBar
-                    }
+                .padding(.vertical)
+            }
+            .scrollIndicators(.hidden)
+            .onChange(of: shouldShowSelectedItems) { _, isExpanded in
+                guard isExpanded else { return }
+                withAnimation {
+                    scrollProxy.scrollTo("selectedItems", anchor: .top)
                 }
             }
-
-            editFloatingButton
-                .padding(.trailing, 20)
-                .padding(.bottom, showSaveButton ? 100 : 20)
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                if showSaveButton {
+                    bottomSaveBar
+                }
+            }
+        }
+        .floatingActionButton(
+            Localizables.RaceNutritionResults.fuelingPlanEditButtonLabel,
+            systemImage: "pencil",
+            bottomPadding: showSaveButton ? 100 : 20
+        ) {
+            coordinator.pushFuelingPlanFullView()
         }
         .toast(
             isPresented: $showSavedSuccessfullyToast,
@@ -366,15 +367,6 @@ private extension RaceNutritionResultView {
             .overlay(alignment: .top) {
                 Divider()
             }
-    }
-
-    var editFloatingButton: some View {
-        Button {
-            coordinator.pushFuelingPlanFullView()
-        } label: {
-            Label(Localizables.RaceNutritionResults.fuelingPlanEditButtonLabel, systemImage: "pencil")
-        }
-        .buttonStyle(.borderedProminent)
     }
 }
 

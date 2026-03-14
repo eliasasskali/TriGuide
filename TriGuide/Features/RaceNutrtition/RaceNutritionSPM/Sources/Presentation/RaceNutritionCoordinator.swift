@@ -33,6 +33,7 @@ public class RaceNutritionCoordinator: BaseCoordinator<RaceNutritionCoordinator.
     private var carbItemsCoordinator: CarbItemsCoordinator?
     private let raceNutritionResultViewModel: RaceNutritionResultViewModel
     private var originalStoredPlan: FuelingResult?
+    private var resetTask: Task<Void, Never>?
     public var onPlanUpdated: (() -> Void)?
 
     // MARK: - Initializer
@@ -66,11 +67,20 @@ public extension RaceNutritionCoordinator {
     }
 
     func resetAndPopToRoot() {
+        resetTask?.cancel()
         popToRoot()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+        resetTask = Task { @MainActor [weak self] in
+            try? await Task.sleep(for: .milliseconds(500))
+            guard !Task.isCancelled else { return }
             self?.viewModel.reset()
+            self?.carbItemsCoordinator = nil
             self?.showSavedPlanToast = true
         }
+    }
+
+    func resetCalculator() {
+        viewModel.reset()
+        carbItemsCoordinator = nil
     }
 
     func pushFuelingPlanFullView() {
@@ -135,12 +145,11 @@ public extension RaceNutritionCoordinator {
                     totalCarbGrams: totalCarbGrams,
                     onCompleteSelection: { [weak self] carbItemsSelection in
                         guard let self else { return }
-                        Task { @MainActor [weak self] in
-                            guard let self,
-                                  let _ = await viewModel.calculateFuelingAsync(from: carbItemsSelection)
+                        Task { @MainActor in
+                            guard let _ = await self.viewModel.calculateFuelingAsync(from: carbItemsSelection)
                             else { return }
-                            originalStoredPlan = nil
-                            pushRaceNutritionResultView()
+                            self.originalStoredPlan = nil
+                            self.pushRaceNutritionResultView()
                         }
                     }
                 )

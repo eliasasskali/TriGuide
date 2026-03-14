@@ -18,32 +18,34 @@ public struct RaceCalculatorView: View {
     }
 
     public var body: some View {
-        ZStack(alignment: .bottomTrailing) {
-            VStack(spacing: 0) {
-                Picker(Localizables.Common.sport, selection: $selectedSport) {
-                    ForEach(SupportedSport.allCases, id: \.self) { sport in
-                        Text(sport.localized)
-                    }
+        VStack(spacing: 0) {
+            Picker(Localizables.Common.sport, selection: $selectedSport) {
+                ForEach(SupportedSport.allCases, id: \.self) { sport in
+                    Text(sport.localized)
                 }
-                .pickerStyle(.palette)
-                .padding()
-                .background(Color(UIColor.systemBackground))
-                .zIndex(1)
-
-                Divider()
-
-                ScrollView {
-                    selectedSportView
-                        .padding()
-                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                }
-                .scrollIndicators(.hidden)
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .pickerStyle(.palette)
+            .padding()
+            .background(Color(UIColor.systemBackground))
+            .zIndex(1)
 
-            resetButton
-                .padding(.trailing, 20)
-                .padding(.bottom, 20)
+            Divider()
+
+            ScrollView {
+                selectedSportView
+                    .padding()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+            }
+            .scrollIndicators(.hidden)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .floatingActionButton(Localizables.Common.reset, systemImage: "arrow.counterclockwise") {
+            coordinator.resetSport(selectedSport)
+            if selectedSport == .triathlon {
+                selectedTriDistance = nil
+            } else if selectedSport == .duathlon {
+                selectedDuathlonDistance = nil
+            }
         }
     }
 }
@@ -186,20 +188,6 @@ private extension RaceCalculatorView {
             secondRunViewModel: coordinator.duathlonSecondRunViewModel,
             selectedDuathlonDistance: $selectedDuathlonDistance
         )
-    }
-
-    var resetButton: some View {
-        Button {
-            coordinator.resetSport(selectedSport)
-            if selectedSport == .triathlon {
-                selectedTriDistance = nil
-            } else if selectedSport == .duathlon {
-                selectedDuathlonDistance = nil
-            }
-        } label: {
-            Label(Localizables.Common.reset, systemImage: "arrow.counterclockwise")
-        }
-        .buttonStyle(.borderedProminent)
     }
 }
 
