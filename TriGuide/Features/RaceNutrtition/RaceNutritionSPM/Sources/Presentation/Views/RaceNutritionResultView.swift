@@ -415,6 +415,11 @@ private extension CarbType {
                 repository: NutritionPlansRepositoryDefault(
                     nutritionPlansDataSource: try! StoredNutritionPlansDataSourceDefault()
                 )
+            ),
+            replaceFuelingPlanUseCase: ReplaceFuelingPlanUseCaseDefault(
+                repository: NutritionPlansRepositoryDefault(
+                    nutritionPlansDataSource: try! StoredNutritionPlansDataSourceDefault()
+                )
             )
         ),
         fuelingResult: .constant(

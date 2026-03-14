@@ -104,4 +104,10 @@ private actor UseCaseNutritionPlansRepositoryMock: NutritionPlansRepository {
         }
         deletedPlans.append(plan)
     }
+
+    func replaceNutritionPlan(_: TriGuideDomain.FuelingResult, with _: TriGuideDomain.FuelingResult, name _: String) async throws {
+        if shouldThrowOnAdd {
+            throw MockError.addFailed
+        }
+    }
 }

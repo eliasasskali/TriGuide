@@ -70,6 +70,31 @@ actor NutritionPlansRepositoryDefault: NutritionPlansRepository {
         }
     }
 
+    func replaceNutritionPlan(
+        _ oldPlan: FuelingResult,
+        with newPlan: FuelingResult,
+        name: String
+    ) async throws {
+        nutritionPlans = try await dataSource.loadNutritionPlans()
+        let planWithName = FuelingResult(
+            name: name,
+            timeLine: newPlan.timeLine,
+            totalCarbsTarget: newPlan.totalCarbsTarget,
+            duration: newPlan.duration,
+            selectedItems: newPlan.selectedItems,
+            hourlyBreakdown: newPlan.hourlyBreakdown
+        )
+        guard let index = nutritionPlans.firstIndex(where: { $0 == oldPlan }) else {
+            throw RepositoryError.saveFailed
+        }
+        nutritionPlans[index] = planWithName
+        do {
+            try await dataSource.saveNutritionPlans(nutritionPlans)
+        } catch {
+            throw RepositoryError.saveFailed
+        }
+    }
+
     func deleteNutritionPlan(_ plan: FuelingResult) async throws {
         nutritionPlans = try await dataSource.loadNutritionPlans()
         nutritionPlans.removeAll { $0 == plan }
