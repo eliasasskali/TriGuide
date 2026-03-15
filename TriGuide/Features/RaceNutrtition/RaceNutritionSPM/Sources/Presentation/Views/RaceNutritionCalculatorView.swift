@@ -491,7 +491,8 @@ private extension RaceNutritionCalculatorView {
                         value: viewModel.startEatingAt.formattedAsHourMin,
                         sliderValue: $viewModel.startEatingAt,
                         sliderLabel: Localizables.RaceNutritionCalculator.startEatingAt,
-                        range: 0 ... max(viewModel.duration ?? 900, 900)
+                        range: 0 ... max(viewModel.duration ?? 900, 900),
+                        roundingStep: 60
                     )
 
                     sliderField(
@@ -500,7 +501,8 @@ private extension RaceNutritionCalculatorView {
                         value: "\(Int(viewModel.ambientTempC))\(Localizables.Units.celsiusSymbol)",
                         sliderValue: $viewModel.ambientTempC,
                         sliderLabel: Localizables.RaceNutritionCalculator.ambientTemperature,
-                        range: -10 ... 50
+                        range: -10 ... 50,
+                        roundingStep: 1
                     )
                 }
             }
@@ -530,8 +532,16 @@ private extension RaceNutritionCalculatorView {
         sliderValue: Binding<Double>,
         sliderLabel: String,
         range: ClosedRange<Double>,
-        step: Double? = nil
+        roundingStep: Double? = nil
     ) -> some View {
+        let binding: Binding<Double> = if let roundingStep {
+            Binding(
+                get: { sliderValue.wrappedValue },
+                set: { sliderValue.wrappedValue = (($0 / roundingStep).rounded() * roundingStep) }
+            )
+        } else {
+            sliderValue
+        }
         VStack(alignment: .leading, spacing: 8) {
             HStack {
                 HStack {
@@ -544,21 +554,11 @@ private extension RaceNutritionCalculatorView {
                         .monospacedDigit()
                 }
             }
-            if let step {
-                Slider(
-                    value: sliderValue,
-                    in: range,
-                    step: step
-                ) {
-                    Text(sliderLabel)
-                }
-            } else {
-                Slider(
-                    value: sliderValue,
-                    in: range
-                ) {
-                    Text(sliderLabel)
-                }
+            Slider(
+                value: binding,
+                in: range
+            ) {
+                Text(sliderLabel)
             }
         }
         .padding(.top, 4)
