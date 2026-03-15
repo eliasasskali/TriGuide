@@ -14,6 +14,8 @@
 		9CB031BD2EBC9B3C0086D6C6 /* NavigationKit in Frameworks */ = {isa = PBXBuildFile; productRef = 9CB031BC2EBC9B3C0086D6C6 /* NavigationKit */; };
 		9CB72A922EBDEF8000014FA1 /* RaceNutritionSPM in Frameworks */ = {isa = PBXBuildFile; productRef = 9CB72A912EBDEF8000014FA1 /* RaceNutritionSPM */; };
 		9CBAB1D32EC66F9400DF800C /* TestPlan.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 9CBAB1D22EC66F9400DF800C /* TestPlan.xctestplan */; };
+		9CC48B6C2F66BCDD0014E707 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 9CC48B6B2F66BCDD0014E707 /* FirebaseAnalytics */; };
+		9CC48B6E2F66BCDD0014E707 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 9CC48B6D2F66BCDD0014E707 /* FirebaseCrashlytics */; };
 		9CF7F49A2EAA7A1200085B77 /* TriGuideDomain in Frameworks */ = {isa = PBXBuildFile; productRef = 9CF7F4992EAA7A1200085B77 /* TriGuideDomain */; };
 		9CF7F49D2EAAA9C500085B77 /* RaceCalculatorSPM in Frameworks */ = {isa = PBXBuildFile; productRef = 9CF7F49C2EAAA9C500085B77 /* RaceCalculatorSPM */; };
 		9DA11E142F01000100A1B2C3 /* AthleteProfile in Frameworks */ = {isa = PBXBuildFile; productRef = 9DA11E122F01000100A1B2C3 /* AthleteProfile */; };
@@ -91,9 +93,11 @@
 				9C78AC5C2EA66CF200FB5BE8 /* DesignSystem in Frameworks */,
 				9CB031BD2EBC9B3C0086D6C6 /* NavigationKit in Frameworks */,
 				9CF7F49D2EAAA9C500085B77 /* RaceCalculatorSPM in Frameworks */,
+				9CC48B6E2F66BCDD0014E707 /* FirebaseCrashlytics in Frameworks */,
 				9C5D3D172EB8A28200E55E2E /* FormKit in Frameworks */,
 				9C5FAFFE2EB160AD00815332 /* CarbItemsSPM in Frameworks */,
 				9CF7F49A2EAA7A1200085B77 /* TriGuideDomain in Frameworks */,
+				9CC48B6C2F66BCDD0014E707 /* FirebaseAnalytics in Frameworks */,
 				9CB72A922EBDEF8000014FA1 /* RaceNutritionSPM in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -145,6 +149,7 @@
 			buildPhases = (
 				9CB979932E141AC9001CBBD8 /* Sources */,
 				9CB979942E141AC9001CBBD8 /* Frameworks */,
+				9CC48B6F2F66BD170014E707 /* ShellScript */,
 				9CB979952E141AC9001CBBD8 /* Resources */,
 			);
 			buildRules = (
@@ -165,6 +170,8 @@
 				9C5D3D162EB8A28200E55E2E /* FormKit */,
 				9CB031BC2EBC9B3C0086D6C6 /* NavigationKit */,
 				9CB72A912EBDEF8000014FA1 /* RaceNutritionSPM */,
+				9CC48B6B2F66BCDD0014E707 /* FirebaseAnalytics */,
+				9CC48B6D2F66BCDD0014E707 /* FirebaseCrashlytics */,
 			);
 			productName = TriGuide;
 			productReference = 9CB979972E141AC9001CBBD8 /* TriGuide.app */;
@@ -260,6 +267,7 @@
 				9C5D3D152EB8A28200E55E2E /* XCLocalSwiftPackageReference "TriGuide/Common/FormKit" */,
 				9CB031BB2EBC9B3C0086D6C6 /* XCLocalSwiftPackageReference "TriGuide/Common/NavigationKit" */,
 				9CB72A902EBDEF8000014FA1 /* XCLocalSwiftPackageReference "TriGuide/Features/RaceNutrtition/RaceNutritionSPM" */,
+				9CC48B6A2F66BCDD0014E707 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 9CB979982E141AC9001CBBD8 /* Products */;
@@ -297,6 +305,29 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		9CC48B6F2F66BD170014E707 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(PROJECT_DIR)/TriGuide/Resources/Firebase/GoogleService-Info-Debug.plist",
+				"$(PROJECT_DIR)/TriGuide/Resources/Firebase/GoogleService-Info-Release.plist",
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/$(PRODUCT_NAME).app/GoogleService-Info.plist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ \"${CONFIGURATION}\" == \"Debug\" ]; then\n    SOURCE=\"${PROJECT_DIR}/TriGuide/Resources/Firebase/GoogleService-Info-Debug.plist\"\nelse\n    SOURCE=\"${PROJECT_DIR}/TriGuide/Resources/Firebase/GoogleService-Info-Release.plist\"\nfi\n\nif [ -f \"$SOURCE\" ]; then\n    cp \"$SOURCE\" \"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/GoogleService-Info.plist\"\nelse\n    echo \"warning: GoogleService-Info.plist not found, skipping copy\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		9CB979932E141AC9001CBBD8 /* Sources */ = {
@@ -468,7 +499,7 @@
 				DEVELOPMENT_TEAM = 68L8H5T6JR;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = debonk;
+				INFOPLIST_KEY_CFBundleDisplayName = Debonk;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.sports";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -499,7 +530,7 @@
 				DEVELOPMENT_TEAM = 68L8H5T6JR;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = debonk;
+				INFOPLIST_KEY_CFBundleDisplayName = Debonk;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.sports";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -671,6 +702,17 @@
 		};
 /* End XCLocalSwiftPackageReference section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		9CC48B6A2F66BCDD0014E707 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.10.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
 		9C4D1E672EA625B1000744ED /* Localization */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -695,6 +737,16 @@
 		9CB72A912EBDEF8000014FA1 /* RaceNutritionSPM */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = RaceNutritionSPM;
+		};
+		9CC48B6B2F66BCDD0014E707 /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9CC48B6A2F66BCDD0014E707 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
+		9CC48B6D2F66BCDD0014E707 /* FirebaseCrashlytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9CC48B6A2F66BCDD0014E707 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCrashlytics;
 		};
 		9CF7F4992EAA7A1200085B77 /* TriGuideDomain */ = {
 			isa = XCSwiftPackageProductDependency;

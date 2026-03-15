@@ -35,6 +35,10 @@ fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output/
 
+#Firebase
+TriGuide/Resources/Firebase/GoogleService-Info-Debug.plist
+TriGuide/Resources/Firebase/GoogleService-Info-Release.plist
+
 # Accidental backup files
 *.orig
 *.swp
