@@ -3,14 +3,12 @@
 //
 
 import DesignSystem
-import Firebase
 import SwiftUI
 
 @main
 struct TriGuideApp: App {
     init() {
         RobotoFont.registerFonts()
-        FirebaseApp.configure()
     }
 
     var body: some Scene {
