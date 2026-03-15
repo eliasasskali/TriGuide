@@ -14,6 +14,7 @@ public final class RaceNutritionViewFactoryDefault {
         let fetchStoredFuelingResultsUseCase: FetchStoredFuelingResultsUseCase
         let deleteStoredFuelingResultUseCase: DeleteStoredFuelingResultUseCase
         let replaceFuelingPlanUseCase: ReplaceFuelingPlanUseCase
+        let raceNutritionCalculatorAnalyticsService: RaceNutritionCalculatorAnalyticsService
 
         public init(
             fuelingCalculatorDataSource: FuelingCalculatorDataSource? = nil,
@@ -21,7 +22,8 @@ public final class RaceNutritionViewFactoryDefault {
             nutritionPlansRepository: NutritionPlansRepository? = nil,
             saveFuelingPlanUseCase: SaveFuelingPlanUseCase? = nil,
             fetchStoredFuelingResultsUseCase: FetchStoredFuelingResultsUseCase? = nil,
-            deleteStoredFuelingResultUseCase: DeleteStoredFuelingResultUseCase? = nil
+            deleteStoredFuelingResultUseCase: DeleteStoredFuelingResultUseCase? = nil,
+            raceNutritionCalculatorAnalyticsService: RaceNutritionCalculatorAnalyticsService? = nil
         ) {
             self.fuelingCalculatorDataSource = fuelingCalculatorDataSource ?? LocalFuelingCalculator()
             self.calculateFuelingResultUseCase = calculateFuelingResultUseCase ?? CalculateFuelingResultUseCaseDefault(
@@ -48,6 +50,7 @@ public final class RaceNutritionViewFactoryDefault {
             self.deleteStoredFuelingResultUseCase = deleteStoredFuelingResultUseCase
                 ?? DeleteStoredFuelingResultUseCaseDefault(repository: repository)
             replaceFuelingPlanUseCase = ReplaceFuelingPlanUseCaseDefault(repository: repository)
+            self.raceNutritionCalculatorAnalyticsService = raceNutritionCalculatorAnalyticsService ?? RaceNutritionCalculatorAnalyticsServiceNoOp()
         }
     }
 
@@ -72,7 +75,8 @@ extension RaceNutritionViewFactoryDefault: RaceNutritionViewFactory {
         RaceNutritionView(
             viewModel: viewModel,
             coordinator: coordinator,
-            factory: self
+            factory: self,
+            raceNutritionCalculatorAnalyticsService: dependencies.raceNutritionCalculatorAnalyticsService
         )
     }
 

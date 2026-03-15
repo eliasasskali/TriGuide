@@ -23,7 +23,7 @@ public extension Localizables {
 
         public static var secondSectionTitle: String {
             NSLocalizedString("race_nutrition_calculator-second-section-title", bundle: .module, comment: "")
-            // 2. Choose how to estimate carbs per hour
+            // 2. Enter your target carb intake (g/h), or estimate it from your weight and effort level.
         }
 
         public static var duration: String {

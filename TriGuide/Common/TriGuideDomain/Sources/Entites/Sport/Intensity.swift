@@ -5,7 +5,7 @@
 import Foundation
 import Localization
 
-public enum Intensity: CaseIterable {
+public enum Intensity: String, CaseIterable {
     case low
     case moderate
     case high
