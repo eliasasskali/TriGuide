@@ -110,6 +110,11 @@ struct RaceNutritionCalculatorView: View {
                 paceCalculatorSheet
             }
         }
+        .floatingActionButton(Localizables.Common.reset, systemImage: "arrow.counterclockwise", bottomPadding: 100) {
+            coordinator.resetCalculator()
+            shouldShowAdvancedOptions = false
+            carbInputMode = .manual
+        }
     }
 }
 

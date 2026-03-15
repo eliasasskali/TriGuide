@@ -48,12 +48,15 @@ public class RaceNutritionResultViewModel: ObservableObject {
         oldPlan: FuelingResult,
         updatedPlan: FuelingResult
     ) async -> Bool {
-        let finalName =
-            updatedPlan.name?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false
-                ? updatedPlan.name!
-                : (oldPlan.name?.isEmpty == false
-                    ? oldPlan.name!
-                    : Localizables.RaceNutritionResults.storedPlansItemUnnamedPlan)
+        let updatedTrimmed = updatedPlan.name?.trimmingCharacters(in: .whitespacesAndNewlines)
+        let finalName: String
+        if let name = updatedTrimmed, !name.isEmpty {
+            finalName = name
+        } else if let name = oldPlan.name, !name.isEmpty {
+            finalName = name
+        } else {
+            finalName = Localizables.RaceNutritionResults.storedPlansItemUnnamedPlan
+        }
 
         do {
             try await replaceFuelingPlanUseCase.execute(

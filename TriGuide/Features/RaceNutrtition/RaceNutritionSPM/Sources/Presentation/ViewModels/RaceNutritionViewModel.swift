@@ -92,12 +92,9 @@ public class RaceNutritionViewModel: ObservableObject {
         )
 
         let useCase = calculateFuelingResultUseCase
-        let result = await withCheckedContinuation { continuation in
-            DispatchQueue.global(qos: .userInitiated).async {
-                let computed = useCase.execute(fuelingInput: fuelingInput)
-                continuation.resume(returning: computed)
-            }
-        }
+        let result = await Task.detached(priority: .userInitiated) {
+            useCase.execute(fuelingInput: fuelingInput)
+        }.value
 
         fuelingResult = result
         return result

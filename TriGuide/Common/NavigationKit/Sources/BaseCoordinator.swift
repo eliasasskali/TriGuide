@@ -40,8 +40,8 @@ open class BaseCoordinator<Route: Hashable, Sheet: Identifiable & Equatable, Con
 
     open func start() -> ContentView {
         fatalError("Subclasses of BaseCoordinator must override start()")
-        // Won't reach this line, to satisfy the compiler
-        return EmptyView() as! ContentView
+        // Unreachable — satisfies compiler return type requirement
+        return EmptyView() as! ContentView // swiftlint:disable:this force_cast
     }
 
     // MARK: - Push and pop navigation
