@@ -33,10 +33,15 @@ struct RaceNutritionCalculatorView: View {
         }
     }
 
+    private enum Constants {
+        static let maxWeight = 600.0
+    }
+
     // MARK: - Dependencies
 
     @StateObject var viewModel: RaceNutritionViewModel
     let coordinator: RaceNutritionCoordinator
+    let analyticsService: RaceNutritionCalculatorAnalyticsService
 
     // MARK: - Pace calculator view models
 
@@ -60,22 +65,36 @@ struct RaceNutritionCalculatorView: View {
     @State private var carbInputMode: CarbInputMode = .manual
     @FocusState private var focusedField: FocusedField?
 
+    // MARK: - Computed Properties
+
+    var analyticsData: RaceNutritionCalculatorAnalyticsData? {
+        guard let duration = viewModel.duration,
+              let sport = viewModel.sport?.rawValue,
+              let carbsPerHour = viewModel.gramsPerHour,
+              let estimatedTotalGrams = viewModel.estimatedTotalGrams
+        else { return nil }
+        return RaceNutritionCalculatorAnalyticsData(
+            durationSeconds: duration,
+            sport: sport,
+            carbInputMode: carbInputMode.rawValue,
+            carbsPerHour: carbsPerHour,
+            estimatedGramsHourWeight: viewModel.weight,
+            estimatedGramsHourIntensity: viewModel.intensity?.rawValue,
+            consumedCaffeineBeforeStart: viewModel.hasConsumedCaffeineBefore,
+            fastedState: viewModel.fasted,
+            fuelingProfile: viewModel.fuelingProfile.rawValue,
+            startCarbIntakeAtSeconds: viewModel.startEatingAt,
+            ambientTemperature: viewModel.ambientTempC,
+            estimatedTotalGrams: estimatedTotalGrams
+        )
+    }
+
     // MARK: - Body
 
     var body: some View {
         ScrollViewReader { proxy in
             ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    title
-                        .padding(.horizontal)
-                    sportAndDuration
-                    carbInputSection
-                    advancedOptionsSection
-                        .id(ScrollTarget.advancedOptions)
-                    Color.clear
-                        .frame(height: 1)
-                        .id(ScrollTarget.advancedOptionsExpandedEnd)
-                }
+                content
             }
             .scrollDismissesKeyboard(.interactively)
             .safeAreaInset(edge: .bottom, spacing: 0) {
@@ -84,6 +103,9 @@ struct RaceNutritionCalculatorView: View {
             .loadingOverlay(isLoading: $viewModel.isLoading)
             .onReceive(viewModel.$didFinishCalculation) { didFinish in
                 if didFinish, let totalCarbGrams = viewModel.estimatedTotalGrams {
+                    if let analyticsData {
+                        analyticsService.trackCalculateFinished(analyticsData: analyticsData)
+                    }
                     coordinator.presentCarbItems(totalCarbGrams: totalCarbGrams)
                     viewModel.didFinishCalculation = false
                 }
@@ -109,8 +131,12 @@ struct RaceNutritionCalculatorView: View {
             .sheet(isPresented: $showPaceCalculatorSheet) {
                 paceCalculatorSheet
             }
+            .onAppear {
+                analyticsService.trackScreenView()
+            }
         }
         .floatingActionButton(Localizables.Common.reset, systemImage: "arrow.counterclockwise", bottomPadding: 100) {
+            analyticsService.trackResetClick()
             coordinator.resetCalculator()
             shouldShowAdvancedOptions = false
             carbInputMode = .manual
@@ -121,6 +147,20 @@ struct RaceNutritionCalculatorView: View {
 // MARK: - Private methods
 
 private extension RaceNutritionCalculatorView {
+    var content: some View {
+        VStack(alignment: .leading, spacing: 20) {
+            title
+                .padding(.horizontal)
+            sportAndDuration
+            carbInputSection
+            advancedOptionsSection
+                .id(ScrollTarget.advancedOptions)
+            Color.clear
+                .frame(height: 1)
+                .id(ScrollTarget.advancedOptionsExpandedEnd)
+        }
+    }
+
     var bottomActionBar: some View {
         VStack(spacing: 0) {
             totalsSummary
@@ -134,6 +174,7 @@ private extension RaceNutritionCalculatorView {
                     Localizables.RaceNutritionCalculator.calculateButtonTitle
                 ),
                 action: {
+                    analyticsService.trackCalculateClick()
                     viewModel.calculateTotalGrams()
                 }
             )
@@ -202,6 +243,7 @@ private extension RaceNutritionCalculatorView {
 
                 Button {
                     guard viewModel.sport != nil else { return }
+                    analyticsService.trackUseTimeCalculatorClick()
                     showPaceCalculatorSheet = true
                 } label: {
                     Label(Localizables.RaceNutritionCalculator.useTimeCalculator, systemImage: "clock")
@@ -237,6 +279,9 @@ private extension RaceNutritionCalculatorView {
                     }
                 }
                 .pickerStyle(.segmented)
+                .onChange(of: carbInputMode) { _, newValue in
+                    analyticsService.trackCarbInputModeChange(mode: newValue.rawValue)
+                }
 
                 switch carbInputMode {
                 case .manual:
@@ -256,8 +301,8 @@ private extension RaceNutritionCalculatorView {
                             .focused($focusedField, equals: .weight)
                             .cardBackground(innerHorizontalPadding: 12, innerVerticalPadding: 12)
                             .onChange(of: viewModel.weight) { _, newValue in
-                                if let val = newValue, val > 999 {
-                                    viewModel.weight = 999
+                                if let val = newValue, val > Constants.maxWeight {
+                                    viewModel.weight = Constants.maxWeight
                                 }
                             }
 
@@ -408,6 +453,7 @@ private extension RaceNutritionCalculatorView {
                     withAnimation(.easeInOut(duration: 0.2)) {
                         shouldShowAdvancedOptions.toggle()
                     }
+                    analyticsService.trackAdvancedOptionsClick()
                 }
 
                 if shouldShowAdvancedOptions {
@@ -532,6 +578,7 @@ private extension RaceNutritionCalculatorView {
             factory: RaceNutritionViewFactoryDefault(
                 dependencies: .init()
             )
-        )
+        ),
+        analyticsService: RaceNutritionCalculatorAnalyticsServiceNoOp()
     )
 }

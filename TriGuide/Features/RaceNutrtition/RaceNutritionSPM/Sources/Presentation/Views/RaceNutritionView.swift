@@ -13,17 +13,20 @@ public struct RaceNutritionView: View {
     @ObservedObject private var coordinator: RaceNutritionCoordinator
 
     private let factory: RaceNutritionViewFactory
+    private let raceNutritionCalculatorAnalyticsService: RaceNutritionCalculatorAnalyticsService
 
     // MARK: - Initializer
 
     public init(
         viewModel: RaceNutritionViewModel,
         coordinator: RaceNutritionCoordinator,
-        factory: RaceNutritionViewFactory
+        factory: RaceNutritionViewFactory,
+        raceNutritionCalculatorAnalyticsService: RaceNutritionCalculatorAnalyticsService
     ) {
         self.viewModel = viewModel
         self.coordinator = coordinator
         self.factory = factory
+        self.raceNutritionCalculatorAnalyticsService = raceNutritionCalculatorAnalyticsService
     }
 
     // MARK: - Body
@@ -33,7 +36,8 @@ public struct RaceNutritionView: View {
             VStack {
                 RaceNutritionCalculatorView(
                     viewModel: viewModel,
-                    coordinator: coordinator
+                    coordinator: coordinator,
+                    analyticsService: raceNutritionCalculatorAnalyticsService
                 )
             }
             .toast(

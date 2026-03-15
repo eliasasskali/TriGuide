@@ -5,7 +5,7 @@
 import Foundation
 import Localization
 
-public enum FuelingProfile: CaseIterable {
+public enum FuelingProfile: String, CaseIterable {
     case amateur
     case trained
     case uncapped
