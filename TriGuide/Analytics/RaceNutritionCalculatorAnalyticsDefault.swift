@@ -9,12 +9,20 @@ struct RaceNutritionCalculatorAnalyticsDefault: RaceNutritionCalculatorAnalytics
     // MARK: - Constants
 
     private enum Constants {
+
         static let screenName = AnalyticsEvent.Screen.raceNutritionCalculator
+
+        // MARK: - Click elements
+
         static let useTimeCalculatorButtonElement = "use_time_calculator_button"
         static let advancedOptionsButtonElement = "advanced_options_button"
         static let resetElement = "reset_button"
         static let carbInputModeElement = "carb_input_mode"
         static let calculateButtonElement = "calculate_button"
+
+        // MARK: - Event names
+
+        static let calculateFinishedEventName = "calculate_finished"
     }
 
     // MARK: - RaceNutritionCalculatorAnalyticsService
@@ -61,7 +69,7 @@ struct RaceNutritionCalculatorAnalyticsDefault: RaceNutritionCalculatorAnalytics
 
     func trackCalculateFinished(analyticsData: RaceNutritionCalculatorAnalyticsData) {
         Analytics.logEvent(
-            "calculate_finished",
+            Constants.calculateFinishedEventName,
             parameters: [
                 "screen": AnalyticsEvent.Screen.raceNutritionCalculator,
                 "duration_seconds": analyticsData.durationSeconds,

@@ -14,6 +14,7 @@ public struct CarbItemsView: View {
 
     @ObservedObject private var viewModel: CarbItemsViewModel
     @ObservedObject private var coordinator: CarbItemsCoordinator
+    private let analyticsService: CarbItemsAnalyticsService
 
     // MARK: - Properties
 
@@ -50,10 +51,12 @@ public struct CarbItemsView: View {
     public init(
         viewModel: CarbItemsViewModel,
         coordinator: CarbItemsCoordinator,
+        analyticsService: CarbItemsAnalyticsService = CarbItemsAnalyticsServiceNoOp(),
         embedded: Bool = false
     ) {
         self.viewModel = viewModel
         self.coordinator = coordinator
+        self.analyticsService = analyticsService
         self.embedded = embedded
     }
 
@@ -82,6 +85,18 @@ public struct CarbItemsView: View {
                     isLoading: viewModel.state == .loading,
                     isDisabled: viewModel.selectedCarbItems.isEmpty
                 ) {
+                    let remoteCarbItemIds = viewModel.selectedCarbItems
+                        .filter { !$0.item.isCustom }
+                        .map { $0.item.id }
+                    let userCarbItems = viewModel.selectedCarbItems
+                        .filter { $0.item.isCustom }
+                        .map { $0.item }
+                    analyticsService.trackContinueSelection(data: CarbItemsSelectionAnalyticsData(
+                        remoteCarbItemIds: remoteCarbItemIds,
+                        userCarbItems: userCarbItems,
+                        totalCarbsSelected: viewModel.selectedItemsCarbsSum,
+                        estimatedTotalCarbs: viewModel.totalCarbGrams ?? 0
+                    ))
                     dismiss()
                     coordinator.onCompleteSelection?(viewModel.selectedCarbItems)
                 }
@@ -94,6 +109,13 @@ public struct CarbItemsView: View {
             if viewModel.state == .loading { ProgressView() }
         }
         .task { await refreshAll() }
+        .task(id: searchText) {
+            guard !searchText.isEmpty else { return }
+            try? await Task.sleep(for: .milliseconds(500))
+            guard !Task.isCancelled else { return }
+            analyticsService.trackSearchCarbItem(query: searchText)
+        }
+        .onAppear { analyticsService.trackListScreenView() }
         .errorAlert(message: $viewModel.errorMessage)
         .navigationDestination(for: CarbItemsCoordinator.Route.self) { route in
             switch route {
@@ -182,6 +204,7 @@ private extension CarbItemsView {
     func userItemSwipeActions(for carbItem: CarbItem) -> some View {
         Group {
             Button(role: .destructive) {
+                analyticsService.trackDeleteCarbItem(itemId: carbItem.id, itemName: carbItem.name)
                 Task { await viewModel.deleteUserCarbItem(item: carbItem) }
             } label: {
                 Label(Localizables.Common.delete, systemImage: "trash")
@@ -198,6 +221,11 @@ private extension CarbItemsView {
 
     func defaultItemSwipeActions(for carbItem: CarbItem) -> some View {
         Button {
+            if carbItem.isFavorite {
+                analyticsService.trackRemoveFromFavorites(itemId: carbItem.id)
+            } else {
+                analyticsService.trackAddToFavorites(itemId: carbItem.id)
+            }
             Task { await viewModel.toggleFavorite(for: carbItem) }
         } label: {
             Label(

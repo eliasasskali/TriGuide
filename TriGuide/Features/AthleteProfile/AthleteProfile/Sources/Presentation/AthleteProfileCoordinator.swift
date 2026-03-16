@@ -27,15 +27,23 @@ public final class AthleteProfileCoordinator: BaseCoordinator<AthleteProfileCoor
 
     // MARK: - Initializer
 
-    public init(raceNutritionFactory: RaceNutritionViewFactoryDefault = .init(dependencies: .init())) {
+    public init(
+        raceNutritionFactory: RaceNutritionViewFactoryDefault = .init(dependencies: .init()),
+        carbItemsAnalyticsService: CarbItemsAnalyticsService = CarbItemsAnalyticsServiceNoOp()
+    ) {
         self.raceNutritionFactory = raceNutritionFactory
         raceNutritionCoordinator = RaceNutritionCoordinator(factory: raceNutritionFactory)
         storedPlansCoordinator = StoredNutritionPlansCoordinator(
             factory: raceNutritionFactory,
             raceNutritionCoordinator: raceNutritionCoordinator
         )
-        if let carbFactory = try? CarbItemsViewFactoryDefault(dependencies: .init()) {
-            carbItemsCoordinator = CarbItemsCoordinator(factory: carbFactory)
+        if let carbFactory = try? CarbItemsViewFactoryDefault(
+            dependencies: .init(carbItemsAnalyticsService: carbItemsAnalyticsService)
+        ) {
+            carbItemsCoordinator = CarbItemsCoordinator(
+                factory: carbFactory,
+                analyticsService: carbItemsAnalyticsService
+            )
         } else {
             carbItemsCoordinator = nil
         }
@@ -76,6 +84,7 @@ public extension AthleteProfileCoordinator {
             CarbItemsView(
                 viewModel: carbItemsCoordinator.viewModel,
                 coordinator: carbItemsCoordinator,
+                analyticsService: carbItemsCoordinator.analyticsService,
                 embedded: true
             )
         } else {

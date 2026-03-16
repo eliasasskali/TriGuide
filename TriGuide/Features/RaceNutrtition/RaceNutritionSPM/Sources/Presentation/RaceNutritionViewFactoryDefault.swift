@@ -15,6 +15,7 @@ public final class RaceNutritionViewFactoryDefault {
         let deleteStoredFuelingResultUseCase: DeleteStoredFuelingResultUseCase
         let replaceFuelingPlanUseCase: ReplaceFuelingPlanUseCase
         let raceNutritionCalculatorAnalyticsService: RaceNutritionCalculatorAnalyticsService
+        let carbItemsAnalyticsService: CarbItemsAnalyticsService
 
         public init(
             fuelingCalculatorDataSource: FuelingCalculatorDataSource? = nil,
@@ -23,7 +24,8 @@ public final class RaceNutritionViewFactoryDefault {
             saveFuelingPlanUseCase: SaveFuelingPlanUseCase? = nil,
             fetchStoredFuelingResultsUseCase: FetchStoredFuelingResultsUseCase? = nil,
             deleteStoredFuelingResultUseCase: DeleteStoredFuelingResultUseCase? = nil,
-            raceNutritionCalculatorAnalyticsService: RaceNutritionCalculatorAnalyticsService? = nil
+            raceNutritionCalculatorAnalyticsService: RaceNutritionCalculatorAnalyticsService? = nil,
+            carbItemsAnalyticsService: CarbItemsAnalyticsService? = nil
         ) {
             self.fuelingCalculatorDataSource = fuelingCalculatorDataSource ?? LocalFuelingCalculator()
             self.calculateFuelingResultUseCase = calculateFuelingResultUseCase ?? CalculateFuelingResultUseCaseDefault(
@@ -51,6 +53,7 @@ public final class RaceNutritionViewFactoryDefault {
                 ?? DeleteStoredFuelingResultUseCaseDefault(repository: repository)
             replaceFuelingPlanUseCase = ReplaceFuelingPlanUseCaseDefault(repository: repository)
             self.raceNutritionCalculatorAnalyticsService = raceNutritionCalculatorAnalyticsService ?? RaceNutritionCalculatorAnalyticsServiceNoOp()
+            self.carbItemsAnalyticsService = carbItemsAnalyticsService ?? CarbItemsAnalyticsServiceNoOp()
         }
     }
 
@@ -90,9 +93,15 @@ extension RaceNutritionViewFactoryDefault: RaceNutritionViewFactory {
         totalCarbGrams: Double,
         onCompleteSelection: (([CarbItemSelection]) -> Void)?
     ) throws -> CarbItemsCoordinator {
-        let carbItemsFactory = try CarbItemsViewFactoryDefault(dependencies: .init(totalCarbGrams: totalCarbGrams))
+        let carbItemsFactory = try CarbItemsViewFactoryDefault(
+            dependencies: .init(
+                carbItemsAnalyticsService: dependencies.carbItemsAnalyticsService,
+                totalCarbGrams: totalCarbGrams
+            )
+        )
         return CarbItemsCoordinator(
             factory: carbItemsFactory,
+            analyticsService: dependencies.carbItemsAnalyticsService,
             onCompleteSelection: onCompleteSelection
         )
     }

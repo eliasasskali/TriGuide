@@ -3,6 +3,7 @@
 //
 
 import AthleteProfile
+import CarbItemsSPM
 import RaceCalculatorSPM
 import RaceNutritionSPM
 
@@ -11,13 +12,16 @@ struct AppFactory {
     // MARK: - Analytics Services
 
     private let raceNutritionCalculatorAnalytics: RaceNutritionCalculatorAnalyticsService = RaceNutritionCalculatorAnalyticsDefault()
+    private let carbItemsAnalyticsRaceNutrition: CarbItemsAnalyticsService = CarbItemsAnalyticsDefault(originScreen: .raceNutritionCalculator)
+    private let carbItemsAnalyticsUserProfile: CarbItemsAnalyticsService = CarbItemsAnalyticsDefault(originScreen: .userProfile)
 
     // MARK: - Coordinators
 
     func buildRaceNutritionCoordinator() -> RaceNutritionCoordinator {
         let factory = RaceNutritionViewFactoryDefault(
             dependencies: .init(
-                raceNutritionCalculatorAnalyticsService: raceNutritionCalculatorAnalytics
+                raceNutritionCalculatorAnalyticsService: raceNutritionCalculatorAnalytics,
+                carbItemsAnalyticsService: carbItemsAnalyticsRaceNutrition
             )
         )
         return RaceNutritionCoordinator(factory: factory)
@@ -29,6 +33,6 @@ struct AppFactory {
     }
 
     func buildAthleteProfileCoordinator() -> AthleteProfileCoordinator {
-        AthleteProfileCoordinator()
+        AthleteProfileCoordinator(carbItemsAnalyticsService: carbItemsAnalyticsUserProfile)
     }
 }

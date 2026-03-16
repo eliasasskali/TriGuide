@@ -16,6 +16,7 @@ public final class CarbItemsViewFactoryDefault {
         let deleteUserCarbItemUseCase: DeleteUserCarbItemUseCase
         let toggleFavoriteCarbItemUseCase: ToggleFavoriteCarbItemUseCase
         let searchCarbItemsUseCase: SearchCarbItemsUseCase
+        let carbItemsAnalyticsService: CarbItemsAnalyticsService
 
         let totalCarbGrams: Double?
 
@@ -31,6 +32,7 @@ public final class CarbItemsViewFactoryDefault {
             deleteUserCarbItemUseCase: DeleteUserCarbItemUseCase? = nil,
             toggleFavoriteCarbItemUseCase: ToggleFavoriteCarbItemUseCase? = nil,
             searchCarbItemsUseCase: SearchCarbItemsUseCase? = nil,
+            carbItemsAnalyticsService: CarbItemsAnalyticsService? = nil,
             totalCarbGrams: Double? = nil
         ) throws {
             let remoteItemsDataSource = remoteCarbItemsDataSource ?? RemoteCarbItemsDataSourceDefault()
@@ -50,6 +52,7 @@ public final class CarbItemsViewFactoryDefault {
             self.deleteUserCarbItemUseCase = deleteUserCarbItemUseCase ?? DeleteUserCarbItemUseCaseDefault(repository: repository)
             self.toggleFavoriteCarbItemUseCase = toggleFavoriteCarbItemUseCase ?? ToggleFavoriteCarbItemUseCaseDefault(repository: repository)
             self.searchCarbItemsUseCase = searchCarbItemsUseCase ?? SearchCarbItemsUseCaseDefault()
+            self.carbItemsAnalyticsService = carbItemsAnalyticsService ?? CarbItemsAnalyticsServiceNoOp()
 
             self.totalCarbGrams = totalCarbGrams
         }
@@ -73,7 +76,8 @@ extension CarbItemsViewFactoryDefault: CarbItemsViewFactory {
     ) -> CarbItemsView {
         CarbItemsView(
             viewModel: viewModel,
-            coordinator: coordinator
+            coordinator: coordinator,
+            analyticsService: dependencies.carbItemsAnalyticsService
         )
     }
 
