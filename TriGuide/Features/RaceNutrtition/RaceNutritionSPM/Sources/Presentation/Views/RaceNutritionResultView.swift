@@ -13,6 +13,7 @@ public struct RaceNutritionResultView: View {
     @ObservedObject private var coordinator: RaceNutritionCoordinator
     @ObservedObject private var viewModel: RaceNutritionResultViewModel
     @Binding var fuelingResult: FuelingResult
+    private let analyticsService: RaceNutritionResultAnalyticsService
     private let showSaveButton: Bool
 
     // MARK: - Properties
@@ -53,12 +54,14 @@ public struct RaceNutritionResultView: View {
     public init(
         coordinator: RaceNutritionCoordinator,
         viewModel: RaceNutritionResultViewModel,
+        analyticsService: RaceNutritionResultAnalyticsService = RaceNutritionResultAnalyticsServiceNoOp(),
         shouldShowSelectedItems: Bool = false,
         showSaveButton: Bool = true,
         fuelingResult: Binding<FuelingResult>
     ) {
         _coordinator = ObservedObject(wrappedValue: coordinator)
         _viewModel = ObservedObject(wrappedValue: viewModel)
+        self.analyticsService = analyticsService
         _shouldShowSelectedItems = State(initialValue: shouldShowSelectedItems)
         self.showSaveButton = showSaveButton
         _fuelingResult = fuelingResult
@@ -95,6 +98,7 @@ public struct RaceNutritionResultView: View {
             systemImage: "pencil",
             bottomPadding: showSaveButton ? 100 : 20
         ) {
+            analyticsService.trackEditPlanClick()
             coordinator.pushFuelingPlanFullView()
         }
         .toast(
@@ -133,6 +137,10 @@ public struct RaceNutritionResultView: View {
                         showSavedSuccessfullyToast = savedSuccessfully
 
                         if savedSuccessfully {
+                            analyticsService.trackPlanSaved(
+                                planName: trimmedName,
+                                data: RaceNutritionResultAnalyticsData(from: fuelingResult)
+                            )
                             lastSavedFuelingResult = fuelingResult
                             planName = ""
                             showPlanNameDialog = false
@@ -157,6 +165,12 @@ public struct RaceNutritionResultView: View {
             }
         }
         .navigationTitle(screenTitle)
+        .onAppear {
+            analyticsService.trackScreenView()
+            analyticsService.trackFuelingResultGenerated(
+                data: RaceNutritionResultAnalyticsData(from: fuelingResult)
+            )
+        }
     }
 }
 
@@ -329,6 +343,7 @@ private extension RaceNutritionResultView {
         .contentShape(Rectangle())
         .onTapGesture {
             shouldShowSelectedItems.toggle()
+            analyticsService.trackToggleSelectedItems(expanded: shouldShowSelectedItems)
         }
     }
 
@@ -353,6 +368,7 @@ private extension RaceNutritionResultView {
                 Localizables.RaceNutritionResults.savePlanButtonHint
             ),
             action: {
+                analyticsService.trackSavePlanClick()
                 errorAlertMessage = nil
                 showPlanNameDialog = true
             }

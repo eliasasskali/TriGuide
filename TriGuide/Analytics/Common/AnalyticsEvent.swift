@@ -9,6 +9,7 @@ public enum AnalyticsEvent {
 
     public enum Screen {
         public static let raceNutritionCalculator = "race_nutrition_calculator"
+        public static let raceNutritionResult = "race_nutrition_result"
         public static let userProfile = "user_profile"
         public static let carbItemsList = "carb_items_list"
         public static let editCarbItem = "edit_carb_item"

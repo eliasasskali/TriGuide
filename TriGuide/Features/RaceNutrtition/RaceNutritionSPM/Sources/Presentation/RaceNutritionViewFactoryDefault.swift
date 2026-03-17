@@ -15,6 +15,7 @@ public final class RaceNutritionViewFactoryDefault {
         let deleteStoredFuelingResultUseCase: DeleteStoredFuelingResultUseCase
         let replaceFuelingPlanUseCase: ReplaceFuelingPlanUseCase
         let raceNutritionCalculatorAnalyticsService: RaceNutritionCalculatorAnalyticsService
+        let raceNutritionResultAnalyticsService: RaceNutritionResultAnalyticsService
         let carbItemsAnalyticsService: CarbItemsAnalyticsService
 
         public init(
@@ -25,6 +26,7 @@ public final class RaceNutritionViewFactoryDefault {
             fetchStoredFuelingResultsUseCase: FetchStoredFuelingResultsUseCase? = nil,
             deleteStoredFuelingResultUseCase: DeleteStoredFuelingResultUseCase? = nil,
             raceNutritionCalculatorAnalyticsService: RaceNutritionCalculatorAnalyticsService? = nil,
+            raceNutritionResultAnalyticsService: RaceNutritionResultAnalyticsService? = nil,
             carbItemsAnalyticsService: CarbItemsAnalyticsService? = nil
         ) {
             self.fuelingCalculatorDataSource = fuelingCalculatorDataSource ?? LocalFuelingCalculator()
@@ -53,6 +55,7 @@ public final class RaceNutritionViewFactoryDefault {
                 ?? DeleteStoredFuelingResultUseCaseDefault(repository: repository)
             replaceFuelingPlanUseCase = ReplaceFuelingPlanUseCaseDefault(repository: repository)
             self.raceNutritionCalculatorAnalyticsService = raceNutritionCalculatorAnalyticsService ?? RaceNutritionCalculatorAnalyticsServiceNoOp()
+            self.raceNutritionResultAnalyticsService = raceNutritionResultAnalyticsService ?? RaceNutritionResultAnalyticsServiceNoOp()
             self.carbItemsAnalyticsService = carbItemsAnalyticsService ?? CarbItemsAnalyticsServiceNoOp()
         }
     }
@@ -115,6 +118,7 @@ extension RaceNutritionViewFactoryDefault: RaceNutritionViewFactory {
         return RaceNutritionResultView(
             coordinator: coordinator,
             viewModel: viewModel,
+            analyticsService: dependencies.raceNutritionResultAnalyticsService,
             showSaveButton: showSaveButton,
             fuelingResult: fuelingResult
         )
