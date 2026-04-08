@@ -6,6 +6,7 @@ import Foundation
 
 /// A no-op implementation of `RaceNutritionCalculatorAnalyticsService` that does nothing when its methods are called.
 public struct RaceNutritionCalculatorAnalyticsServiceNoOp: RaceNutritionCalculatorAnalyticsService {
+    public init() {}
     public func trackScreenView() {}
     public func trackUseTimeCalculatorClick() {}
     public func trackAdvancedOptionsClick() {}

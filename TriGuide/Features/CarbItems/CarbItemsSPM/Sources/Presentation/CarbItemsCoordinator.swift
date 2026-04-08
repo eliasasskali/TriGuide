@@ -17,7 +17,9 @@ public class CarbItemsCoordinator: BaseCoordinator<CarbItemsCoordinator.Route, N
     // MARK: - Dependencies
 
     let factory: CarbItemsViewFactory
+    public let analyticsService: CarbItemsAnalyticsService
     public let onCompleteSelection: (([CarbItemSelection]) -> Void)?
+    public var calculationId: String?
 
     @Published public var viewModel: CarbItemsViewModel
 
@@ -25,9 +27,11 @@ public class CarbItemsCoordinator: BaseCoordinator<CarbItemsCoordinator.Route, N
 
     public init(
         factory: CarbItemsViewFactory,
+        analyticsService: CarbItemsAnalyticsService = CarbItemsAnalyticsServiceNoOp(),
         onCompleteSelection: (([CarbItemSelection]) -> Void)? = nil
     ) {
         self.factory = factory
+        self.analyticsService = analyticsService
         self.onCompleteSelection = onCompleteSelection
         viewModel = factory.buildCarbItemsViewModel()
         super.init()
@@ -47,6 +51,11 @@ public class CarbItemsCoordinator: BaseCoordinator<CarbItemsCoordinator.Route, N
 
 public extension CarbItemsCoordinator {
     func pushCarbItemForm(for existingItem: CarbItem? = nil) {
+        if existingItem != nil {
+            analyticsService.trackEditItemScreenView()
+        } else {
+            analyticsService.trackNewItemFormScreenView()
+        }
         push(.form(existingItem: existingItem))
     }
 
@@ -56,8 +65,10 @@ public extension CarbItemsCoordinator {
             Task { @MainActor in
                 guard let self = self else { return }
                 if let old = existingItem {
+                    self.analyticsService.trackEditCarbItem(item: savedItem)
                     await self.viewModel.editUserCarbItem(newItem: savedItem, oldItem: old)
                 } else {
+                    self.analyticsService.trackCreateCarbItem(item: savedItem)
                     await self.viewModel.addUserCarbItem(item: savedItem)
                 }
             }

@@ -57,6 +57,7 @@
 				Features/AthleteProfile/AthleteProfile,
 				Features/RaceCalculator/RaceCalculatorSPM,
 				Features/RaceNutrtition/RaceNutritionSPM,
+				Info.plist,
 			);
 			target = 9CB979962E141AC9001CBBD8 /* TriGuide */;
 		};
@@ -499,6 +500,7 @@
 				DEVELOPMENT_TEAM = 68L8H5T6JR;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = TriGuide/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Debonk;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.sports";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -530,6 +532,7 @@
 				DEVELOPMENT_TEAM = 68L8H5T6JR;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = TriGuide/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Debonk;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.sports";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;

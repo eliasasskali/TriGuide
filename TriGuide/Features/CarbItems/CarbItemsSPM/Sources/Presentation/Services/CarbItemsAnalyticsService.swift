@@ -1,0 +1,44 @@
+//
+// TriGuide 2026
+//
+
+import Foundation
+import TriGuideDomain
+
+// MARK: - CarbItemsOriginScreen
+
+public enum CarbItemsOriginScreen: String, Sendable {
+    case raceNutritionCalculator = "race_nutrition_calculator"
+    case userProfile = "user_profile"
+}
+
+// MARK: - CarbItemsSelectionAnalyticsData
+
+public struct CarbItemsSelectionAnalyticsData {
+    public let totalCarbsSelected: Double
+    public let estimatedTotalCarbs: Double
+
+    public init(
+        totalCarbsSelected: Double,
+        estimatedTotalCarbs: Double
+    ) {
+        self.totalCarbsSelected = totalCarbsSelected
+        self.estimatedTotalCarbs = estimatedTotalCarbs
+    }
+}
+
+// MARK: - CarbItemsAnalyticsService
+
+public protocol CarbItemsAnalyticsService {
+    func trackListScreenView()
+    func trackEditItemScreenView()
+    func trackNewItemFormScreenView()
+    func trackSearchCarbItem(query: String)
+    func trackCreateCarbItem(item: CarbItem)
+    func trackEditCarbItem(item: CarbItem)
+    func trackDeleteCarbItem(itemId: String, itemName: String)
+    func trackAddToFavorites(itemId: String)
+    func trackRemoveFromFavorites(itemId: String)
+    func trackContinueSelection(data: CarbItemsSelectionAnalyticsData, calculationId: String?)
+    func trackItemSelected(item: CarbItem, quantity: Double, calculationId: String?)
+}

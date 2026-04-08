@@ -15,6 +15,9 @@ public final class RaceNutritionViewFactoryDefault {
         let deleteStoredFuelingResultUseCase: DeleteStoredFuelingResultUseCase
         let replaceFuelingPlanUseCase: ReplaceFuelingPlanUseCase
         let raceNutritionCalculatorAnalyticsService: RaceNutritionCalculatorAnalyticsService
+        let raceNutritionResultAnalyticsService: RaceNutritionResultAnalyticsService
+        let fuelingPlanEditAnalyticsService: FuelingPlanEditAnalyticsService
+        let carbItemsAnalyticsService: CarbItemsAnalyticsService
 
         public init(
             fuelingCalculatorDataSource: FuelingCalculatorDataSource? = nil,
@@ -23,7 +26,10 @@ public final class RaceNutritionViewFactoryDefault {
             saveFuelingPlanUseCase: SaveFuelingPlanUseCase? = nil,
             fetchStoredFuelingResultsUseCase: FetchStoredFuelingResultsUseCase? = nil,
             deleteStoredFuelingResultUseCase: DeleteStoredFuelingResultUseCase? = nil,
-            raceNutritionCalculatorAnalyticsService: RaceNutritionCalculatorAnalyticsService? = nil
+            raceNutritionCalculatorAnalyticsService: RaceNutritionCalculatorAnalyticsService? = nil,
+            raceNutritionResultAnalyticsService: RaceNutritionResultAnalyticsService? = nil,
+            fuelingPlanEditAnalyticsService: FuelingPlanEditAnalyticsService? = nil,
+            carbItemsAnalyticsService: CarbItemsAnalyticsService? = nil
         ) {
             self.fuelingCalculatorDataSource = fuelingCalculatorDataSource ?? LocalFuelingCalculator()
             self.calculateFuelingResultUseCase = calculateFuelingResultUseCase ?? CalculateFuelingResultUseCaseDefault(
@@ -51,6 +57,9 @@ public final class RaceNutritionViewFactoryDefault {
                 ?? DeleteStoredFuelingResultUseCaseDefault(repository: repository)
             replaceFuelingPlanUseCase = ReplaceFuelingPlanUseCaseDefault(repository: repository)
             self.raceNutritionCalculatorAnalyticsService = raceNutritionCalculatorAnalyticsService ?? RaceNutritionCalculatorAnalyticsServiceNoOp()
+            self.raceNutritionResultAnalyticsService = raceNutritionResultAnalyticsService ?? RaceNutritionResultAnalyticsServiceNoOp()
+            self.fuelingPlanEditAnalyticsService = fuelingPlanEditAnalyticsService ?? FuelingPlanEditAnalyticsServiceNoOp()
+            self.carbItemsAnalyticsService = carbItemsAnalyticsService ?? CarbItemsAnalyticsServiceNoOp()
         }
     }
 
@@ -68,6 +77,10 @@ public final class RaceNutritionViewFactoryDefault {
 // MARK: - RaceNutritionViewFactory
 
 extension RaceNutritionViewFactoryDefault: RaceNutritionViewFactory {
+    public var fuelingPlanEditAnalyticsService: FuelingPlanEditAnalyticsService {
+        dependencies.fuelingPlanEditAnalyticsService
+    }
+
     @MainActor public func buildRaceNutritionView(
         viewModel: RaceNutritionViewModel,
         coordinator: RaceNutritionCoordinator
@@ -90,9 +103,15 @@ extension RaceNutritionViewFactoryDefault: RaceNutritionViewFactory {
         totalCarbGrams: Double,
         onCompleteSelection: (([CarbItemSelection]) -> Void)?
     ) throws -> CarbItemsCoordinator {
-        let carbItemsFactory = try CarbItemsViewFactoryDefault(dependencies: .init(totalCarbGrams: totalCarbGrams))
+        let carbItemsFactory = try CarbItemsViewFactoryDefault(
+            dependencies: .init(
+                carbItemsAnalyticsService: dependencies.carbItemsAnalyticsService,
+                totalCarbGrams: totalCarbGrams
+            )
+        )
         return CarbItemsCoordinator(
             factory: carbItemsFactory,
+            analyticsService: dependencies.carbItemsAnalyticsService,
             onCompleteSelection: onCompleteSelection
         )
     }
@@ -106,6 +125,7 @@ extension RaceNutritionViewFactoryDefault: RaceNutritionViewFactory {
         return RaceNutritionResultView(
             coordinator: coordinator,
             viewModel: viewModel,
+            analyticsService: dependencies.raceNutritionResultAnalyticsService,
             showSaveButton: showSaveButton,
             fuelingResult: fuelingResult
         )

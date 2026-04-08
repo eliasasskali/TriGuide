@@ -28,7 +28,19 @@ actor UserCarbItemsDataSourceDefault: UserCarbItemsDataSource {
 
     func getCarbItems() async throws -> [CarbItem] {
         do {
-            return try await storage.load().map { $0.toDomain() }
+            return try await storage.load().map { dto in
+                CarbItem(
+                    id: dto.id,
+                    name: dto.name,
+                    gramsOfCarbs: dto.gramsOfCarbs,
+                    caffeine: dto.caffeine,
+                    sodium: dto.sodium,
+                    waterVolumeML: dto.waterVolumeML,
+                    type: dto.type,
+                    brand: dto.brand,
+                    isCustom: true
+                )
+            }
         } catch LocalStorageError.fileNotFound {
             return []
         }

@@ -7,18 +7,19 @@ import Foundation
 // MARK: - RaceNutritionCalculatorAnalyticsData
 
 public struct RaceNutritionCalculatorAnalyticsData {
-    let durationSeconds: Double
-    let sport: String
-    let carbInputMode: String
-    let carbsPerHour: Double
-    let estimatedGramsHourWeight: Double?
-    let estimatedGramsHourIntensity: String?
-    let consumedCaffeineBeforeStart: Bool
-    let fastedState: Bool
-    let fuelingProfile: String
-    let startCarbIntakeAtSeconds: Double
-    let ambientTemperature: Double
-    let estimatedTotalGrams: Double
+    public let calculationId: String?
+    public let durationSeconds: Double
+    public let sport: String
+    public let carbInputMode: String
+    public let carbsPerHour: Double
+    public let estimatedGramsHourWeight: Double?
+    public let estimatedGramsHourIntensity: String?
+    public let consumedCaffeineBeforeStart: Bool
+    public let fastedState: Bool
+    public let fuelingProfile: String
+    public let startCarbIntakeAtSeconds: Double
+    public let ambientTemperature: Double
+    public let estimatedTotalGrams: Double
 }
 
 // MARK: - RaceNutritionCalculatorAnalyticsService

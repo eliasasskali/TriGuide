@@ -14,17 +14,10 @@ struct ContentView: View {
     @StateObject private var athleteProfileCoordinator: AthleteProfileCoordinator
 
     init() {
-        let raceNutritionFactory: RaceNutritionViewFactory = RaceNutritionViewFactoryDefault(dependencies: .init())
-        _raceNutritionCoordinator = StateObject(
-            wrappedValue: RaceNutritionCoordinator(factory: raceNutritionFactory)
-        )
-        let raceCalculatorFactory: RaceCalculatorViewFactory = RaceCalculatorViewFactoryDefault(dependencies: .init())
-        _raceCalculatorCoordinator = StateObject(
-            wrappedValue: raceCalculatorFactory.buildRaceCalculatorCoordinator()
-        )
-        _athleteProfileCoordinator = StateObject(
-            wrappedValue: AthleteProfileCoordinator()
-        )
+        let factory = AppFactory()
+        _raceNutritionCoordinator = StateObject(wrappedValue: factory.buildRaceNutritionCoordinator())
+        _raceCalculatorCoordinator = StateObject(wrappedValue: factory.buildRaceCalculatorCoordinator())
+        _athleteProfileCoordinator = StateObject(wrappedValue: factory.buildAthleteProfileCoordinator())
     }
 
     @State private var selectedTab = 0

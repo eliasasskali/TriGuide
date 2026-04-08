@@ -11,6 +11,7 @@ struct TriGuideApp: App {
     init() {
         RobotoFont.registerFonts()
         FirebaseApp.configure()
+        Analytics.setAnalyticsCollectionEnabled(true)
     }
 
     var body: some Scene {

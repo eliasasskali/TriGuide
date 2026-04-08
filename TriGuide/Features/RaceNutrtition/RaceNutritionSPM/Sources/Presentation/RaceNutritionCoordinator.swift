@@ -122,7 +122,9 @@ public extension RaceNutritionCoordinator {
         return AnyView(
             FuelingPlanEditView(
                 result: binding,
-                showNameEditor: originalStoredPlan != nil
+                showNameEditor: originalStoredPlan != nil,
+                analyticsService: factory.fuelingPlanEditAnalyticsService,
+                calculationId: viewModel.calculationId
             ) { [weak self] updatedPlan in
                 guard let self, let originalStoredPlan else { return true }
                 let saved = await raceNutritionResultViewModel.replaceFuelingPlan(
@@ -153,10 +155,12 @@ public extension RaceNutritionCoordinator {
                         }
                     }
                 )
+                carbItemsCoordinator?.calculationId = viewModel.calculationId
                 return carbItemsCoordinator?.start()
             }
 
             carbItemsCoordinator.viewModel.totalCarbGrams = totalCarbGrams
+            carbItemsCoordinator.calculationId = viewModel.calculationId
             return carbItemsCoordinator.start()
         } catch {
             return nil
