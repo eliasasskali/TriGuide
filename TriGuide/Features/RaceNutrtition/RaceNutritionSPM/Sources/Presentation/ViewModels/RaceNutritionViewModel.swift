@@ -30,6 +30,7 @@ public class RaceNutritionViewModel: ObservableObject {
     @Published var didFinishCalculation = false
 
     @Published var fuelingResult: FuelingResult?
+    @Published var calculationId: String?
 
     // MARK: - Computed properties
 
@@ -72,6 +73,7 @@ public class RaceNutritionViewModel: ObservableObject {
         guard let duration, duration > 0, let gramsPerHour else { return }
 
         estimatedTotalGrams = ((duration / 3600) * gramsPerHour).rounded(.down)
+        calculationId = UUID().uuidString
         didFinishCalculation = true
     }
 
@@ -114,6 +116,7 @@ public class RaceNutritionViewModel: ObservableObject {
         estimatedTotalGrams = nil
         didFinishCalculation = false
         fuelingResult = nil
+        calculationId = nil
     }
 }
 

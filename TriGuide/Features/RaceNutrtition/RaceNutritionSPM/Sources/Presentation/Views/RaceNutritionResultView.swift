@@ -24,6 +24,7 @@ public struct RaceNutritionResultView: View {
     @State private var errorAlertMessage: String?
     @State private var planName = ""
     @State private var isSavingPlan = false
+    @State private var wasEdited = false
     @State private var lastSavedFuelingResult: FuelingResult?
 
     // MARK: - Computed properties
@@ -99,6 +100,7 @@ public struct RaceNutritionResultView: View {
             bottomPadding: showSaveButton ? 100 : 20
         ) {
             analyticsService.trackEditPlanClick()
+            wasEdited = true
             coordinator.pushFuelingPlanFullView()
         }
         .toast(
@@ -139,7 +141,11 @@ public struct RaceNutritionResultView: View {
                         if savedSuccessfully {
                             analyticsService.trackPlanSaved(
                                 planName: trimmedName,
-                                data: RaceNutritionResultAnalyticsData(from: fuelingResult)
+                                data: RaceNutritionResultAnalyticsData(
+                                    from: fuelingResult,
+                                    calculationId: coordinator.viewModel.calculationId,
+                                    wasEdited: wasEdited
+                                )
                             )
                             lastSavedFuelingResult = fuelingResult
                             planName = ""
@@ -168,7 +174,10 @@ public struct RaceNutritionResultView: View {
         .onAppear {
             analyticsService.trackScreenView()
             analyticsService.trackFuelingResultGenerated(
-                data: RaceNutritionResultAnalyticsData(from: fuelingResult)
+                data: RaceNutritionResultAnalyticsData(
+                    from: fuelingResult,
+                    calculationId: coordinator.viewModel.calculationId
+                )
             )
         }
     }

@@ -17,7 +17,8 @@ extension CarbItemDto {
             sodium: sodium,
             waterVolumeML: waterVolumeML,
             type: type,
-            brand: brand
+            brand: brand,
+            isCustom: isCustom
         )
     }
 }

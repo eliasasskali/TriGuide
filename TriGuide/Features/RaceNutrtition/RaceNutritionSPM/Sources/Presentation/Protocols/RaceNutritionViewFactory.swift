@@ -27,6 +27,8 @@ public protocol RaceNutritionViewFactory {
         fuelingResult: Binding<FuelingResult>
     ) -> RaceNutritionResultView
 
+    var fuelingPlanEditAnalyticsService: FuelingPlanEditAnalyticsService { get }
+
     @MainActor func buildRaceNutritionResultViewModel() -> RaceNutritionResultViewModel
 
     @MainActor func buildStoredNutritionPlansListViewModel() -> StoredNutritionPlansListViewModel

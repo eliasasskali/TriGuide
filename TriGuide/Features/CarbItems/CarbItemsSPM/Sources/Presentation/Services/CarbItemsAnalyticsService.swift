@@ -15,19 +15,13 @@ public enum CarbItemsOriginScreen: String, Sendable {
 // MARK: - CarbItemsSelectionAnalyticsData
 
 public struct CarbItemsSelectionAnalyticsData {
-    public let remoteCarbItemIds: [String]
-    public let userCarbItems: [CarbItem]
     public let totalCarbsSelected: Double
     public let estimatedTotalCarbs: Double
 
     public init(
-        remoteCarbItemIds: [String],
-        userCarbItems: [CarbItem],
         totalCarbsSelected: Double,
         estimatedTotalCarbs: Double
     ) {
-        self.remoteCarbItemIds = remoteCarbItemIds
-        self.userCarbItems = userCarbItems
         self.totalCarbsSelected = totalCarbsSelected
         self.estimatedTotalCarbs = estimatedTotalCarbs
     }
@@ -45,5 +39,6 @@ public protocol CarbItemsAnalyticsService {
     func trackDeleteCarbItem(itemId: String, itemName: String)
     func trackAddToFavorites(itemId: String)
     func trackRemoveFromFavorites(itemId: String)
-    func trackContinueSelection(data: CarbItemsSelectionAnalyticsData)
+    func trackContinueSelection(data: CarbItemsSelectionAnalyticsData, calculationId: String?)
+    func trackItemSelected(item: CarbItem, quantity: Double, calculationId: String?)
 }

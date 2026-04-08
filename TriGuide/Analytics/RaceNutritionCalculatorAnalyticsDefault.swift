@@ -9,7 +9,6 @@ struct RaceNutritionCalculatorAnalyticsDefault: RaceNutritionCalculatorAnalytics
     // MARK: - Constants
 
     private enum Constants {
-
         static let screenName = AnalyticsEvent.Screen.raceNutritionCalculator
 
         // MARK: - Click elements
@@ -72,6 +71,7 @@ struct RaceNutritionCalculatorAnalyticsDefault: RaceNutritionCalculatorAnalytics
             Constants.calculateFinishedEventName,
             parameters: [
                 "screen": AnalyticsEvent.Screen.raceNutritionCalculator,
+                "calculation_id": analyticsData.calculationId as Any,
                 "duration_seconds": analyticsData.durationSeconds,
                 "sport": analyticsData.sport,
                 "carb_input_mode": analyticsData.carbInputMode,

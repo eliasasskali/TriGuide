@@ -15,6 +15,8 @@ struct FuelingPlanEditView: View {
     @Binding var result: FuelingResult
     let onApplyChanges: ((FuelingResult) async -> Bool)?
     let showNameEditor: Bool
+    private let analyticsService: FuelingPlanEditAnalyticsService
+    private let calculationId: String?
     @State private var editableInstantEvents: [FuelingEvent]
     @State private var editableIntervalEvents: [FuelingEvent]
     @State private var liveHourlyBreakdown: [IntervalFueling]
@@ -26,10 +28,14 @@ struct FuelingPlanEditView: View {
     init(
         result: Binding<TriGuideDomain.FuelingResult>,
         showNameEditor: Bool = false,
+        analyticsService: FuelingPlanEditAnalyticsService = FuelingPlanEditAnalyticsServiceNoOp(),
+        calculationId: String? = nil,
         onApplyChanges: ((FuelingResult) async -> Bool)? = nil
     ) {
         _result = result
         self.showNameEditor = showNameEditor
+        self.analyticsService = analyticsService
+        self.calculationId = calculationId
         self.onApplyChanges = onApplyChanges
 
         _editableInstantEvents = State(initialValue: result.wrappedValue.instantEvents)
@@ -85,6 +91,7 @@ struct FuelingPlanEditView: View {
         }
         .onAppear {
             recomputeLiveBreakdown()
+            analyticsService.trackScreenView()
         }
         .errorAlert(message: $validationErrorMessage)
         .hideKeyboardOnTap()
@@ -216,6 +223,10 @@ private extension FuelingPlanEditView {
             let success = await onApplyChanges(updated)
             guard success else { return }
         }
+
+        analyticsService.trackPlanEdited(
+            data: FuelingPlanEditAnalyticsData(original: current, edited: updated, calculationId: calculationId)
+        )
 
         result = updated
         liveHourlyBreakdown = newHourlyBreakdown

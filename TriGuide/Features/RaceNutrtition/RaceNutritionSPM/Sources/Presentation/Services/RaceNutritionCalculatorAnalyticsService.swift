@@ -7,6 +7,7 @@ import Foundation
 // MARK: - RaceNutritionCalculatorAnalyticsData
 
 public struct RaceNutritionCalculatorAnalyticsData {
+    public let calculationId: String?
     public let durationSeconds: Double
     public let sport: String
     public let carbInputMode: String

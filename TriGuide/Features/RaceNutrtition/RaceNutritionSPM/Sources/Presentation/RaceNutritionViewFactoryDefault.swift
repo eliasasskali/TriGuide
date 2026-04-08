@@ -16,6 +16,7 @@ public final class RaceNutritionViewFactoryDefault {
         let replaceFuelingPlanUseCase: ReplaceFuelingPlanUseCase
         let raceNutritionCalculatorAnalyticsService: RaceNutritionCalculatorAnalyticsService
         let raceNutritionResultAnalyticsService: RaceNutritionResultAnalyticsService
+        let fuelingPlanEditAnalyticsService: FuelingPlanEditAnalyticsService
         let carbItemsAnalyticsService: CarbItemsAnalyticsService
 
         public init(
@@ -27,6 +28,7 @@ public final class RaceNutritionViewFactoryDefault {
             deleteStoredFuelingResultUseCase: DeleteStoredFuelingResultUseCase? = nil,
             raceNutritionCalculatorAnalyticsService: RaceNutritionCalculatorAnalyticsService? = nil,
             raceNutritionResultAnalyticsService: RaceNutritionResultAnalyticsService? = nil,
+            fuelingPlanEditAnalyticsService: FuelingPlanEditAnalyticsService? = nil,
             carbItemsAnalyticsService: CarbItemsAnalyticsService? = nil
         ) {
             self.fuelingCalculatorDataSource = fuelingCalculatorDataSource ?? LocalFuelingCalculator()
@@ -56,6 +58,7 @@ public final class RaceNutritionViewFactoryDefault {
             replaceFuelingPlanUseCase = ReplaceFuelingPlanUseCaseDefault(repository: repository)
             self.raceNutritionCalculatorAnalyticsService = raceNutritionCalculatorAnalyticsService ?? RaceNutritionCalculatorAnalyticsServiceNoOp()
             self.raceNutritionResultAnalyticsService = raceNutritionResultAnalyticsService ?? RaceNutritionResultAnalyticsServiceNoOp()
+            self.fuelingPlanEditAnalyticsService = fuelingPlanEditAnalyticsService ?? FuelingPlanEditAnalyticsServiceNoOp()
             self.carbItemsAnalyticsService = carbItemsAnalyticsService ?? CarbItemsAnalyticsServiceNoOp()
         }
     }
@@ -74,6 +77,10 @@ public final class RaceNutritionViewFactoryDefault {
 // MARK: - RaceNutritionViewFactory
 
 extension RaceNutritionViewFactoryDefault: RaceNutritionViewFactory {
+    public var fuelingPlanEditAnalyticsService: FuelingPlanEditAnalyticsService {
+        dependencies.fuelingPlanEditAnalyticsService
+    }
+
     @MainActor public func buildRaceNutritionView(
         viewModel: RaceNutritionViewModel,
         coordinator: RaceNutritionCoordinator

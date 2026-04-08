@@ -63,6 +63,7 @@ struct RaceNutritionCalculatorView: View {
     @State private var showPaceCalculatorSheet = false
     @State private var shouldShowAdvancedOptions = false
     @State private var carbInputMode: CarbInputMode = .manual
+    @State private var isResettingMode = false
     @FocusState private var focusedField: FocusedField?
 
     // MARK: - Computed Properties
@@ -74,6 +75,7 @@ struct RaceNutritionCalculatorView: View {
               let estimatedTotalGrams = viewModel.estimatedTotalGrams
         else { return nil }
         return RaceNutritionCalculatorAnalyticsData(
+            calculationId: viewModel.calculationId,
             durationSeconds: duration,
             sport: sport,
             carbInputMode: carbInputMode.rawValue,
@@ -121,6 +123,7 @@ struct RaceNutritionCalculatorView: View {
             .onChange(of: coordinator.showSavedPlanToast) { _, showToast in
                 if showToast {
                     shouldShowAdvancedOptions = false
+                    isResettingMode = true
                     carbInputMode = .manual
                 }
             }
@@ -139,6 +142,7 @@ struct RaceNutritionCalculatorView: View {
             analyticsService.trackResetClick()
             coordinator.resetCalculator()
             shouldShowAdvancedOptions = false
+            isResettingMode = true
             carbInputMode = .manual
         }
     }
@@ -280,6 +284,10 @@ private extension RaceNutritionCalculatorView {
                 }
                 .pickerStyle(.segmented)
                 .onChange(of: carbInputMode) { _, newValue in
+                    guard !isResettingMode else {
+                        isResettingMode = false
+                        return
+                    }
                     analyticsService.trackCarbInputModeChange(mode: newValue.rawValue)
                 }
 

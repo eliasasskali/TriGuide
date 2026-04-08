@@ -74,17 +74,20 @@ private extension RaceNutritionResultAnalyticsDefault {
     func buildResultParameters(from data: RaceNutritionResultAnalyticsData) -> [String: Any] {
         [
             "screen": Constants.screenName,
+            "calculation_id": data.calculationId as Any,
             "duration_seconds": data.durationSeconds,
             "total_carbs_target": data.totalCarbsTarget,
             "total_selected_carbs": data.totalSelectedCarbs,
             "carb_target_per_hour": data.carbTargetPerHour,
             "actual_carbs_per_hour": data.actualCarbsPerHour,
+            "carb_deficit_ratio": data.carbDeficitRatio,
             "total_timeline_events": data.totalTimelineEvents,
-            "total_selected_items": data.totalSelectedItems,
-            "remote_carb_item_ids": data.remoteCarbItemIds,
-            "user_carb_item_names": data.userCarbItemNames,
             "total_caffeine_mg": data.totalCaffeineMg,
             "total_water_volume_ml": data.totalWaterVolumeML,
+            "first_caffeine_time_seconds": data.firstCaffeineTimeSeconds as Any,
+            "drink_coverage_ratio": data.drinkCoverageRatio,
+            "carb_distribution_variance": data.carbDistributionVariance,
+            "was_edited": data.wasEdited,
         ]
     }
 }

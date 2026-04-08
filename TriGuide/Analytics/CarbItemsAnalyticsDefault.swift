@@ -15,6 +15,7 @@ struct CarbItemsAnalyticsDefault: CarbItemsAnalyticsService {
         static let addToFavoritesElement = "add_to_favorites"
         static let removeFromFavoritesElement = "remove_from_favorites"
         static let continueSelectionElement = "continue_selection"
+        static let itemSelectedEvent = "item_selected"
 
         // Event names
         static let createCarbItemEvent = "create_carb_item"
@@ -119,31 +120,25 @@ struct CarbItemsAnalyticsDefault: CarbItemsAnalyticsService {
 
     // MARK: - Selection
 
-    func trackContinueSelection(data: CarbItemsSelectionAnalyticsData) {
-        let userItemsInfo: [[String: Any]] = data.userCarbItems.map { item in
-            [
-                "id": item.id,
-                "name": item.name,
-                "carbs": item.gramsOfCarbs,
-                "type": item.type.rawValue,
-                "brand": item.brand ?? "",
-            ]
-        }
-        let userItemsJSON: String
-        if let jsonData = try? JSONSerialization.data(withJSONObject: userItemsInfo),
-           let jsonString = String(data: jsonData, encoding: .utf8)
-        {
-            userItemsJSON = jsonString
-        } else {
-            userItemsJSON = "[]"
-        }
-
+    func trackContinueSelection(data: CarbItemsSelectionAnalyticsData, calculationId: String?) {
         Analytics.logEvent(Constants.continueSelectionElement, parameters: [
             "screen": listScreenName,
-            "remote_carb_item_ids": data.remoteCarbItemIds,
-            "user_carb_items": userItemsJSON,
+            "calculation_id": calculationId as Any,
             "total_carbs_selected": data.totalCarbsSelected,
             "estimated_total_carbs": data.estimatedTotalCarbs,
+        ])
+    }
+
+    func trackItemSelected(item: CarbItem, quantity: Double, calculationId: String?) {
+        Analytics.logEvent(Constants.itemSelectedEvent, parameters: [
+            "screen": listScreenName,
+            "calculation_id": calculationId as Any,
+            "item_id": item.id,
+            "item_name": item.name,
+            "item_category": item.type.rawValue,
+            "item_variant": item.isCustom ? "custom" : "remote",
+            "quantity": Int(quantity),
+            "carbs_per_unit": item.gramsOfCarbs,
         ])
     }
 }

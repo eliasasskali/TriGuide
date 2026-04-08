@@ -85,18 +85,13 @@ public struct CarbItemsView: View {
                     isLoading: viewModel.state == .loading,
                     isDisabled: viewModel.selectedCarbItems.isEmpty
                 ) {
-                    let remoteCarbItemIds = viewModel.selectedCarbItems
-                        .filter { !$0.item.isCustom }
-                        .map { $0.item.id }
-                    let userCarbItems = viewModel.selectedCarbItems
-                        .filter { $0.item.isCustom }
-                        .map { $0.item }
                     analyticsService.trackContinueSelection(data: CarbItemsSelectionAnalyticsData(
-                        remoteCarbItemIds: remoteCarbItemIds,
-                        userCarbItems: userCarbItems,
                         totalCarbsSelected: viewModel.selectedItemsCarbsSum,
                         estimatedTotalCarbs: viewModel.totalCarbGrams ?? 0
-                    ))
+                    ), calculationId: coordinator.calculationId)
+                    for selection in viewModel.selectedCarbItems {
+                        analyticsService.trackItemSelected(item: selection.item, quantity: selection.quantity, calculationId: coordinator.calculationId)
+                    }
                     dismiss()
                     coordinator.onCompleteSelection?(viewModel.selectedCarbItems)
                 }

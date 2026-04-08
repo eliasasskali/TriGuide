@@ -19,6 +19,7 @@ public class CarbItemsCoordinator: BaseCoordinator<CarbItemsCoordinator.Route, N
     let factory: CarbItemsViewFactory
     public let analyticsService: CarbItemsAnalyticsService
     public let onCompleteSelection: (([CarbItemSelection]) -> Void)?
+    public var calculationId: String?
 
     @Published public var viewModel: CarbItemsViewModel
 

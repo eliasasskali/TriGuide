@@ -13,6 +13,7 @@ struct AppFactory {
 
     private let raceNutritionCalculatorAnalytics: RaceNutritionCalculatorAnalyticsService = RaceNutritionCalculatorAnalyticsDefault()
     private let raceNutritionResultAnalytics: RaceNutritionResultAnalyticsService = RaceNutritionResultAnalyticsDefault()
+    private let fuelingPlanEditAnalytics: FuelingPlanEditAnalyticsService = FuelingPlanEditAnalyticsDefault()
     private let carbItemsAnalyticsRaceNutrition: CarbItemsAnalyticsService = CarbItemsAnalyticsDefault(originScreen: .raceNutritionCalculator)
     private let carbItemsAnalyticsUserProfile: CarbItemsAnalyticsService = CarbItemsAnalyticsDefault(originScreen: .userProfile)
 
@@ -23,6 +24,7 @@ struct AppFactory {
             dependencies: .init(
                 raceNutritionCalculatorAnalyticsService: raceNutritionCalculatorAnalytics,
                 raceNutritionResultAnalyticsService: raceNutritionResultAnalytics,
+                fuelingPlanEditAnalyticsService: fuelingPlanEditAnalytics,
                 carbItemsAnalyticsService: carbItemsAnalyticsRaceNutrition
             )
         )

@@ -17,5 +17,6 @@ public struct CarbItemsAnalyticsServiceNoOp: CarbItemsAnalyticsService {
     public func trackDeleteCarbItem(itemId _: String, itemName _: String) {}
     public func trackAddToFavorites(itemId _: String) {}
     public func trackRemoveFromFavorites(itemId _: String) {}
-    public func trackContinueSelection(data _: CarbItemsSelectionAnalyticsData) {}
+    public func trackContinueSelection(data _: CarbItemsSelectionAnalyticsData, calculationId _: String?) {}
+    public func trackItemSelected(item _: CarbItem, quantity _: Double, calculationId _: String?) {}
 }
