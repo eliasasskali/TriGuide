@@ -1,14 +1,10 @@
 //
-//  TriGuideUITestsLaunchTests.swift
-//  TriGuideUITests
-//
-//  Created by Elias Asskali Assakali on 1/7/25.
+//  TriGuide 2025
 //
 
 import XCTest
 
 final class TriGuideUITestsLaunchTests: XCTestCase {
-
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true
     }

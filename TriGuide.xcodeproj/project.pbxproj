@@ -6,6 +6,21 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		9C4D1E682EA625B1000744ED /* Localization in Frameworks */ = {isa = PBXBuildFile; productRef = 9C4D1E672EA625B1000744ED /* Localization */; };
+		9C5D3D172EB8A28200E55E2E /* FormKit in Frameworks */ = {isa = PBXBuildFile; productRef = 9C5D3D162EB8A28200E55E2E /* FormKit */; };
+		9C5FAFFE2EB160AD00815332 /* CarbItemsSPM in Frameworks */ = {isa = PBXBuildFile; productRef = 9C5FAFFD2EB160AD00815332 /* CarbItemsSPM */; };
+		9C78AC5C2EA66CF200FB5BE8 /* DesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = 9C78AC5B2EA66CF200FB5BE8 /* DesignSystem */; };
+		9CB031BD2EBC9B3C0086D6C6 /* NavigationKit in Frameworks */ = {isa = PBXBuildFile; productRef = 9CB031BC2EBC9B3C0086D6C6 /* NavigationKit */; };
+		9CB72A922EBDEF8000014FA1 /* RaceNutritionSPM in Frameworks */ = {isa = PBXBuildFile; productRef = 9CB72A912EBDEF8000014FA1 /* RaceNutritionSPM */; };
+		9CBAB1D32EC66F9400DF800C /* TestPlan.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 9CBAB1D22EC66F9400DF800C /* TestPlan.xctestplan */; };
+		9CC48B6C2F66BCDD0014E707 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 9CC48B6B2F66BCDD0014E707 /* FirebaseAnalytics */; };
+		9CC48B6E2F66BCDD0014E707 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 9CC48B6D2F66BCDD0014E707 /* FirebaseCrashlytics */; };
+		9CF7F49A2EAA7A1200085B77 /* TriGuideDomain in Frameworks */ = {isa = PBXBuildFile; productRef = 9CF7F4992EAA7A1200085B77 /* TriGuideDomain */; };
+		9CF7F49D2EAAA9C500085B77 /* RaceCalculatorSPM in Frameworks */ = {isa = PBXBuildFile; productRef = 9CF7F49C2EAAA9C500085B77 /* RaceCalculatorSPM */; };
+		9DA11E142F01000100A1B2C3 /* AthleteProfile in Frameworks */ = {isa = PBXBuildFile; productRef = 9DA11E122F01000100A1B2C3 /* AthleteProfile */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		9CB979A82E141ACA001CBBD8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -27,11 +42,33 @@
 		9CB979972E141AC9001CBBD8 /* TriGuide.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TriGuide.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9CB979A72E141ACA001CBBD8 /* TriGuideTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TriGuideTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9CB979B12E141ACA001CBBD8 /* TriGuideUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TriGuideUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9CBAB1D22EC66F9400DF800C /* TestPlan.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = TestPlan.xctestplan; path = TriGuideTests/TestPlan.xctestplan; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		9C4D1E652EA6221B000744ED /* Exceptions for "TriGuide" folder in "TriGuide" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Common/FormKit,
+				Common/Localization,
+				Common/NavigationKit,
+				Common/StorageKit,
+				Common/TriGuideDomain,
+				Features/AthleteProfile/AthleteProfile,
+				Features/RaceCalculator/RaceCalculatorSPM,
+				Features/RaceNutrtition/RaceNutritionSPM,
+				Info.plist,
+			);
+			target = 9CB979962E141AC9001CBBD8 /* TriGuide */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		9CB979992E141AC9001CBBD8 /* TriGuide */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				9C4D1E652EA6221B000744ED /* Exceptions for "TriGuide" folder in "TriGuide" target */,
+			);
 			path = TriGuide;
 			sourceTree = "<group>";
 		};
@@ -52,6 +89,17 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9DA11E142F01000100A1B2C3 /* AthleteProfile in Frameworks */,
+				9C4D1E682EA625B1000744ED /* Localization in Frameworks */,
+				9C78AC5C2EA66CF200FB5BE8 /* DesignSystem in Frameworks */,
+				9CB031BD2EBC9B3C0086D6C6 /* NavigationKit in Frameworks */,
+				9CF7F49D2EAAA9C500085B77 /* RaceCalculatorSPM in Frameworks */,
+				9CC48B6E2F66BCDD0014E707 /* FirebaseCrashlytics in Frameworks */,
+				9C5D3D172EB8A28200E55E2E /* FormKit in Frameworks */,
+				9C5FAFFE2EB160AD00815332 /* CarbItemsSPM in Frameworks */,
+				9CF7F49A2EAA7A1200085B77 /* TriGuideDomain in Frameworks */,
+				9CC48B6C2F66BCDD0014E707 /* FirebaseAnalytics in Frameworks */,
+				9CB72A922EBDEF8000014FA1 /* RaceNutritionSPM in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -75,6 +123,7 @@
 		9CB9798E2E141AC9001CBBD8 = {
 			isa = PBXGroup;
 			children = (
+				9CBAB1D22EC66F9400DF800C /* TestPlan.xctestplan */,
 				9CB979992E141AC9001CBBD8 /* TriGuide */,
 				9CB979AA2E141ACA001CBBD8 /* TriGuideTests */,
 				9CB979B42E141ACA001CBBD8 /* TriGuideUITests */,
@@ -101,6 +150,7 @@
 			buildPhases = (
 				9CB979932E141AC9001CBBD8 /* Sources */,
 				9CB979942E141AC9001CBBD8 /* Frameworks */,
+				9CC48B6F2F66BD170014E707 /* ShellScript */,
 				9CB979952E141AC9001CBBD8 /* Resources */,
 			);
 			buildRules = (
@@ -112,6 +162,17 @@
 			);
 			name = TriGuide;
 			packageProductDependencies = (
+				9DA11E122F01000100A1B2C3 /* AthleteProfile */,
+				9C4D1E672EA625B1000744ED /* Localization */,
+				9C78AC5B2EA66CF200FB5BE8 /* DesignSystem */,
+				9CF7F4992EAA7A1200085B77 /* TriGuideDomain */,
+				9CF7F49C2EAAA9C500085B77 /* RaceCalculatorSPM */,
+				9C5FAFFD2EB160AD00815332 /* CarbItemsSPM */,
+				9C5D3D162EB8A28200E55E2E /* FormKit */,
+				9CB031BC2EBC9B3C0086D6C6 /* NavigationKit */,
+				9CB72A912EBDEF8000014FA1 /* RaceNutritionSPM */,
+				9CC48B6B2F66BCDD0014E707 /* FirebaseAnalytics */,
+				9CC48B6D2F66BCDD0014E707 /* FirebaseCrashlytics */,
 			);
 			productName = TriGuide;
 			productReference = 9CB979972E141AC9001CBBD8 /* TriGuide.app */;
@@ -192,9 +253,23 @@
 			knownRegions = (
 				en,
 				Base,
+				es,
+				ca,
 			);
 			mainGroup = 9CB9798E2E141AC9001CBBD8;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				9DA11E132F01000100A1B2C3 /* XCLocalSwiftPackageReference "TriGuide/Features/AthleteProfile/AthleteProfile" */,
+				9C4D1E662EA625B1000744ED /* XCLocalSwiftPackageReference "TriGuide/Common/Localization" */,
+				9C78AC5A2EA66CF200FB5BE8 /* XCLocalSwiftPackageReference "TriGuide/Common/DesignSystem" */,
+				9CF7F4982EAA7A1200085B77 /* XCLocalSwiftPackageReference "TriGuide/Common/TriGuideDomain" */,
+				9CF7F49B2EAAA9C500085B77 /* XCLocalSwiftPackageReference "TriGuide/Features/RaceCalculator/RaceCalculatorSPM" */,
+				9C5FAFFC2EB160AD00815332 /* XCLocalSwiftPackageReference "TriGuide/Features/CarbItems/CarbItemsSPM" */,
+				9C5D3D152EB8A28200E55E2E /* XCLocalSwiftPackageReference "TriGuide/Common/FormKit" */,
+				9CB031BB2EBC9B3C0086D6C6 /* XCLocalSwiftPackageReference "TriGuide/Common/NavigationKit" */,
+				9CB72A902EBDEF8000014FA1 /* XCLocalSwiftPackageReference "TriGuide/Features/RaceNutrtition/RaceNutritionSPM" */,
+				9CC48B6A2F66BCDD0014E707 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 9CB979982E141AC9001CBBD8 /* Products */;
 			projectDirPath = "";
@@ -212,6 +287,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9CBAB1D32EC66F9400DF800C /* TestPlan.xctestplan in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -230,6 +306,29 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		9CC48B6F2F66BD170014E707 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(PROJECT_DIR)/TriGuide/Resources/Firebase/GoogleService-Info-Debug.plist",
+				"$(PROJECT_DIR)/TriGuide/Resources/Firebase/GoogleService-Info-Release.plist",
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/$(PRODUCT_NAME).app/GoogleService-Info.plist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ \"${CONFIGURATION}\" == \"Debug\" ]; then\n    SOURCE=\"${PROJECT_DIR}/TriGuide/Resources/Firebase/GoogleService-Info-Debug.plist\"\nelse\n    SOURCE=\"${PROJECT_DIR}/TriGuide/Resources/Firebase/GoogleService-Info-Release.plist\"\nfi\n\nif [ -f \"$SOURCE\" ]; then\n    cp \"$SOURCE\" \"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/GoogleService-Info.plist\"\nelse\n    echo \"warning: GoogleService-Info.plist not found, skipping copy\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		9CB979932E141AC9001CBBD8 /* Sources */ = {
@@ -328,6 +427,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -384,6 +484,7 @@
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -396,9 +497,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"TriGuide/Preview Content\"";
-				DEVELOPMENT_TEAM = 366ZQ9S5R6;
+				DEVELOPMENT_TEAM = 68L8H5T6JR;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = TriGuide/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Debonk;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.sports";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -408,7 +512,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.iliasasskali.TriGuide;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -425,9 +529,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"TriGuide/Preview Content\"";
-				DEVELOPMENT_TEAM = 366ZQ9S5R6;
+				DEVELOPMENT_TEAM = 68L8H5T6JR;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = TriGuide/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Debonk;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.sports";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -437,7 +544,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.iliasasskali.TriGuide;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -558,6 +665,105 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		9C4D1E662EA625B1000744ED /* XCLocalSwiftPackageReference "TriGuide/Common/Localization" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = TriGuide/Common/Localization;
+		};
+		9C5D3D152EB8A28200E55E2E /* XCLocalSwiftPackageReference "TriGuide/Common/FormKit" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = TriGuide/Common/FormKit;
+		};
+		9C5FAFFC2EB160AD00815332 /* XCLocalSwiftPackageReference "TriGuide/Features/CarbItems/CarbItemsSPM" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = TriGuide/Features/CarbItems/CarbItemsSPM;
+		};
+		9C78AC5A2EA66CF200FB5BE8 /* XCLocalSwiftPackageReference "TriGuide/Common/DesignSystem" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = TriGuide/Common/DesignSystem;
+		};
+		9CB031BB2EBC9B3C0086D6C6 /* XCLocalSwiftPackageReference "TriGuide/Common/NavigationKit" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = TriGuide/Common/NavigationKit;
+		};
+		9CB72A902EBDEF8000014FA1 /* XCLocalSwiftPackageReference "TriGuide/Features/RaceNutrtition/RaceNutritionSPM" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = TriGuide/Features/RaceNutrtition/RaceNutritionSPM;
+		};
+		9CF7F4982EAA7A1200085B77 /* XCLocalSwiftPackageReference "TriGuide/Common/TriGuideDomain" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = TriGuide/Common/TriGuideDomain;
+		};
+		9CF7F49B2EAAA9C500085B77 /* XCLocalSwiftPackageReference "TriGuide/Features/RaceCalculator/RaceCalculatorSPM" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = TriGuide/Features/RaceCalculator/RaceCalculatorSPM;
+		};
+		9DA11E132F01000100A1B2C3 /* XCLocalSwiftPackageReference "TriGuide/Features/AthleteProfile/AthleteProfile" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = TriGuide/Features/AthleteProfile/AthleteProfile;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		9CC48B6A2F66BCDD0014E707 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.10.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		9C4D1E672EA625B1000744ED /* Localization */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Localization;
+		};
+		9C5D3D162EB8A28200E55E2E /* FormKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = FormKit;
+		};
+		9C5FAFFD2EB160AD00815332 /* CarbItemsSPM */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CarbItemsSPM;
+		};
+		9C78AC5B2EA66CF200FB5BE8 /* DesignSystem */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = DesignSystem;
+		};
+		9CB031BC2EBC9B3C0086D6C6 /* NavigationKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = NavigationKit;
+		};
+		9CB72A912EBDEF8000014FA1 /* RaceNutritionSPM */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RaceNutritionSPM;
+		};
+		9CC48B6B2F66BCDD0014E707 /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9CC48B6A2F66BCDD0014E707 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
+		9CC48B6D2F66BCDD0014E707 /* FirebaseCrashlytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9CC48B6A2F66BCDD0014E707 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCrashlytics;
+		};
+		9CF7F4992EAA7A1200085B77 /* TriGuideDomain */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TriGuideDomain;
+		};
+		9CF7F49C2EAAA9C500085B77 /* RaceCalculatorSPM */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RaceCalculatorSPM;
+		};
+		9DA11E122F01000100A1B2C3 /* AthleteProfile */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AthleteProfile;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 9CB9798F2E141AC9001CBBD8 /* Project object */;
 }

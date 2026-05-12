@@ -1,0 +1,63 @@
+# Xcode
+#
+build/
+DerivedData/
+*.xcuserstate
+
+# User-specific Xcode settings
+xcuserdata/
+*.xcscmblueprint
+*.xccheckout
+
+# Breakpoints and user schemes
+*.xcworkspace/xcuserdata/
+*.xcuserstate
+*.xcuserdatad
+*.moved-aside
+
+# Swift Package Manager
+.build/
+Packages/
+Package.pins
+Package.resolved
+*.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
+
+# CocoaPods
+Pods/
+Podfile.lock
+
+# Carthage
+Carthage/Build/
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output/
+
+#Firebase
+TriGuide/Resources/Firebase/GoogleService-Info-Debug.plist
+TriGuide/Resources/Firebase/GoogleService-Info-Release.plist
+
+# Accidental backup files
+*.orig
+*.swp
+*.swo
+*~
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Thumbnails
+._*
+
+# Temporary files
+*.tmp
+*.temp
+
+# Other
+*.mode1v3
+*.mode2v3
+*.perspectivev3
